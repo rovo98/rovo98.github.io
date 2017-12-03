@@ -6,18 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>rovo98&#39;s blogs</title>
+  <title>动态规划 | rovo98&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="title: 动态规划 [TOC] 1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。 2.基本原理首先，我们要找到某一状态的最优解，然后在它的帮助下，找到下">
+  <meta name="description" content="1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="rovo98&#39;s blogs">
+<meta property="og:title" content="动态规划">
 <meta property="og:url" content="http://yoursite.com/2017/12/03/动态规划/index.html">
 <meta property="og:site_name" content="rovo98&#39;s blogs">
-<meta property="og:description" content="title: 动态规划 [TOC] 1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。 2.基本原理首先，我们要找到某一状态的最优解，然后在它的帮助下，找到下一个状态的最优解。 “状态”用来描述该问题的子问题的解。 2.1例题： 如果我们">
-<meta property="og:updated_time" content="2017-12-03T11:29:25.686Z">
+<meta property="og:description" content="1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。">
+<meta property="og:updated_time" content="2017-12-03T11:31:14.827Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="rovo98&#39;s blogs">
-<meta name="twitter:description" content="title: 动态规划 [TOC] 1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。 2.基本原理首先，我们要找到某一状态的最优解，然后在它的帮助下，找到下一个状态的最优解。 “状态”用来描述该问题的子问题的解。 2.1例题： 如果我们">
+<meta name="twitter:title" content="动态规划">
+<meta name="twitter:description" content="1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。">
   
     <link rel="alternative" href="/atom.xml" title="rovo98&#39;s blogs" type="application/atom+xml">
   
@@ -156,12 +156,26 @@
             <article id="post-动态规划" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      动态规划
+    </h1>
+  
+
+        
+        <a href="/2017/12/03/动态规划/" class="archive-article-date">
+  	<time datetime="2017-12-03T11:28:31.597Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-03</time>
+</a>
+        
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>title: 动态规划</p>
-<p>[TOC]</p>
-<h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h4><p>什么是动态规划？我们要怎么描述它？</p>
+        <h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h4><p>什么是动态规划？我们要怎么描述它？</p>
 <p>动态规划算法通常基于<strong>一个递推公式及一个或多个初始状态。</strong>当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要<strong>多项式的复杂度</strong>，因此它比回溯法、暴力解法等要快许多。</p>
+<a id="more"></a>
 <h4 id="2-基本原理"><a href="#2-基本原理" class="headerlink" title="2.基本原理"></a>2.基本原理</h4><p>首先，我们要找到<strong>某一状态</strong>的最优解，然后在它的帮助下，找到<strong>下一个状态</strong>的最优解。</p>
 <p><strong>“状态”</strong>用来描述该问题的子问题的解。</p>
 <h5 id="2-1例题："><a href="#2-1例题：" class="headerlink" title="2.1例题："></a>2.1例题：</h5><blockquote>
