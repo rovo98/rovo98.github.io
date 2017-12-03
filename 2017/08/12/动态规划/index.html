@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | rovo98&#39;s blogs</title>
+  <title>动态规划 | rovo98&#39;s blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="rovo98&#39;s blogs">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。">
+<meta name="keywords" content="算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动态规划">
+<meta property="og:url" content="http://yoursite.com/2017/08/12/动态规划/index.html">
 <meta property="og:site_name" content="rovo98&#39;s blogs">
+<meta property="og:description" content="1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。">
+<meta property="og:updated_time" content="2017-12-03T12:10:57.609Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="rovo98&#39;s blogs">
+<meta name="twitter:title" content="动态规划">
+<meta name="twitter:description" content="1.简介什么是动态规划？我们要怎么描述它？ 动态规划算法通常基于一个递推公式及一个或多个初始状态。当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要多项式的复杂度，因此它比回溯法、暴力解法等要快许多。">
   
     <link rel="alternative" href="/atom.xml" title="rovo98&#39;s blogs" type="application/atom+xml">
   
@@ -149,36 +154,81 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-动态规划" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/08/12/动态规划/" class="archive-article-date">
-  	<time datetime="2017-08-11T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-12</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/08/12/动态规划/">动态规划</a>
+    <h1 class="article-title" itemprop="name">
+      动态规划
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/08/12/动态规划/" class="archive-article-date">
+  	<time datetime="2017-08-11T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h4><p>什么是动态规划？我们要怎么描述它？</p>
+<p>动态规划算法通常基于<strong>一个递推公式及一个或多个初始状态。</strong>当前子问题的解由上一个子问题的解推出。使用动态规划来解题只需要<strong>多项式的复杂度</strong>，因此它比回溯法、暴力解法等要快许多。</p>
+<a id="more"></a>
+<h4 id="2-基本原理"><a href="#2-基本原理" class="headerlink" title="2.基本原理"></a>2.基本原理</h4><p>首先，我们要找到<strong>某一状态</strong>的最优解，然后在它的帮助下，找到<strong>下一个状态</strong>的最优解。</p>
+<p><strong>“状态”</strong>用来描述该问题的子问题的解。</p>
+<h5 id="2-1例题："><a href="#2-1例题：" class="headerlink" title="2.1例题："></a>2.1例题：</h5><blockquote>
+<p>如果我们有面值为1元、3元、5元的硬币若干枚，如何用最少的硬币凑够11元?</p>
+</blockquote>
+<p>分析：</p>
+<p>​    首先，我们先思考一个问题，如何用最少的硬币凑够i元(i&lt;11)?<br>​    原因：</p>
+<ul>
+<li>当我们遇到一个大问题时，总是习惯把问题的规模变小，这样便于分析讨论。</li>
+<li>这个规模变小后的问题和原来的问题是同质的，除了规模变小，其他的都是一样的，本质上它还是同一个问题(规模变小后的问题其实是原问题的子问题)</li>
+</ul>
+<p>过程：用d(i) = j来表示凑够i元需要j个硬币</p>
+<ul>
+<li>从最小的i开始，当i=0，即我们需要多少个硬币来凑够0元？<br>毫无疑问，需要0个硬币，d(0) = 0</li>
+<li>当i = 1时，只有1元的硬币可以用，我们拿起一个，问题就变成了凑0元：<br>d(1) = d(1-1) + 1 = d(0) + 1</li>
+<li>当i = 2时，有1元的硬币可以用， 拿起一个，问题描述：<br>d(2) = d(2-1) + 1 = d(1) + 1  = d(0) + 2</li>
+<li>当i = 3时，有两种硬币可以用，情况如下：<ul>
+<li>d(3) = d(3-1) + 1 = d(2) + 1 = d(0) + 3</li>
+<li>d(3) = d(3-3) + 1 = d(0) + 1<br>结果应该为：Min( d(3-1)+1, d(3-3)+1 )<br>####3.总结<br>上文中，d(i)表示凑够i元最少需要多少个硬币，我们将它定义为该问题的”状态”，根据子问题的定义状态。找到子问题，状态也就浮出水面了。最终我们需要求解的问题可以用这个状态来表示：d(11)，即凑够11元最少需要多少个硬币？<br>其中，包含状态d(i) 的方程，我们称之为<strong>“状态转换方程”</strong><br>例如: d(3) = min{ d(3-1) + 1, d(3-3) + 1}<br>描述了状态之间是如何转移的，需要抽象一下：<br>d(i) = min{ d(i-vj) + 1}, 其中i - vj&gt;= 0, vj表示第j 个硬币的面值；有了状态转换方程后问题就基本解决了。<br>伪代码如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Set Min[i] equal to Infinity <span class="keyword">for</span> all of i</span><br><span class="line">Min[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">For i = <span class="number">1</span> to S</span><br><span class="line">For j = <span class="number">0</span> to N<span class="number">-1</span></span><br><span class="line">	If (Vj&lt;=i AND Min[i-Vj]+<span class="number">1</span>&lt;Min[i])</span><br><span class="line">Then Min[i] = Min[i-Vj]+<span class="number">1</span></span><br><span class="line"></span><br><span class="line">Output Min[S]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -190,7 +240,7 @@
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -203,17 +253,94 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2017/08/12/动态规划/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
+
   
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -236,8 +363,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
