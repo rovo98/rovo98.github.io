@@ -60,14 +60,14 @@ footer:
   icon: user
 
   # If not defined, will be used `author` from Hexo main config.
-  copyright:
+  copyright: rovo98. All rights reserved.
   # -------------------------------------------------------------
   # Hexo link (Powered by Hexo).
   powered: true
 
   theme:
     # Theme & scheme info link (Theme - NexT.scheme).
-    enable: true
+    enable: false
     # Version info of NexT after scheme info (vX.X.X).
     version: false
   # -------------------------------------------------------------
