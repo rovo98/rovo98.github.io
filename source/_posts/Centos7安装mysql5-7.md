@@ -7,8 +7,6 @@ tags: mysql5.7安装
 description: CentOS7下安装mysql。
 ---
 
-CentOS7下安装mysql.
-
 <!-- more -->
 
 ### 配置yum源

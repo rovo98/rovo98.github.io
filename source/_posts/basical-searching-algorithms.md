@@ -1,16 +1,14 @@
 ---
 title: 基本查找算法 - basical searching algorithms
 author: rovo98
-description: 使用java实现并简要分析抽象的基本静态查找算法。
+description: 使用java实现并简要分析抽象的基本静态查找算法。notes, learning from algs4.
 date: 2018.3.7
 categories:
     - Algorithms
 tags:
-    - searching algs,static
+    - searching algs
 mathjax: true
 ---
-
-基本的静态查找算法。
 
 <!-- more -->
 ### 引入
@@ -208,4 +206,6 @@ public static int interpolationSearch(Comparable[] a, Comparable key) {
 }
 ```
 
+### NOTICE
 
+本文中，涉及的算法详细实现和使用，请移步到github[查看](https://github.com/rovo98/ds-and-algs#searching-algorithms----go-back-to-top)。
