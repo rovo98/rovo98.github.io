@@ -156,3 +156,15 @@
 {% endif %}
 
 {% include 'head/custom-head.swig' %}
+
+<!-- 文章加密 -->
+<script>
+    (function(){
+        if('{{ page.password }}'){
+            if (prompt('Please Enter the password!') !== '{{ page.password }}'){
+                alert('Password Error！');
+                history.back();
+            }
+        }
+    })();
+</script>

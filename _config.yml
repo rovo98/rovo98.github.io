@@ -82,4 +82,3 @@ deploy:
   type: git
   repo: git@github.com:rovo98/rovo98.github.io.git
   branch: master 
-
