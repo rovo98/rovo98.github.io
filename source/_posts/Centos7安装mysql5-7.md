@@ -4,14 +4,14 @@ author: rovo98
 date: 2018.4.23
 categories: mysql
 tags: mysql5.7安装
-description: notes for install mysql in centos7
+description: CentOS7下安装mysql。
 ---
 
 CentOS7下安装mysql.
 
 <!-- more -->
 
-### 1.配置yum源
+### 配置yum源
 
 ```bash
 # 下载mysql安装源包
@@ -30,13 +30,13 @@ root @~> yum repolist enabled | grep "mysql.*-community.*"
 
 ![mysql_source](repo-resource.png)
 
-### 2.安装mysql
+### 安装mysql
 
 ```bash
 root@ ~> yum install -y mysql-community-server
 ```
 
-### 3.启动MySQL服务并设置开机自动启动
+### 启动MySQL服务并设置开机自动启动
 
 ```bash
 root@ ~> systemctl start mysqld
@@ -51,7 +51,7 @@ root@ ~> systemctl enable mysqld
 root@ ~> systemctl daemon-reload
 ```
 
-### 5.修改默认密码
+### 修改默认密码
 
 刚安装完的mysql会自动给root用户分配一个临时密码，而且必须重新设置密码(从5.5版本开始)
 
@@ -101,14 +101,14 @@ mysql> set global validate_password_length=4;
 
 之后就可以设置简单的密码了。
 
-### 5.允许root远程登录
+### 允许root远程登录
 
 ```bash
 mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '[YOUR_PASSWORD]' WITH GRANT OPTION;
 mysql> flush privileges;
 ```
 
-### 6. 修改字符集编码为UTF-8
+### 修改字符集编码为UTF-8
 
 - 查看当前字符编码
 
