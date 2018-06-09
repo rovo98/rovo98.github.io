@@ -63,7 +63,7 @@ footer:
   copyright: rovo98. All rights reserved.
   # -------------------------------------------------------------
   # Hexo link (Powered by Hexo).
-  powered: true
+  powered: false
 
   theme:
     # Theme & scheme info link (Theme - NexT.scheme).
