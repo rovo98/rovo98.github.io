@@ -327,4 +327,4 @@ public class Bubble {
 
 ### NOTICE
 
-本文中，涉及的算法详细实现和使用，请移步到github[查看](https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-to)
+本文中，涉及的算法详细实现和使用，请移步到github[查看](https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top)。

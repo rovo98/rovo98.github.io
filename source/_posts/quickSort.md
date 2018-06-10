@@ -2,7 +2,7 @@
 title: 快速排序 - quickSort
 author: rovo98
 description: 快速排序 notes for algs4.
-date: 2018.3.10 
+date: 2018.3.6
 categories:
     - Algorithms
 tags:
@@ -202,4 +202,4 @@ private static void sort(Comparable[] a, int lo, int hi) {
 
 ### NOTICE
 
-本文中，涉及的算法详细实现和使用，请移步到github[查看](https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-to)。
+本文中，涉及的算法详细实现和使用，请移步到github[查看](https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top)。
