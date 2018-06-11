@@ -11,7 +11,7 @@ tags:
 
 使用Cisco Packet Tracer7 (思科网络模拟器)验证ppp点对点通信。
 
-![Cisco packet Tracer7](packetTracer7.png)
+![](/images/ppp通信验证/packetTracer7.png)
 
 <!-- more -->
 
@@ -24,6 +24,7 @@ tags:
 实验设备结构图：
 
 ![结构](structure.png)
+
 
 - 均使用思科模拟器中的Generic 泛型路由
 ### 实验步骤
