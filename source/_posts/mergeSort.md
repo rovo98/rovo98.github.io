@@ -1,13 +1,14 @@
 ---
 title: 归并排序 - mergeSort
 author: rovo98
-description: 归并排序 notes, learning from algs4.
-date: 2018.3.5 
+description: '归并排序 notes, learning from algs4.'
+date: 2018.3.5
 categories:
-    - Algorithms
+  - Algorithms
 tags:
-    - sorting algs
+  - sorting algs
 mathjax: true
+abbrlink: '1368334'
 ---
 
 

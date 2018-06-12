@@ -1,12 +1,12 @@
 ---
 title: PPP 点对点通信验证
 author: rovo98
-date: 2018.6.10 00:10
-description: 使用Cisco PacketTracer验证ppp点对点通信
+date: '2018.6.10 00:10'
 categories:
-	- 计算机网络
+  - 计算机网络
 tags:
-	- ppp通信
+  - ppp通信
+abbrlink: 28ff89ad
 ---
 
 使用Cisco Packet Tracer7 (思科网络模拟器)验证ppp点对点通信。

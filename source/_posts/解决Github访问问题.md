@@ -1,11 +1,12 @@
 ---
 title: 解决Github国内访问出现的问题
 author: rovo98
-date: 2018-6-10  15:58:34
 categories:
-	- tips
+  - tips
 tags:
-	- github
+  - github
+abbrlink: 7e3029b3
+date: 2018-06-10 15:58:34
 ---
 
 主要通过修改hosts文件解决Github在国内访问不了、访问慢和页面加载异常的问题(没钱买vpn~)。

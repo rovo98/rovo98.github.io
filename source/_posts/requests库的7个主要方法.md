@@ -2,11 +2,12 @@
 title: Requests库的7个主要方法
 author: rovo98
 description: 简单了解python爬虫库requests的7个主要方法.
-date: 2017.03.15 13:10:41
+date: '2017.03.15 13:10:41'
 categories:
-    - python爬虫
+  - python爬虫
 tags:
-    - Requests库
+  - Requests库
+abbrlink: c671c604
 ---
 
 ### Requests库的7个主要方法

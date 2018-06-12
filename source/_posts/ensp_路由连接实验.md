@@ -2,11 +2,15 @@
 title: 使用ensp进行简单的路由器互连实验
 author: rovo98
 date: 2018/6/7
-description: 简单使用ensp做华为AR1220路由互连的实验。
 categories: 计算机网络
 tags: 路由器
+abbrlink: cc46ce96
 ---
 
+
+简单使用ensp做华为AR1220路由互连的实验。
+
+![](/images/ensp_路由连接实验/ensp.png)
 
 <!-- more -->
 

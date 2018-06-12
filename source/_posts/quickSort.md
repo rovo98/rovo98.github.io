@@ -4,10 +4,11 @@ author: rovo98
 description: 快速排序 notes for algs4.
 date: 2018.3.6
 categories:
-    - Algorithms
+  - Algorithms
 tags:
-    - sorting algs
+  - sorting algs
 mathjax: true
+abbrlink: d9de8e4c
 ---
 
 

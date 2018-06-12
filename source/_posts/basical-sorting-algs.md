@@ -2,20 +2,20 @@
 title: 基本排序算法 - basial sorting algorithms with java implementation
 author: rovo98
 date: 2018.3.5
-description: 基础排序算法 notes, learning from algs4.
 categories:
-    - Algorithms
+  - Algorithms
 tags:
-    - sorting algs
+  - sorting algs
 mathjax: true
+abbrlink: 57d02cec
 ---
+
+
+> 我们关注的主要对象是**重新排列数组元素的算法**， 其中每个元素都有一个**主键**。排序算法的目的就是将所有元素的主键按照某种方式排列(通常按照大小或是字母顺序)。
 
 <!-- more -->
 
-
-### 引入
-
-我们关注的主要对象是**重新排列数组元素的算法**， 其中每个元素都有一个**主键**。排序算法的目的就是将所有元素的主键按照某种方式排列(通常按照大小或是字母顺序)。在java中元素通常都是对象，对主键的抽象描述则是通过一种内置的机制(**Comparable接口**)来完成的。
+在java中元素通常都是对象，对主键的抽象描述则是通过一种内置的机制(**Comparable接口**)来完成的。
 
 #### 排序算法类模板
 

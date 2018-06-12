@@ -1,10 +1,11 @@
 ---
-title : CentOS7通过yum(yellow dog update modifier) 安装mysql5.7
+title: CentOS7通过yum(yellow dog update modifier) 安装mysql5.7
 author: rovo98
 date: 2018.4.23
 categories: mysql
 tags: mysql5.7安装
 description: CentOS7下安装mysql。
+abbrlink: 86d29d2c
 ---
 
 <!-- more -->
