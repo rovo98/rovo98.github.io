@@ -1,11 +1,9 @@
 ---
 title: jsp基础学习笔记 - 概览
-date: '2018.6.12 11:40:34'
+date: '2017.10.12 11:40:34'
 categories:
   - jsp基础学习
-tags:
-  - jsp
-  - 学习笔记
+tags: [jsp,学习笔记]
 abbrlink: 67d7cfb7
 ---
 

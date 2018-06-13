@@ -3,8 +3,7 @@ title: 理解Requests库的异常和HTTP协议
 author: rovo98
 categories:
   - python爬虫
-tags:
-  - Requests库
+tags: [Requests库, 学习笔记]
 abbrlink: 4ae864e2
 date: 2017-03-15 13:11:01
 ---
