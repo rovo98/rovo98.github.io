@@ -7,7 +7,7 @@ categories:
   - Struts 2
 tags:
   - 学习笔记
-  - struts 2
+  - Struts 2
 abbrlink: 4fe73428
 ---
 
