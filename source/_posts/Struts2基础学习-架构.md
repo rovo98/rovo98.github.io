@@ -5,9 +5,10 @@ date: '2018.4.11 14:00:01'
 categories:
   - Java框架学习
   - Struts 2
-tags:
+tags: 
+  - Struts 2基础学习
   - 学习笔记
-  - Struts 2
+  - Java框架基础
 abbrlink: 4fe73428
 ---
 

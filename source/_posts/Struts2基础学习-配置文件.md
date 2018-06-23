@@ -5,13 +5,14 @@ date: '2018.4.11 14:01:01'
 categories:
   - Java框架学习
   - Struts 2
-tags:
-  - Struts 2
+tags: 
+  - Struts 2基础学习
   - 学习笔记
+  - Java框架基础
 abbrlink: 3fe084cc
 ---
 
-主要了解Struts 2应用的基本配置。看看使用Struts 2的一些重要的配置文件，如：**web.xml, struts.xml,strutsconfig.xml和struts.properties**，可以对Struts 2应用做哪些配置。
+主要了解Struts 2应用的基本配置。看看使用Struts 2的一些重要的配置文件，如：**web.xml, struts.xml,struts-config.xml和struts.properties**，可以对Struts 2应用做哪些配置。
 
 
 <!-- more -->
@@ -20,7 +21,7 @@ abbrlink: 3fe084cc
 
 ### web.xml 配置文件
 
-** web.xml**  配置文件是 ** J2EE**  配置文件，它决定了Servlet容器如何处理HTTP请求中的元素。**严格上来说，它并不是 ** Struts 2**  的配置文件，但是我们需要通过配置它来使 ** Struts 2`` `工作。**毕竟Struts 2 是基于一个Filter做Controller实现的)
+** web.xml**  配置文件是 ** J2EE**  配置文件，它决定了Servlet容器如何处理HTTP请求中的元素。严格上来说，它并不是 ** Struts 2**  的配置文件，但是我们需要通过配置它来使  Struts 2工作。毕竟Struts 2 是基于一个Filter做Controller实现的)
 
 这个文件为任何一个Web应用提供一个入口点(entry point),而 ** Struts 2 **  应用的入口点是定义在 ** web.xml**  文件中的一个过滤器(filter)。因此我们会在** web.xml** 中顶一个** FilterDispatcher** 类的入口。
 
@@ -130,7 +131,7 @@ abbrlink: 3fe084cc
 |Interceptor|Description|
 |:-----:|:-------------:|
 |struts-config|配置文件的根节点|
-|form-bean|可以将ActionForm的子类映射到一个名称(name),并在整个**strustconfig.xml**文件的其余部分中，甚至在JSP页面上，都可使用这个name作为ActionForm的别名|
+|form-bean|可以将ActionForm的子类映射到一个名称(name),并在整个**struts-config.xml**文件的其余部分中，甚至在JSP页面上，都可使用这个name作为ActionForm的别名|
 |global forwards|可以将一个页面映射到一个名称(name),并使用该名称来引用实际页面。这可以避免使用网页上的硬编码(hardcoding)网址|
 |action-mapping|用来声明表单处理程序，也被成为action映射|
 |controller|配置Struts的内部结构，很少在实际情况中使用|
