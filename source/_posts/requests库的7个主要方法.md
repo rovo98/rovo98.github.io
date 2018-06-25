@@ -23,32 +23,32 @@ abbrlink: c671c604
 
 #### requests库的主要方法(基础方法)
 
-requests.request(method, url, **kwargs)
+``requests.request(method, url, **kwargs)``
 
 - **method:**请求方式，对应get/put/post等7种
-  - r = requests.request('GET',url, **kwargs)
-  - r = requsts.request('HEAD',url, **kwargs)
-  - r = requests.request('POST',url, **kwargs)
-  - r = requests.request('PATCH',url, **kwargs)
-  - r = requests.request('delete', url, **kwargs)
-  - r = requests.request('OPTIONS',url, **kwargs)
+  - ``r = requests.request('GET',url, **kwargs)``
+  - ``r = requsts.request('HEAD',url, **kwargs)``
+  - ``r = requests.request('POST',url, **kwargs)``
+  - ``r = requests.request('PATCH',url, **kwargs)``
+  - ``r = requests.request('delete', url, **kwargs)``
+  - ``r = requests.request('OPTIONS',url, **kwargs)``
 
 
 - **url:**拟获取页面的URL链接
-- **kwargs: 控制访问的参数，共13个
-  - 1)params:字典或字节序列，作为参数增加到URL中
-  - 2)data: 字典、字节序列或者文件对象，作为Request的内容
-  - 3)json : JSON格式数据，作为Request内容
-  - 4)headers : 字典，HTTP定制头
-  - 5)cookies : 字典或CookieJar，Request中的cookie
-  - 6)auth : 元组，支持HTTP认证功能
-  - 7)files : 字典类型，传输文件
-  - 8)timeout : 设定的超时时间，秒为单位
-  - 9)proxies : 字典类型，设定访问代理服务器，可以增加登录认证
-  - 10)allow_redirects : True/False, 默认为True,重定向开关
-  - 11)stream : True/False, 默认为True ,获取内容立即下载开关
-  - 12)verify : True/False , 默认为True ， 认证SSL证书开关
-  - 13) cert : 本地SSL证书路径
+- ``**kwargs``: 控制访问的参数，共13个
+  - 1)``params``:字典或字节序列，作为参数增加到URL中
+  - 2)``data``: 字典、字节序列或者文件对象，作为Request的内容
+  - 3)``json`` : JSON格式数据，作为Request内容
+  - 4)``headers`` : 字典，HTTP定制头
+  - 5)``cookies`` : 字典或CookieJar，Request中的cookie
+  - 6)``auth`` : 元组，支持HTTP认证功能
+  - 7)``files`` : 字典类型，传输文件
+  - 8)``timeout`` : 设定的超时时间，秒为单位
+  - 9)``proxies`` : 字典类型，设定访问代理服务器，可以增加登录认证
+  - 10)``allow_redirects`` : True/False, 默认为True,重定向开关
+  - 11)``stream`` : True/False, 默认为True ,获取内容立即下载开关
+  - 12)``verify`` : True/False , 默认为True ， 认证SSL证书开关
+  - 13) ``cert`` : 本地SSL证书路径
 #### requests.get()方法：
 
 ```python
@@ -56,13 +56,13 @@ r = requests.get(url)    #构造一个向服务器请求资源的Request对象
 #返回一个包含服务器资源的Response对象
 ```
 
-完整方法：requests.get(==url, params=None, **kwargs==)
+完整方法：``requests.get(url, params=None, **kwargs)``
 
-url: 拟获取页面的url链接
+``url``: 拟获取页面的url链接
 
- params: url中的额外参数， 字典或字节流格式， 可选
+ ``params``: url中的额外参数， 字典或字节流格式， 可选
 
-**kwargs : 12个控制访问的参数，与request()的一样
+``**kwargs`` : 12个控制访问的参数，与request()的一样
 
 实际上是这样的：
 
@@ -105,7 +105,7 @@ r.headers
 | r.apparent_encoding |   从内容中分析出的响应内容编码方式(备用编码凡是)    |
 |      r.content      |        HTTP响应内容的二进制形式         |
 
-[注]：**r.encoding: 如果header中不存在charset， 则认为编码为ISO-8859-1**
+[注]：``r.encoding``: 如果``header``中不存在``charset``， 则认为编码为``ISO-8859-1``
 
 #### Requests库的head()方法
 

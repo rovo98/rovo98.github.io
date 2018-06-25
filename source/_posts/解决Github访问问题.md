@@ -42,12 +42,12 @@ GitHub在中国大陆访问速度慢的问题原因有很多，但最直接和�
 
 ![ip address](github_ipaddress.png)
 
-可以看到，我查出的域名ip地址为： 192.30.254.112 和 192.30.253.113 (任取一个即可)
+可以看到，我查出的域名ip地址为： ``192.30.254.112`` 和 ``192.30.253.113`` (任取一个即可)
 
 #### 修改host文件，在文件中添加一行：
 
 **[注] ： windows的hosts文件位置为： **
-C:/windows/system32/drivers/etc/hosts
+``C:/windows/system32/drivers/etc/hosts``
 
 ```txt
 192.30.253.112 github.com
@@ -91,7 +91,7 @@ ipconfig /flushdns
 
 **[notice]** : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。
 
-例如，上面的151.101.228.133是对我来说较好的ip:
+例如，上面的``151.101.228.133``是对我来说较好的ip:
 
 ![dns 查询检测](ping_test.png)
 
