@@ -1,8 +1,7 @@
 ---
 title: 理解Requests库的异常和HTTP协议
 author: rovo98
-categories:
-  - python爬虫
+categories: [Python, python爬虫]
 tags: [Requests库, 学习笔记]
 abbrlink: 4ae864e2
 date: 2017-03-15 13:11:01
@@ -52,7 +51,7 @@ HTTP是一个基于“请求与响应”模式的、无状态的应用层协议�
 
 HTTP协议采用URL作为定位网络资源的标识。
 
-**URL格式：**http://host\[:port][path]
+**URL格式：** ``http://host[ :port ][ path ]``
 
 HTTP URL的理解：
 
@@ -71,11 +70,11 @@ URL 是通过HTTP协议存取资源的Internet路径，一个URL对应一个数�
 
 **理解PATCH和PUT的区别**：
 
-假设URL位置有一组数据UserInfo， 包括UserID、UserName等20个字段
+假设URL位置有一组数据``UserInfo``， 包括``UserID``、``UserName``等20个字段
 
- 需求：用户修改了UserName，其他不变。
+ 需求：用户修改了``UserName``，其他不变。
 
-采用PATCH，仅向URL提交UserName的剧本更新请求。
+采用PATCH，仅向URL提交``UserName``的更新请求。
 
 采用PUT，必须将所有20个字段一并提交URL，未提交字段被删除。
 PATCH的好处：节省网络带宽

@@ -3,8 +3,7 @@ title: 归并排序 - mergeSort
 author: rovo98
 description: '归并排序 notes, learning from algs4.'
 date: 2018.3.5
-categories:
-  - Algorithms
+categories: [Algorithms, sorting algs]
 tags:
   - sorting algs
 mathjax: true

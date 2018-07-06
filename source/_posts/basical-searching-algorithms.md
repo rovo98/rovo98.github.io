@@ -3,10 +3,9 @@ title: 基本查找算法 - basical searching algorithms
 author: rovo98
 description: '使用java实现并简要分析抽象的基本静态查找算法。notes, learning from algs4.'
 date: 2018.3.7
-categories:
-  - Algorithms
+categories: [Algorithms, searching algs]
 tags:
-  - searching algs
+  - basical searching algs
 mathjax: true
 abbrlink: d83777d2
 ---
