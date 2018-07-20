@@ -10,11 +10,12 @@ tags:
   - hibernate
   - 学习笔记
 abbrlink: b19895ed
+password: writting
 ---
 
-**Hibernate**是一个对象关系映射(Object-Relational Mapping, ``ORM``)的JAVA解决方案。是在2001年由 *Gavin King*创建的开源持久化框架。适用于任何使用Java应用程序的功能强大的高性能**对象关系持久化和查询服务**。
-
 ![](/images/Hibernate基础学习/hibernate_logo.png)
+
+**Hibernate**是一个对象关系映射(Object-Relational Mapping, ``ORM``)的JAVA解决方案。是在2001年由 *Gavin King*创建的开源持久化框架。适用于任何使用Java应用程序的功能强大的高性能**对象关系持久化和查询服务**。
 
 <!-- more -->
 
@@ -26,7 +27,7 @@ abbrlink: b19895ed
 
 ![](hibernate_position.jpg)
 
-### Hibernate 优势
+### 一、Hibernate 优势
 
 1. Hibernate使用XML文件来将Java类映射到数据表，不需要写任何代码。
 2. 提供简单的APIs直接将java对象保存到数据库中，或从数据库中检索出来。
@@ -37,7 +38,7 @@ abbrlink: b19895ed
 7. 使用智能检索策略来最小化数据库的访问。
 8. 提供简单的数据查询。
 
-### 支持的数据库
+### 二、支持的数据库
 
 **Hibernate**支持所有主流的关系型数据库(RDBMS)。下面简单地列出Hibernate支持的数据库:
 
@@ -51,7 +52,7 @@ abbrlink: b19895ed
 - Sybase SQL Server
 - Infomix Dynamic Server
 
-### 支持的技术
+### 三、支持的技术
 
 **Hibernate**支持很多其他的技术，包括
 
@@ -76,7 +77,7 @@ abbrlink: b19895ed
 
 下面是针对上面架构图中出现的核心类给出的简单解释。
 
-### Configuration Object
+### 一、Configuration Object
 
 ``Configuration``(配置对象)是在Hibernate应用中第一个被创建的对象，且在Hibernate应用初始化时，只创建一次。它通常代表着Hibernate所需的配置信息或属性。
 
@@ -85,29 +86,29 @@ abbrlink: b19895ed
 - ``Database Connection``(数据库连接) - 通过hibernate支持的一个或多个配置文件来处理的，例如： ``hibernate.properties``和``hibernate.cfg.xml``。
 - ``Class Mapping Setup``(类映射设置) - 该组件负责创建Java类和数据表之间的连接。
 
-### SessionFactory Object
+### 二、SessionFactory Object
 
 ``SessionFactory``对象是通过使用``Configuration``对象创建生成的，该对象可以使用提供的配置文件为应用程序配置Hibernate，并能够实例化``Session``对象。``SessionFactory``是一个线程安全对象，并被应用程序的所有线程使用。
 
 ``Sessionfactory``是一个重量级对象，通常在应用程序启动时创建并保留以备后续使用。每个数据库使用单独的配置文件都需要一个``SessionFactory``对象。因此，如果使用多个数据库，我们可能需要创建多个``SessionFactory``对象。
 
-### Session Object
+### 三、Session Object
 
 ``Session``对象主要用来从数据库中获取物理连接。``Session``是轻量级对象，当每次需要与数据库交互时都可以实例化该对象。持久化对象(persistent Objects)就是通过它来实现保存和检索的。
 
 ``Session``对象一般不会保留很长一段时间，因为它并不是线程安全对象，只能在需要使用的时候创建和销毁。
 
-### Transaction Object
+### 四、Transaction Object
 
 ``Transaction``对象代表了数据库的一个工作单元，大多数RDBMS都支持事务功能。Hibernate中的事务由``underlying transaction manager``(基础事务管理器)以及``transaction``(事务，来自``JDBC``或者``JTA``)。
 
 这是一个**可选**对象，Hibernate应用程序可以选择不使用此接口，而是使用自己的应用程序的代码来管理事务。
 
-### Query Object
+### 五、Query Object
 
 ``Query``对象使用``SQL``或者Hibernate查询语言（``HQL``)字符串来从数据库中检索数据以及创建对象。一个``Query``实例一般是用来绑定查询参数，限制返回结果行数，并执行查询操作的。
 
-### Criteria Object
+### 七、Criteria Object
 
 ``Criteria``对象用于创建和执行面向对象的条件查询来检索对象。
 
@@ -118,7 +119,7 @@ abbrlink: b19895ed
 
 这里我们只需要考虑``hibernate.cfg.xml``配置文件的配置。大多数的属性一般都采用默认值，并且不需要在属性文件(``hibernate.properties``)中制定它们，除非真的需要。配置文件只能保存在应用程序的类路径的根目录中。
 
-### Hibernate 属性
+### 一、Hibernate 属性
 
 下面列出的使一些重要的属性，当我们在配置数据库时可能会用到：
 
@@ -144,7 +145,7 @@ abbrlink: b19895ed
 |hibernate.connection.password|数据库密码|
 
 
-### 在Hibernate中配置 MySQL 数据库
+### 二、在Hibernate中配置 MySQL 数据库
 
 ``MySQL``是目前最受欢的开源数据库系统之一。下面通过配置``hibernate.cfg.xml``文件来配置``MySQL``数据库，在此之前，确保在``MySQL``中创建一个``testdb``数据库，以及``test``用户。
 
@@ -248,7 +249,7 @@ try {
 
 **[notice]** : 如果``Session``抛出异常，事务必须回滚(rollback)并且``Session``需要丢弃。
 
-### Session 接口方法
+### 一、Session 接口方法
 
 ``Session``接口提供了很多方法，下面列出的是其中一些中重要的方法。更多的信息可以查看Hibernate文档中与``Session``以及``SessionFactory``相关的完整方法信息。
 
@@ -293,7 +294,7 @@ try {
 
 ``POJO``是用来强调给定的对象是一个原始的Java对象，而不是一个特殊的类，也不是一个``Enterprise JavaBean``。
 
-### 简单POJO例子
+### 一、简单POJO例子
 
 基于上面提到的规则，定义了下面的一个简单``POJO``类：
 
@@ -409,7 +410,7 @@ create table EMPLOYEE (
 
 下面给出了所有基本的，日期和时间，大对象以及其他各种内置映射类型。
 
-### 原始类型(Primitive Types)
+### 一、原始类型(Primitive Types)
 
 
 |Mapping type| Java type|ANSI  SQL Type|
@@ -427,7 +428,7 @@ create table EMPLOYEE (
 |yes/no|boolean or java.lang.Boolean|CHAR(1)('Y' or 'N')|
 |true/false|boolean or java.lang.Boolean|CHAR(1)('Y' or 'N')|
 
-### 日期和时间类型
+### 二、日期和时间类型
 
 |Mapping Type|Java Type | ANSI SQL Type|
 |:--:|:---:|:---:|
@@ -437,7 +438,7 @@ create table EMPLOYEE (
 |calendar|java.util.Calendar|TIMESTAMP|
 |calendar_date|java.util.Calendar|DATE|
 
-### 二进制和大对象类型
+### 三、二进制和大对象类型
 
 |Mapping Type|Java Type|ANSI SQL Type|
 |:-----:|:----:|:----:|
@@ -447,7 +448,7 @@ create table EMPLOYEE (
 |clob|java.sql.Clob|CLOB|
 |blob|java.sql.Blob|BLOB|
 
-### JDK相关类型
+### 四、JDK相关类型
 
 |Mapping Type|Java Type|ANSI SQL Type|
 |:----:|:----:|:-----:|
@@ -461,7 +462,7 @@ create table EMPLOYEE (
 接下来我们将通过一个简单的例子来了解**Hiberate**是如何为独立应用程序提供持久化服务的。下面使用Hibernate技术分几个不同的步骤来创建一个Java应用程序。
 
 
-### 创建POJO类
+### 一、创建POJO类
 
 创建应用程序的第一步就是创建Java POJO类，这取决与应用程序中需要保留到数据库的类。这里我们创建一个拥有``getter``和``setter``方法的``Employee``类，并让它成为``JavaBean``兼容类。
 
@@ -513,7 +514,7 @@ public class Employee {
 }
 ```
 
-### 创建数据表
+### 二、创建数据表
 
 第二步，就是要在数据库中创建数据表。一张数据表对应一个持久化类。定义``EMPLOYEE``表来对应``Employee``持久化类。
 
@@ -527,7 +528,7 @@ create table EMPLOYEE (
 );
 ```
 
-### 创建映射文件
+### 三、创建映射文件
 
 创建一个映射文件来告诉Hibernate如何将持久化类映射到数据表。
 
@@ -558,7 +559,7 @@ create table EMPLOYEE (
 </hibernate-mapping>
 ```
 
-### 创建应用程序类
+### 四、创建应用程序类
 
 最后，我们创建一个应用程序类来做简单的测试。例如：保存一些``Employee``数据，执行``CRUD``操作等。
 
@@ -688,7 +689,7 @@ public class ManageEmployee {
 }
 ```
 
-### 编译执行
+### 五、编译执行
 
 通过编译执行，我们可以得到下面的测试结果：
 
@@ -726,7 +727,7 @@ mysql>
 - 实体类之间的关联映射
 - 组件映射
 
-### 集合映射
+### 一、集合映射
 
 如果持久化类中包含某个属性为集合类型，我们也需要将集合类型值映射到数据表中。**Hibernate**能够持久化的集合实例有``java.util.Map``、``java.util.Set``、``java.util.SortedMap``、``java.util.SortedSet``、``java.util.List``以及持久化实例中的数组(``array``)。
 
@@ -755,7 +756,7 @@ mysql>
 
 #### SortedMap-Mapping
 
-### 关联映射
+### 二、关联映射
 
 实体类和数据表之间的映射是``ORM``的灵魂。以下是可以表示对象之间关系的四种方式。关联映射可以是单向的，也可以是双向的。
 
@@ -774,7 +775,7 @@ mysql>
 
 #### Many-to-Many
 
-### 组件映射
+### 三、组件映射
 
 在应用程序中，有很大的可能性一个实体类会持有另一个实体的引用最为成员变量。如果别引用的类没有自己的申明周期并且完全依赖与拥有的实体类的生命周期，那么所引用的类称为**组件类**。
 

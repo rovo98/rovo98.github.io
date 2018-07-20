@@ -8,9 +8,9 @@ tags: [Java框架基础, ORM, 学习笔记]
 abbrlink: 4e7f2cb9
 ---
 
-> 对象关系映射(Oject Relational Mapping, ORM)是一种程序技术，用户实现面向对象编程语言中不同类型系统的数据之间的转换。
-
 ![](/images/Java框架学习基础-ORM/orm.png)
+
+> 对象关系映射(Oject Relational Mapping, ORM)是一种程序技术，用户实现面向对象编程语言中不同类型系统的数据之间的转换。
 
 <!-- more -->
 

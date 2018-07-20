@@ -3,8 +3,7 @@ title: 快速排序 - quickSort
 author: rovo98
 description: 快速排序 notes for algs4.
 date: 2018.3.6
-categories:
-  - Algorithms
+categories: [Algorithms, sorting algs]
 tags:
   - sorting algs
 mathjax: true
