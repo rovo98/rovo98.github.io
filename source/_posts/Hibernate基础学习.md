@@ -15,7 +15,7 @@ password: writting
 
 ![](/images/Hibernate基础学习/hibernate_logo.png)
 
-**Hibernate**是一个对象关系映射(Object-Relational Mapping, ``ORM``)的JAVA解决方案。是在2001年由 *Gavin King*创建的开源持久化框架。适用于任何使用Java应用程序的功能强大的高性能**对象关系持久化和查询服务**。
+**Hibernate**是一个对象关系映射<span title = "Object-Relational Mapping">``ORM``</span>的JAVA解决方案。是在2001年由 *Gavin King*创建的开源持久化框架。适用于任何使用Java应用程序的功能强大的高性能**对象关系持久化和查询服务**。
 
 <!-- more -->
 
