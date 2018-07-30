@@ -1470,6 +1470,154 @@ http://localhost:8080/getMethodTest.jsp?username=rovo98&msg=hello
 
 ## 过滤器(Filters)
 
+``Servlet``和``JSP``过滤器都是可用于``Servlet``和``JSP``编程横的Java类，主要有以下目的 - 
+
+- 在客户端访问后端资源之前拦截客户端请求;
+- 在服务器发送响应回客户端之前，操纵响应.
+
+各种类型的过滤器 - 
+
+1. 验证过滤器 (Authentication Filters)
+2. 数据压缩过滤器 (Data compression Filters)
+3. 加密过滤器 (Encryption Filters)
+4. 触发资源访问事件的过滤器 (Filters that trigger resource access events)
+5. 图像转换过滤器 (Image Conversion Filters)
+6. 日志和审计过滤器 (Logging and Auditing Filters)
+7. ``MIME-TYPE``链过滤器 (MIME-TYPE Chain Filters)
+8. 标记过滤器 (Tokenizing Filters)
+9. 转换``XML``内容的``XSL/T``过滤器
+
+过滤器在部署描述符文件``web.xml``中，然后映射到应用程序部署描述符中的``servlet``或``JSP``名称或``URL``模式。部署描述符文件``web.xml``可以在``Tomcat``的安装目录的``conf``目录下找到。
+
+当``JSP``容器启动Web应用程序时，它会创建我们在部署描述符文件中声明的每个过滤器的实例。过滤器按照在部署描述符中声明的顺序执行。
+
+### Servlet 过滤器方法
+
+一个过滤器其实就是一个实现``javax.servlet.Filter``接口的简单Java类。接口中定义了下面的三个方法 - 
+
+|Method|Description|
+|:----:|:---:|
+|``public void doFilter(ServletRequest, ServletResponse,FilterChain)``|每次由于客户端请求末端的资源而请求/响应对通过链时，容器都会调用此方法|
+|``public void init(FilterConfig filterConfig)``|Web容器调用执行该方法，表示过滤器正在投入使用|
+|``public void destroy()``|由Web容器调用执行，表示过滤器已停止服务|
+
+### JSP 过滤器示例
+
+下面的示例在每次访问任何``JSP``文件时打印客户端的IP地址和当前日期时间。我们可以按照类似的流程编写更复杂的过滤器来适应我们的需求 - 
+
+```java
+// Import required java libraries
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.*;
+ 
+// Implements Filter class
+public class LogFilter implements Filter  {
+   public void  init(FilterConfig config) throws ServletException {
+      // Get init parameter 
+      String testParam = config.getInitParameter("test-param"); 
+ 
+      //Print the init parameter 
+      System.out.println("Test Param: " + testParam); 
+   }
+   public void  doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+      throws java.io.IOException, ServletException {
+      
+      // Get the IP address of client machine.   
+      String ipAddress = request.getRemoteAddr();
+      
+      // Log the IP address and current timestamp.
+      System.out.println("IP "+ ipAddress + ", Time "+ new Date().toString());
+      
+      // Pass request back down the filter chain
+      chain.doFilter(request,response);
+   }
+   public void destroy( ) {
+      /* Called before the Filter instance is removed 
+      from service by the web container*/
+   }
+}
+```
+
+### 在web.xml中配置过滤器
+
+定义过滤器，然后映射到``URL``或``JSP``文件名，在``web.xml``中映射到``URL``模式，其方式和定义``Servlet``的方式类似。例如 -
+
+``web.xml``:
+```xml
+<filter>
+   <filter-name>LogFilter</filter-name>
+   <filter-class>LogFilter</filter-class>
+   
+   <init-param>
+      <param-name>test-param</param-name>
+      <param-value>Initialization Paramter</param-value>
+   </init-param>
+</filter>
+
+<filter-mapping>
+   <filter-name>LogFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+上面配置过滤器将适用于所有的``Servlet``和``JSP``，因为配置中的映射``URL``指定了``/*``。如果要在少数``servlet``或``JSP``上应用过滤器，则可以指定特定的``servlet``或``JSP``路径。
+
+### 使用多个过滤器
+
+在Web应用中，我们可能会定义具有特定用途的多个不同过滤器。例如：下面的``web.xml``中定义了两个过滤器``AuthenFilter``和``LogFilter`` - 
+
+``web.xml``:
+```xml
+<filter>
+   <filter-name>LogFilter</filter-name>
+   <filter-class>LogFilter</filter-class>
+   
+   <init-param>
+      <param-name>test-param</param-name>
+      <param-value>Initialization Paramter</param-value>
+   </init-param>
+</filter>
+ 
+<filter>
+   <filter-name>AuthenFilter</filter-name>
+   <filter-class>AuthenFilter</filter-class>
+   <init-param>
+      <param-name>test-param</param-name>
+      <param-value>Initialization Paramter</param-value>
+   </init-param>
+</filter>
+ 
+<filter-mapping>
+   <filter-name>LogFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
+ 
+<filter-mapping>
+   <filter-name>AuthenFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+### 过滤器执行顺序
+
+``web.xml``中``filter-mapping``元素的顺序决定了Web容器将过滤器应用于``Servlet``或``JSP``的顺序。要改变过滤器执行的顺序，只需要改变``filter-mapping``元素的顺序即可。
+
+例如： 下面的例子中，``AuthenFilter``会被执行，再者是``LogFilter``，与上面之前定义的顺序不同 - 
+
+```xml
+<filter-mapping>
+   <filter-name>AuthenFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
+ 
+<filter-mapping>
+   <filter-name>LogFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
 ## Cookies 处理(Cookies Handing)
 
 ## Session 跟踪(Session Tracking)
