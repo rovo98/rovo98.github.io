@@ -9,9 +9,10 @@ tags:
 abbrlink: 28ff89ad
 ---
 
-使用Cisco Packet Tracer7 (思科网络模拟器)验证ppp点对点通信。
 
-![](/images/ppp通信验证/packetTracer7.png)
+![](/images/ppp通信验证/structure.png)
+
+使用Cisco Packet Tracer7 (思科网络模拟器)验证ppp点对点通信。
 
 <!-- more -->
 
@@ -19,14 +20,6 @@ abbrlink: 28ff89ad
 
 使用``packet Tracer`` 模拟两台路由器，进行点对点通信测试。
 
-#### 实验设计
-
-实验设备结构图：
-
-![结构](structure.png)
-
-
-- 均使用思科模拟器中的Generic 泛型路由
 ### 实验步骤
 
 #### 配置路由器

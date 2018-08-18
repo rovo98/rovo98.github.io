@@ -1620,6 +1620,242 @@ public class LogFilter implements Filter  {
 
 ## Cookies 处理(Cookies Handing)
 
+``Cookies``是存储在客户端计算机上的文本文件，用于各种信息的跟踪目的。``JSP``使用底层``servlet``技术透明地支持``HTTP cookie``。
+
+识别和返回用户涉及以下三个步骤 - 
+
+1. 服务器将一组``cookie``发送到浏览器。例如，姓名，年龄后身份证号码等;
+2. 浏览器将此信息存储在本地计算机上以备将来使用;
+3. 当下次浏览器向Web服务器发送任何请求时，它将这些``cookie``信息发送到服务器，并且服务器使用该信息来识别用户或者也可以用于其他目的.
+
+我们主要学习如何设置或重置``cookie``如何访问它们以及如何使用``JSP``程序将它们删除。
+
+### Cookie 的剖析
+
+``Cookie``通常设置在``HTTP``的标头(header)中(尽管``JavaScript``也可以直接在浏览器上设置``cookie``)。设置``cookie``的``JSP``可能会发送看起来像这样的``header`` - 
+
+```txt
+HTTP/1.1 200 OK
+Date: Fri, 04 Feb 2000 21:03:38 GMT
+Server: Apache/1.3.9 (UNIX) PHP/4.0b3
+Set-Cookie: name = xyz; expires = Friday, 04-Feb-07 22:03:38 GMT; 
+   path = /; domain = tutorialspoint.com
+Connection: close
+Content-Type: text/html
+```
+
+我们可以看到，``Set-Cookie``标头(header)包含名称值对，GMT日期，路径和域。名称值对将进行URL编码。``expires``字段是浏览器在给定时间和日期之后"忘记"``cookie``的指令，即``cookie``的过期时间。
+
+如果浏览器设置了存储``cookie``，则会将这些信息保留到过期时间。如果用户将浏览器指向与``cookie``的路径或域匹配的任何页面，则会将``cookie``重新发送到服务器。浏览器的标头(header)可能看起来是这样的 - 
+
+```txt
+GET / HTTP/1.0
+Connection: Keep-Alive
+User-Agent: Mozilla/4.6 (X11; I; Linux 2.2.6-15apmac ppc)
+Host: zink.demon.co.uk:1126
+
+Accept: image/gif, */*
+Accept-Encoding: gzip
+Accept-Language: en
+Accept-Charset: iso-8859-1,*,utf-8
+Cookie: name = xyz
+```
+
+然后，``JSP``程序将通过``request.getCookies()``方法来访问``cookie``，该方法将返回一个``Cookie``对象的数组。
+
+### Servlet Cookies 方法
+
+下表列出了在``JSP``，``Servlet``中操作``Cookie``时可以使用的有用方法 - 
+
+|Method|Description|
+|:----:|:-----:|
+|``public void setDomain(String pattern)``|此方法设置``cookie``适用的域；例如 : rovo98.com|
+|``public String getDomain()``|此方法获取``cookie``适用的域；例如: rovo98.com|
+|``public void setMaxAge(int expiry)``|此方法设置``cookie``到期之前应经过多长时间(以秒为单位)。如果未设置此值，则``cookie``将仅持续与当前回话(session)|
+|``public int getMaxAge()``|此方法返回``cookie``的持续时间，以秒为单位。默认情况下，``-1``表示``cookie``将持续存在直到浏览器关闭|
+|``public String getName()``|此方法返回``cookie``的名称。创建后无法更改名称|
+|``public void setValue(String newValue)``|此方法设置与``cookie``相关联的值|
+|``public String getValue()``|此方法获取与``cookie``相关联的值|
+|``public void setPath(String uri)``|此方法设置此``cookie``的应用的路径。如果未指定路径，则会为与当前页面相同的目录中的所有UR以及所有子目录返回``cookie``|
+|``public String getPath()``|此方法获取``cookie``适用的路径|
+|``public void setSeure(boolean flag)``|此方法设置``boolean``值，指定``cookie``是否应仅通过加密(即SSL)链接发送|
+|``public void setComment(String purpose)``|此方法指定描述``cookie``用途的注释。如果浏览器将``cookie``提供给用户，注释很有用|
+|``public String getComment()``|此方法返回描述此``cookie``用途的注释，如果``cookie``没有注释，则返回``null``|
+
+### 使用JSP设置Cookies
+
+使用``JSP``设置``cookie``包含三个步骤 - 
+
+#### Step 1: 创建Cookie对象
+
+通过调用``Cookie``的构造方法来创建``cookie``对象 - 
+
+```java
+Cookie cookie = new Cookie("key", "value");
+```
+
+**[注意]**: ``name``和``value``参数字符串中都不可以包含空格和以下任何字符 - 
+
+```txt
+[ ] ( ) = , " / ? @ : ;
+```
+
+#### Step 2: 设置最大生存时间
+
+使用``setMaxAge``方法来设置``cookie``对象有效的持续时间。例如下面设置的``cookie``的有效持续时间为 ``24``小时 - 
+
+```java
+cookie.setMaxAge(60*60*24);
+```
+
+#### Step 3: 将Cookie发送到HTTP响应的头部(Header)中
+
+使用``response.addCookie``方法将``cookie``对象添加到``HTTP``响应的``header``中 - 
+
+```java
+response.addCookie(cookie);
+```
+
+#### 实例
+
+修改之前的读取表单数据示例，将``username``和``msg``参数添加到``cookie``中 - 
+
+```jsp
+<%
+   // Create cookies for username and msg  parameters.
+   Cookie username = new Cookie("username", request.getParameter("username"));
+   Cookie message = new Cookie("msg", request.getParameter("msg"));
+   
+   // Set expiry date after 24 Hrs for both the cookies.
+   username.setMaxAge(60*60*24); 
+   lastName.setMaxAge(60*60*24); 
+   
+   // Add both the cookies in the response header.
+   response.addCookie( username );
+   response.addCookie( message );
+%>
+
+<html>
+   <head>
+      <title>Setting Cookies</title>
+   </head>
+   
+   <body>
+      <center>
+         <h1>Setting Cookies</h1>
+      </center>
+      <ul>
+         <li><p><b>User name</b>
+            <%= request.getParameter("username")%>
+         </p></li>
+         <li><p><b>Message</b>
+            <%= request.getParameter("msg")%>
+         </p></li>
+      </ul>
+   
+   </body>
+</html>
+```
+
+### 使用JSP读取Cookies
+
+为了读取``cookie``，需要通过调用``HttpServletRequest``的``getCookies()``方法创建一个``javax.servlet.http.Cookie``对象数组。然后遍历数组，并使用``getName()``和``getValue()``访问每个``cookie``和相关值。
+
+#### 实例
+
+使用下面的``JSP``程序可以读取之前设置``cookie``实例中的``cookie`` - 
+
+```jsp
+<html>
+   <head>
+      <title>Reading Cookies</title>
+   </head>
+   
+   <body>
+      <center>
+         <h1>Reading Cookies</h1>
+      </center>
+      <%
+         Cookie cookie = null;
+         Cookie[] cookies = null;
+         
+         // Get an array of Cookies associated with the this domain
+         cookies = request.getCookies();
+         
+         if( cookies != null ) {
+            out.println("<h2> Found Cookies Name and Value</h2>");
+            
+            for (int i = 0; i < cookies.length; i++) {
+               cookie = cookies[i];
+               out.print("Name : " + cookie.getName( ) + ",  ");
+               out.print("Value: " + cookie.getValue( )+" <br/>");
+            }
+         } else {
+            out.println("<h2>No cookies founds</h2>");
+         }
+      %>
+   </body>
+   
+</html>
+```
+
+### 使用JSP删除Cookies
+
+删除``cookies``非常简单，要删除一个``cookie``，只需要执行下面简单的三个步骤即可 - 
+
+1. 读取一个现有的``cookie``并存放到``Cookie``对象中;
+2. 通过使用``setMaxAge()``将``cookie``的有效时间设置为``0``来删除该``cookie``;
+3. 重新将该``cookie``添加到响应头部(header)中.
+
+
+#### 实例
+
+下面的例子展示了如何删除之前设置的``username`` ``cookie``，再次访问该``cookie``时将返回``null`` - 
+
+```jsp
+<html>
+   <head>
+      <title>Reading Cookies</title>
+   </head>
+   
+   <body>
+      <center>
+         <h1>Reading Cookies</h1>
+      </center>
+      <%
+         Cookie cookie = null;
+         Cookie[] cookies = null;
+         
+         // Get an array of Cookies associated with the this domain
+         cookies = request.getCookies();
+         
+         if( cookies != null ) {
+            out.println("<h2> Found Cookies Name and Value</h2>");
+            
+            for (int i = 0; i < cookies.length; i++) {
+               cookie = cookies[i];
+               
+               if((cookie.getName( )).compareTo("username") == 0 ) {
+                  cookie.setMaxAge(0);
+                  response.addCookie(cookie);
+                  out.print("Deleted cookie: " + 
+                  cookie.getName( ) + "<br/>");
+               }
+               out.print("Name : " + cookie.getName( ) + ",  ");
+               out.print("Value: " + cookie.getValue( )+" <br/>");
+            }
+         } else {
+            out.println(
+            "<h2>No cookies founds</h2>");
+         }
+      %>
+   </body>
+   
+</html>
+```
+
+我们还可以在Web浏览器中手动的将``cookie``删除。
+
 ## Session 跟踪(Session Tracking)
 
 ## 文件上传(File Uploading)

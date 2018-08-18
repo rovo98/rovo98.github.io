@@ -7,10 +7,9 @@ tags: 路由器
 abbrlink: cc46ce96
 ---
 
+![](/images/ensp_路由连接实验/route-structure.png)
 
-简单使用ensp做华为AR1220路由互连的实验。
-
-![](/images/ensp_路由连接实验/ensp.png)
+使用ensp做华为AR1220路由进行简单的互连实验。
 
 <!-- more -->
 
@@ -29,9 +28,7 @@ abbrlink: cc46ce96
 
 #### 路由连接实验设计
 
-整体结构如下：
-
-![整体结构](route-structure.png)
+整体设计结构如下：
 
 - 1.其中分为六个不同的局域网；
 
