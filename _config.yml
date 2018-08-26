@@ -118,7 +118,7 @@ abbrlink:
     rep: hex   #support dec(default) and hex
 
 # all-minifier
-all_minifier: true
+all_minifier: false
 
 html_minifier:
   enable: true
