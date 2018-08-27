@@ -91,10 +91,10 @@ deploy:
   branch: master 
 
 search:
-        path: search.xml
-        field: post
-        format: html
-        limit: 10000
+    path: search.xml
+    field: post
+    format: html
+    limit: 10000
 
 #live2d setting
 live2d:
@@ -118,7 +118,7 @@ abbrlink:
     rep: hex   #support dec(default) and hex
 
 # all-minifier
-all_minifier: false
+all_minifier: true
 
 html_minifier:
   enable: true
@@ -142,7 +142,7 @@ js_minifier:
     - '*.min.js'
 
 image_minifier:
-  enable: true
+  enable: false
   interlaced: false
   multipass: false
   optimizationLevel: 2
