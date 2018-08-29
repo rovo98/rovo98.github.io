@@ -93,10 +93,11 @@ make clean && make distclean
 [Desktop Entry]
 Name=Vim[compiled by rovo98]
 Version=8.1
-Exec=vim
+Exec=vim %f
 Comment=Vim is a highly configurable text editor for efficiently creating and changing any kind of text.
 Icon=/usr/share/vim/vim81/src/vim.ico
 Type=Application
+MimeType=text/plain;
 Terminal=true
 Encoding=UTF-8
 Categories=Utility;
