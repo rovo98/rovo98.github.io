@@ -88,5 +88,7 @@
   {% include '_third-party/mathjax.swig' %}
   {% include '_third-party/scroll-cookie.swig' %}
   {% include '_third-party/exturl.swig' %}
+<!--崩溃欺骗 added by rovo98-->
+<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
 </body>
 </html>

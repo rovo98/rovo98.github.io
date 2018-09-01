@@ -160,7 +160,6 @@
         </section>
       <!--/noindex-->
       {% endif %}
-
       {% if theme.sidebar.b2t %}
         <div class="back-to-top">
           <i class="fa fa-arrow-up"></i>
@@ -169,7 +168,6 @@
           {% endif %}
         </div>
       {% endif %}
-
-    </div>
+  </div>
   </aside>
 {% endmacro %}
