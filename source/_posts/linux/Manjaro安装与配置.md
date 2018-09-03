@@ -120,7 +120,13 @@ SigLevel= TrustedOnly
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
 ```
 
-3. 同步并更新系统；
+3. 安装``archlinuxcn-keyring``:
+
+```
+sudo pacman -S archlinuxcn-keyring
+```
+
+4. 同步并更新系统；
 ```
 sudo pacman -Syyu
 ```
