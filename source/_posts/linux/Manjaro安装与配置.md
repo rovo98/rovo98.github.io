@@ -121,7 +121,6 @@ Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
 ```
 
 3. 安装``archlinuxcn-keyring``:
-
 ```
 sudo pacman -S archlinuxcn-keyring
 ```

@@ -90,5 +90,9 @@
   {% include '_third-party/exturl.swig' %}
 <!--崩溃欺骗 added by rovo98-->
 <script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+<link rel="stylesheet" href="/aplayer/APlayer.min.css">
+<div id="aplayer"></div>
+<script type="text/javascript" src="/aplayer/APlayer.min.js"></script>
+<script type="text/javascript" src="/aplayer/music.js"></script>
 </body>
 </html>
