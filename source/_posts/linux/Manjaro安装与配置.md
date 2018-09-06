@@ -69,7 +69,7 @@ bs=4M
 > 在``GRUB_CMDLINE_LINUX``中添加参数:
 ![](manjaro-grub.png)
 > 之后更新 ``grub``文件:
->``sudo udpate-grub``
+>``sudo update-grub``
 >或
 >``sudo grub-mkconfig -o /boot/grub.grub.cfg``
 ![](update-grub.png)
