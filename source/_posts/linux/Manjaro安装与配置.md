@@ -71,7 +71,7 @@ bs=4M
 > 之后更新 ``grub``文件:
 >``sudo update-grub``
 >或
->``sudo grub-mkconfig -o /boot/grub.grub.cfg``
+>``sudo grub-mkconfig -o /boot/grub/grub.cfg``
 ![](update-grub.png)
 >参考链接: 
 > 1. [https://forum.manjaro.org/t/a-start-job-is-running-for-livemedia-mhwd-script/3395/15](https://forum.manjaro.org/t/a-start-job-is-running-for-livemedia-mhwd-script/3395/15)

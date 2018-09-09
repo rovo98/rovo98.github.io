@@ -103,6 +103,7 @@ index_with_subtitle: false
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, question icon will be loaded.
 menu:
   home: / || home
+  top: /top/ || signal
   #about: /about/ || user
   tags: /tags/ || tags
   categories: /categories/ || th
@@ -553,9 +554,9 @@ rating:
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn get AppID and AppKey.
 leancloud_visitors:
-  enable: false
-  app_id: #<app_id>
-  app_key: #<app_key>
+  enable: true
+  app_id: z6k4uD5nvz0L4yBDrkeEhOfq-gzGzoHsz #<app_id>
+  app_key: eiWBqdCDNSKEjz1o1nvUel7W #<app_key>
 
 # Another tool to show number of visitors to each article.
 # visit https://console.firebase.google.com/u/0/ to get apiKey and projectId
@@ -840,7 +841,3 @@ enabled: true
 # add sitemap
 sitemap:
     path: sitemap.xml
-
-# Online contact
-daovoice: true
-daovoice_app_id:  "d1fb0f56" # 这里填你刚才获得的 app_id

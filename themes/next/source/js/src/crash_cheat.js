@@ -4,15 +4,16 @@
  var titleTime;
  document.addEventListener('visibilitychange', function () {
      if (document.hidden) {
-         $('[rel="icon"]').attr('href', "/images/my-favicon-16x16.png");
-         document.title = '╭(°A°`)╮ 页面崩溃啦 ~';
+         $('[rel="icon"]').attr('href', "/images/favicon-sad.png");
+         document.title = '页面崩溃啦 ~';
          clearTimeout(titleTime);
      }
      else {
-         $('[rel="icon"]').attr('href', "/images/my-favicon-32x32.png");
-         document.title = '(ฅ>ω<*ฅ) 噫又好了~' + OriginTitle;
+         $('[rel="icon"]').attr('href', "/images/favicon-happy.png");
+         document.title = '噫又好了~' + OriginTitle;
          titleTime = setTimeout(function () {
              document.title = OriginTitle;
-         }, 2000);
+             $('[rel="icon"]').attr('href', '/images/my-favicon-32x32.png');
+         }, 5000);
      }
  });

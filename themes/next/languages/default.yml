@@ -1,5 +1,6 @@
 title:
   archive: Archive
+  top: Posts Ranking
   category: Category
   tag: Tag
   schedule: Schedule
@@ -8,6 +9,7 @@ author: Author
 
 menu:
   home: Home
+  top:  Posts Ranking
   archives: Archives
   categories: Categories
   tags: Tags
