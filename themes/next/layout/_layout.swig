@@ -88,11 +88,18 @@
   {% include '_third-party/mathjax.swig' %}
   {% include '_third-party/scroll-cookie.swig' %}
   {% include '_third-party/exturl.swig' %}
-<!--崩溃欺骗 added by rovo98-->
-<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+  <!-- Aplayer added by rovo98-->
 <link rel="stylesheet" href="/aplayer/APlayer.min.css">
 <div id="aplayer"></div>
 <script type="text/javascript" src="/aplayer/APlayer.min.js"></script>
 <script type="text/javascript" src="/aplayer/music.js"></script>
+
+<!-- dynamic background added by rovo98 at 2018.9.26 -->
+<div class="bg_content">
+  <canvas id="canvas"></canvas>
+</div>
+{% if theme.canvas_dynamic_bg %}
+<script type="text/javascript" src="/js/src/dynamic_bg.js"></script>
+{% endif %}
 </body>
 </html>

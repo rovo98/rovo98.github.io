@@ -5,7 +5,7 @@
  document.addEventListener('visibilitychange', function () {
      if (document.hidden) {
          $('[rel="icon"]').attr('href', "/images/favicon-sad.png");
-         document.title = '页面崩溃啦 ~';
+         document.title = '页面崩溃啦 ~' + OriginTitle;
          clearTimeout(titleTime);
      }
      else {
@@ -14,6 +14,6 @@
          titleTime = setTimeout(function () {
              document.title = OriginTitle;
              $('[rel="icon"]').attr('href', '/images/my-favicon-32x32.png');
-         }, 5000);
+         }, 2000);
      }
  });

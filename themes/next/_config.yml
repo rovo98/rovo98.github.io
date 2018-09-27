@@ -104,7 +104,7 @@ index_with_subtitle: false
 menu:
   home: / || home
   top: /top/ || signal
-  #about: /about/ || user
+  about: /about/ || user
   tags: /tags/ || tags
   categories: /categories/ || th
   archives: /archives/ || archive
@@ -163,6 +163,7 @@ links_layout: block
 #links_layout: inline
 links:
     dcLunatic: https://dcLunatic.github.io
+    Adj325: https://adj325.github.io
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
@@ -255,9 +256,9 @@ post_wordcount:
   #description: ex. subscribe to my blog by scanning my public wechat account
 
 # Reward
-#reward_comment: Donate comment here
-#wechatpay: /images/wechatpay.jpg
-#alipay: /images/alipay.jpg
+reward_comment: Donate me, thanks for your support!
+wechatpay: /images/wechat_code.jpg
+alipay: /images/alipay_code.jpg
 #bitcoin: /images/bitcoin.png
 
 # Declare license on posts
@@ -439,8 +440,9 @@ gitalk:
 # Available value:
 #    button | slide
 # Warning: Baidu Share does not support https.
-#baidushare:
-##  type: button
+baidushare:
+   type: slide
+   baidushare: true
 
 # Share
 # This plugin is more useful in China, make sure you known how to use it.
@@ -465,7 +467,7 @@ gitalk:
 #           Technorati,Posterous,Tumblr,GoogleBookmarks,Newsvine,
 #           Evernote,Friendfeed,Vkontakte,Odnoklassniki,Mailru
 needmoreshare2:
-  enable: true
+  enable: false
   postbottom:
     enable: false 
     options:
@@ -728,6 +730,9 @@ canvas_lines: false
 
 # canvas_sphere
 canvas_sphere: false
+
+# my dynamic_bg
+canvas_dynamic_bg: true
 
 # Only fit scheme Pisces
 # Canvas-ribbon
