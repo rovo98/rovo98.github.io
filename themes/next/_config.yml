@@ -846,3 +846,6 @@ enabled: true
 # add sitemap
 sitemap:
     path: sitemap.xml
+
+# Alayer
+Aplayer: true

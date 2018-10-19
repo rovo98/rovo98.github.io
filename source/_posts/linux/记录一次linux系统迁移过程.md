@@ -170,7 +170,7 @@ mkfs.fat /dev/nvme0n1p2
 
 #### 系统迁移操作
 
-对于``Linux``系统，我只需要知道**一切皆文件**就行了。因此对于系统的迁移就变得简单了，可以使用``dd``,打包压缩然后解压缩等(就是一个系统备份和恢复)有关系统备份和恢复可以参看``Arch wiki``给出的:[https://wiki.archlinux.org/index.php/System_backup](https://wiki.archlinux.org/index.php/System_backup).这里我是使用的是``tar``结合``pigz``([什么是pigz?](http://www.ywnds.com/?p=10332))解压缩工具进行备份和恢复:
+对于``Linux``系统，我们只需要知道**Linux一切皆文件**就行了。因此对于系统的迁移就变得简单了，可以使用``dd``,打包压缩然后解压缩，有关系统备份和恢复可以参看``Arch wiki``给出的:[https://wiki.archlinux.org/index.php/System_backup](https://wiki.archlinux.org/index.php/System_backup).这里我是使用的是``tar``结合``pigz``([什么是pigz?](http://www.ywnds.com/?p=10332))解压缩工具进行备份和恢复:
 
 备份(打包压缩)
 ```
