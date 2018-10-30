@@ -23,7 +23,9 @@ abbrlink: 3babee60
 
 ### 引入
 
-拆开电脑，直接加装固态,顺便清清灰尘，换一下硅脂(ps: 这不知道是我第几次拆电脑了...,表示以后再也不买GPU风扇了，这已经是第二次失败的购买经历了[``除非得到与原来匹配的风扇一致的风扇，不然我是不再换了``]):
+{% note info %}
+拆开电脑，直接加装固态,顺便清清灰尘，换一下硅脂(ps: 这不知道是我第几次拆电脑了...,表示以后再也不买GPU风扇了，这已经是第二次失败的购买经历了(``除非得到与原来匹配的风扇一致的风扇，不然我是不再换了``).
+{% endnote %}
 
 清尘换硅脂:
 
@@ -32,6 +34,7 @@ abbrlink: 3babee60
 
 ![install-ssd-01](install_ssd02.jpg)
 
+{% note primary %}
 关于固态如何购买挑选，需要很好的了解自己电脑能够支持的固态类型和市场所提供的固态类型，并综合各种因素才能做出最好的选择。这里我推荐几篇个人觉得不错的文章:
 
 - [https://www.laptopmag.com/articles/laptop-ssd-guide](https://www.laptopmag.com/articles/laptop-ssd-guide)
@@ -43,6 +46,7 @@ abbrlink: 3babee60
 - [https://www.techadvisor.co.uk/test-centre/storage/best-ssd-2018-3235200/](https://www.techadvisor.co.uk/test-centre/storage/best-ssd-2018-3235200/)
 
 以上推荐文章仅作为参考。
+{% endnote %}
 
 ### 迁移系统
 
@@ -60,7 +64,7 @@ sudo fdisk /dev/nvme0n1
 
 这里我已经分好区了的，具体的操作在``fdisk``中进行:
 
-```
+```txt fdisk操作帮助目录
 Generic
    d   delete a partition
    F   list free unpartitioned space
@@ -105,6 +109,10 @@ Command (m for help): t  # 修改EFI分区的分区类型为EFI系统分区
 Command (m for help): w
 ```
 
+{% note danger %}
+请注意先查看所执行的分区操作是不是你想要的再进行最后的保存设置
+{% endnote %}
+
 其他的分区创建类似``EFI``的创建，``swap``分区需要指定为``Linux swap``分区，作为``linux``数据分区的分区在创建时默认就是``linux filesystem``类型了，不需要更改，之后对创建的分区进行格式化:将``EFI``格式化为``fat32``，将``linux``数据分区格式化``ext4``； 先通过``sudo fdisk -l``或``lsblk``查看已经创建分区对应的设备名,例如:
 ``sudo fdisk -l``:
 
@@ -138,7 +146,7 @@ Device          Start        End   Sectors   Size Type
 /dev/sda4  1596575744 1953521663 356945920 170.2G Microsoft basic data
 ```
 
-``lsblk``:
+``lsblk`` 查看分好的磁盘分区:
 
 ```
 NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
@@ -156,7 +164,7 @@ nvme0n1     259:0    0 238.5G  0 disk
 └─nvme0n1p5 259:5    0  34.2G  0 part /run/media/rovo98/a002d542-c8c4-4c98-85af-8a4446dbaa1b
 ```
 
-格式化,例如:
+对特定的分区进行格式化,例如:
 
 ```
 # 对于linux数据分区
@@ -165,6 +173,10 @@ mkfs.ext4 /dev/nvme0n1p5
 # EFI分区
 mkfs.fat /dev/nvme0n1p2
 ```
+
+{% note danger %}
+**注意**: 执行每条格式化命令前，必须确认指定的分区是否是你想要格式化的分区
+{% endnote %}
 
 做好这些准备之后，就可以进行系统的迁移了
 
@@ -190,7 +202,9 @@ sudo tar --use-compress-program=pigz -xvpf /run/media/rovo98/Chester\ bennington
 
 完成后需要手动创建，上面打包压缩是排除的文件夹:``/proc``, ``/sys``, ``/mnt``, ``/run``, ``/lost+found``.
 
+{% note primary %}
 详细备份和恢复过程可以参考查看:[Arch上的备份还原](https://www.jianshu.com/p/b03a51c682a5)
+{% endnote %}
 
 #### 修复Grub、fstab文件以及refind引导管理
 
@@ -202,6 +216,10 @@ mount /sys /mnt/manjaro/sys
 mount /run /mnt/manjaro/run
 mount /dev /mnt/manjaro/dev
 ```
+
+{% note warning %}
+这些目录必须重新挂载，不然，当``chroot``切换进入目标系统之后，将无法获取一些系统信息，如：设备, 磁盘分区信息等. 
+{% endnote %}
 
 ![](mount-bind.png)
 
@@ -236,7 +254,9 @@ chroot /mnt/manjaro
 
 ![](updated-fstab.png)
 
+{% note primary %}
 主要修改挂载项以及对应的``UUID``，有关``fstab``文件的详细内容可以参考[https://wiki.archlinux.org/index.php/Fstab](https://wiki.archlinux.org/index.php/Fstab)
+{% endnote %}
 
 #### 修复Grub
 
@@ -251,13 +271,15 @@ sudo update-grub
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-**[注意]**：如果此过程中出现以下提示信息:
 
-```
-EFI variables are not supported on this system.
-```
+{% note warning %}
+**注意**：如果此过程中出现以下提示信息:
+
+``EFI variables are not supported on this system.``
 
 需要先安装``efibootmgr``, ``dosfstools``以及``grub``包，然后重新尝试重新生成``Grub``并更新其配置文件.
+
+{% endnote %}
 
 若仍出现该信息，则先退出``chroot``环境，并加载``efivarfs``模块:
 
@@ -273,14 +295,15 @@ mount -t efivarfs efivarfs /sys/firmware/efi/efivars
 
 再重新生成``Grub``并更新``Grub``配置文件就好了。
 
+{% note primary %}
 参考链接:[https://wiki.manjaro.org/index.php/Restore_the_GRUB_Bootloader](https://wiki.manjaro.org/index.php/Restore_the_GRUB_Bootloader)
+{% endnote %}
 
 #### 重新配置refind
 
 对之前的``refind``配置文件进行备份，保留主题文件``themes``及``refind.conf``就好了，其余的文件在执行``refind-install``时会自动生成.
 
-```
-sudo refind-install
+```txt sudo refind-install
 
 # 已经生成过了的,打印信息如下
 ShimSource is none
@@ -317,18 +340,23 @@ Existing //boot/refind_linux.conf found; not overwriting.
 
 通过了解发现``Grub2.2``版本并不支持``nvme``的固态，可以使用安装``bootloader``来进行引导。PS: 但我``Manjaro``安装的``Grub``是``2.3``版本的，理论上是支持的。
 
+{% note primary %}
 参考链接: [https://bbs.archlinux.org/viewtopic.php?id=209653](https://bbs.archlinux.org/viewtopic.php?id=209653)
+{% endnote %}
 
 通过一番查找之后，终于找到了解决方法:
 
-1. 添加加载模块
-```
-#vim /etc/mkinitcpio.conf
-MODULES="...nvme..."
+1. 添加加载模块 ``sudo vim /etc/mkinitcpio.conf``
+```diff 文件:/etc/mkinitcpio.conf 
+...
+
+- MODULES = ""
++ MODULES="nvme"
+
+...
 ```
 2. 更新``mkinitcpio``
-```
-mkinitcpio -p linux414
+```txt 执行命令: sudo mkinitcpio -p linux414
 #参数说明，详细可以通过man查看
 -p, --preset preset
 Build initramfs image(s) according to specified preset. This may be a file in /etc/mkinitcpio.d (without the .preset extension) or a full, absolute path to a file. This option may be specified multiple times to process multiple presets.
@@ -342,7 +370,9 @@ sudo grub-mkocnfig -o /boot/grub/grub.cfg
 
 再次重启之后，便可以成功进入系统了。
 
+{% note primary %}
 参考链接:[http://blog.51cto.com/shenfly231/1918426](http://blog.51cto.com/shenfly231/1918426), 若要安装``bootloader``也可以参考该链接。
+{% endnote %}
 
 ### SSD优化
 
@@ -352,7 +382,9 @@ sudo grub-mkocnfig -o /boot/grub/grub.cfg
 
 >SSD TRIM is an Advanced Technology Attachment (ATA) command that enables an operating system to inform a NAND flash solid-state drive (SSD) which data blocks it can erase because they are no longer in use. The use of TRIM can improve the performance of writing data to SSDs and contribute to longer SSD life.
 
+{% note primary %}
 了解可以参考: [https://searchstorage.techtarget.com/definition/TRIM](https://searchstorage.techtarget.com/definition/TRIM)，以及``Arch wiki``上的:<br />[https://wiki.archlinux.org/index.php/Solid_state_drive#TRIM](https://wiki.archlinux.org/index.php/Solid_state_drive#TRIM)
+{% endnote %}
 
 >Most SSDs support the **ATA_TRIM command** for **sustained long-term performance and wear-leveling**. A techspot article shows performance benchmark examples of before and after filling an SSD with data.
 
@@ -372,10 +404,13 @@ lsblk --discard
 
 关于使用的``Trim``方式，我使用的``Continuous TRIM``(详见``Arch Wiki``)
 即在``fstab``文件的挂载项中添加参数``discard``
-```
-UUID=D942-EEB0                            /boot/efi      vfat    defaults,discard,noatime 0 2
-UUID=67180790-92d0-48d3-8f00-448161019f2d swap           swap    defaults,discard,noatime 0 2
-UUID=e2708091-5a07-47a6-bc26-5fdaa044c5f3 /              ext4    defaults,discard,noatime 0 1
+```diff 文件:/etc/fstab
+- UUID=D942-EEB0                            /boot/efi      vfat    defaults,noatime 0 2
+- UUID=67180790-92d0-48d3-8f00-448161019f2d swap           swap    defaults,noatime 0 2
+- UUID=e2708091-5a07-47a6-bc26-5fdaa044c5f3 /              ext4    defaults,noatime 0 1
++ UUID=D942-EEB0                            /boot/efi      vfat    defaults,discard,noatime 0 2
++ UUID=67180790-92d0-48d3-8f00-448161019f2d swap           swap    defaults,discard,noatime 0 2
++ UUID=e2708091-5a07-47a6-bc26-5fdaa044c5f3 /              ext4    defaults,discard,noatime 0 1
 ```
 
 #### IO调度器选择
@@ -392,13 +427,17 @@ echo noop > /sys/block/sda/queue/scheduler
 3. 要永久生效则需要添加编写开机自启动脚本
 详见参考链接.
 
+{% note primary %}
 更多信息以及详细的内容可以参考下面给出的参考链接.
 参考链接:
 - [https://wiki.archlinux.org/index.php/Improving_performance#Storage_devices](https://wiki.archlinux.org/index.php/Improving_performance#Storage_devices)
 - [https://blog.codeship.com/linux-io-scheduler-tuning/](https://blog.codeship.com/linux-io-scheduler-tuning/)
 - [https://www.ibm.com/developerworks/cn/linux/l-lo-io-scheduler-optimize-performance/index.html](https://www.ibm.com/developerworks/cn/linux/l-lo-io-scheduler-optimize-performance/index.html)
+{% endnote %}
 
 #### 另外
 
+{%note primary %}
 更多有关``Linux VM``性能调优的可以参考:
 [https://lonesysadmin.net/tag/linux-vm-performance-tuning/](https://lonesysadmin.net/tag/linux-vm-performance-tuning/)
+{% endnote %}
