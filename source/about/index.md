@@ -4,9 +4,9 @@ date: 2018-06-09 00:04:28
 type: "about"
 ---
 
-<blockquote class="blockquote-center">
+{% cq %}
 <font size="10" style="color: #aaa;">我只是一名不合格的搬运工！</font>
-</blockquote>
+{% endcq %}
 
 <font size="5">Coding Pages</font>
 

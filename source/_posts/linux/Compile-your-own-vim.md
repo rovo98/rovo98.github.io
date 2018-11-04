@@ -17,15 +17,18 @@ abbrlink: 97c4fd12
 
 
 本想看能不能通过某种方式，来扩展现有安装好的``vim``,但是通过``google``了解到：
+{% cq %}
+VIM is intended to be a portable editor that "just works" on all systems. By having the default version use the clipboard functionality, it will need to link against X11 libraries, and a separate version of VIM would need to be compiled for desktop versus server (no pre-installed X11/xorg) builds. This is why the vim and vim-gtk packages are provided.
 
-> VIM is intended to be a portable editor that "just works" on all systems. By having the default version use the clipboard functionality, it will need to link against X11 libraries, and a separate version of VIM would need to be compiled for desktop versus server (no pre-installed X11/xorg) builds. This is why the vim and vim-gtk packages are provided.
-
-> VIM旨在成为一个可在所有系统上“正常工作”的便携式编辑器。通过使默认版本使用剪贴板功能，它将需要链接到X11库，并且需要针对桌面与服务器（没有预安装的X11 / xorg）构建编译单独版本的VIM。这就是提供vim和vim-gtk软件包的原因。
+VIM旨在成为一个可在所有系统上“正常工作”的便携式编辑器。通过使默认版本使用剪贴板功能，它将需要链接到X11库，并且需要针对桌面与服务器（没有预安装的X11 / xorg）构建编译单独版本的VIM。这就是提供vim和vim-gtk软件包的原因。
+{% endcq %}
 
 <!-- more -->
 虽然知道``gvim``带有支持``clipboard``的``vim``，但是我又不想装``gvim``。自己的系统又有``X11``库和 ``Xorg``，所以决定自己编译一个``vim``.
 
-**[注意]**： 对于没有``X11``和``Xorg``的需要在编译前配置好，否则编译会出错.
+{% note warning %}
+**注意**： 对于没有``X11``和``Xorg``的需要在编译前配置好，否则编译会出错.
+{% endnote %}
 
 ### 一、从github上获取vim的源码
 
@@ -108,9 +111,10 @@ Categories=Utility;
 现在可以享受你自己编译的vim了。
 
 
+{% note primary %}
 参考链接: 
 
 - [https://vi.stackexchange.com/questions/13564/why-is-vim-for-debian-compiled-without-clipboard](https://vi.stackexchange.com/questions/13564/why-is-vim-for-debian-compiled-without-clipboard)
 - [https://stackoverflow.com/questions/11416069/compile-vim-with-clipboard-and-xterm](https://stackoverflow.com/questions/11416069/compile-vim-with-clipboard-and-xterm)
-
+{% endnote %}
 

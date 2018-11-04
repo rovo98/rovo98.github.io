@@ -89,18 +89,22 @@ ipconfig /flushdns
 # GitHub End
 ```
 
-**[notice]** : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。
+{% note warning %}
+**注意** : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。
+{% endnote %}
 
 例如，上面的``151.101.228.133``是对我来说较好的ip:
 
 ![dns 查询检测](ping_test.png)
 
+{% note info %}
 推荐的dns查询检测工具：
 
 - [DNS查询 - 在线工具](https://tool.lu/dns/)
 - [DNS检测|DNS查询-站长工具](http://tool.chinaz.com/dns/)
 
 你可对单个域名多查询几次，以挑选稳定且速度较快的ip。
+{% endnote %}
 
 #### 快速地访问github
 
@@ -109,5 +113,7 @@ ipconfig /flushdns
 ![](github_test.gif)
 
 
+{% note primary %}
 参考：[https://github.com/chenxuhua/issues-blog/issues/3](https://github.com/chenxuhua/issues-blog/issues/3)
+{% endnote %}
 

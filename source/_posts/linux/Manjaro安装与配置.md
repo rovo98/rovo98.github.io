@@ -99,8 +99,9 @@ echo 127 >> /sys/class/backlight/intel_backlight/brightness
 exit 0
 ```
 
-**[注意]**: 对于安装``Manjaro``系统出现的问题，大多数都可以在官方的论坛[Manjaro Forum](https://forum.manjaro.org/)以及[Manjaro Wiki](https://wiki.manjaro.org/index.php?title=Main_Page)，还有``Arch Linux``的[Arch Wiki](https://wiki.manjaro.org)以及上找到解决方法。
-
+{% note primary %}
+对于安装``Manjaro``系统出现的问题，大多数都可以在官方的论坛[Manjaro Forum](https://forum.manjaro.org/)以及[Manjaro Wiki](https://wiki.manjaro.org/index.php?title=Main_Page)，还有``Arch Linux``的[Arch Wiki](https://wiki.manjaro.org)以及上找到解决方法。
+{% endnote %}
 
 ### 二、Manjaro 配置
 
@@ -157,7 +158,10 @@ Manjaro 提供了强大的硬件检测模块``mhwd``，可以很方便的安装�
 
 对于未安装的，这里提供一个最为简单的方式，**直接在硬件设置中，右键安装即可，这样可以省去自己去添加用户组和开机启动，以及切换状态初始化**
 
+{% note warning%}
 **[注意：]** 下面的这些依赖必须安装，否则会出现独立显卡无法正常工作的问题(fps跟集成显卡差不多)：
+{% endnote %}
+
 ```
 sudo pacman -S virtualgl lib32-virtualgl
 ```
@@ -210,7 +214,12 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
 
 ![](refind-menu.jpg)
 
+{% note primary %}
 对于Refind有兴趣的可以直接``google``或``baidu``了解一下，选择一个现有的主题然后自己稍微进行配置一下，就可以了。
+参考:
+- [http://www.rodsbooks.com/refind/](http://www.rodsbooks.com/refind/)
+- [Arch Wiki 上关于refind的内容](https://wiki.archlinux.org/index.php/REFInd_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))
+{% endnote %}
 
 
 #### 各个系统桌面
