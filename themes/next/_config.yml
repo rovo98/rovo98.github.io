@@ -732,7 +732,7 @@ canvas_lines: false
 canvas_sphere: false
 
 # my dynamic_bg
-canvas_dynamic_bg: true
+canvas_dynamic_bg: false
 
 # Only fit scheme Pisces
 # Canvas-ribbon
