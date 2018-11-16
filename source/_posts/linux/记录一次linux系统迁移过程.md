@@ -64,7 +64,7 @@ sudo fdisk /dev/nvme0n1
 
 这里我已经分好区了的，具体的操作在``fdisk``中进行:
 
-```txt fdisk操作帮助目录
+```txt
 Generic
    d   delete a partition
    F   list free unpartitioned space
@@ -303,7 +303,7 @@ mount -t efivarfs efivarfs /sys/firmware/efi/efivars
 
 对之前的``refind``配置文件进行备份，保留主题文件``themes``及``refind.conf``就好了，其余的文件在执行``refind-install``时会自动生成.
 
-```txt sudo refind-install
+```txt
 
 # 已经生成过了的,打印信息如下
 ShimSource is none
@@ -347,7 +347,7 @@ Existing //boot/refind_linux.conf found; not overwriting.
 通过一番查找之后，终于找到了解决方法:
 
 1. 添加加载模块 ``sudo vim /etc/mkinitcpio.conf``
-```diff 文件:/etc/mkinitcpio.conf 
+```diff
 ...
 
 - MODULES = ""
@@ -356,7 +356,7 @@ Existing //boot/refind_linux.conf found; not overwriting.
 ...
 ```
 2. 更新``mkinitcpio``
-```txt 执行命令: sudo mkinitcpio -p linux414
+```txt
 #参数说明，详细可以通过man查看
 -p, --preset preset
 Build initramfs image(s) according to specified preset. This may be a file in /etc/mkinitcpio.d (without the .preset extension) or a full, absolute path to a file. This option may be specified multiple times to process multiple presets.
@@ -403,8 +403,8 @@ lsblk --discard
 ``DISC-GRAN``和``DISC-MAX``不为``0``则表示支持，详细查看上面的``Arch Wiki``给出的文章。
 
 关于使用的``Trim``方式，我使用的``Continuous TRIM``(详见``Arch Wiki``)
-即在``fstab``文件的挂载项中添加参数``discard``
-```diff 文件:/etc/fstab
+即在``/etc/fstab``文件的挂载项中添加参数``discard``
+```diff
 - UUID=D942-EEB0                            /boot/efi      vfat    defaults,noatime 0 2
 - UUID=67180790-92d0-48d3-8f00-448161019f2d swap           swap    defaults,noatime 0 2
 - UUID=e2708091-5a07-47a6-bc26-5fdaa044c5f3 /              ext4    defaults,noatime 0 1
