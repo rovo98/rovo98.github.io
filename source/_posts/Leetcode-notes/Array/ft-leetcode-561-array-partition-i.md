@@ -65,7 +65,7 @@ class Solution {
 }
 ```
 
-**复杂度分析(Compelxity Analysising):**
+**复杂度分析(Compelxity Analysis):**
 - 时间复杂度(Time complexity): $O(nlogn)$，主要取决所使用的排序算法
 - 空间复杂度(Space complexity): $O(1)$
 
@@ -122,7 +122,7 @@ class Solution {
 ``bucket[nums[i]+10000]++``，使用两个整型变量``minElemt``和``maxElemt``确定元素出现的范围, 使用*flag*变量``isOdd``判断当前处理元素是处于奇数位置还是偶数位置。
 {% endnote %}
 
-**复杂度分析(Complexity Analysising)**:
+**复杂度分析(Complexity Analysis)**:
 - 时间复杂度(Time complexity): $O(n)$, 就算是数组所有元素都相同的情况，也是只要遍历$n$次
 - 空间复杂度(Space complexity): $O(n)$ 对于该题目来说，$n为20000$
 
