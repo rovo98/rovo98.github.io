@@ -209,6 +209,12 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
 
 ![](disk-structure.png)
 
+{% note danger%}
+说明: 对于上面给出的分区方案仅供参考，**例如: 对于``Linux``的``swap``分区(用于虚拟内存的置换)来说，由于系统启动时会对``swap``进行初始化，因此多个系统可以使用一个``swap``分区即可。只要配置``UUID``没错就行了，毕竟多系统主机每次也只能启动一个系统。。。**
+
+上面的分区旨在演示，基于``GPT`` (*GUID Partion Table*)分区表(可以分128主要分区，而``MBR``(*Master Boot Record*)分区表只能是4个主要分区, 请自行了解两者的区别)使用``UEFI``(*Unified Extensible Firmware Interface*)如何为安装多系统做准备。
+{%endnote%}
+
 
 然后使用 ``REfind``来管理和引导系统:
 
@@ -228,10 +234,10 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
 
 ![](win10.png)
 
-- Manjaro 17.1.12 (DE: KDE)
+- Manjaro(DE: KDE)
 
 ![](manjaro-desktop.png)
 
-- Kali 2018.1(upgraded)
+- Kali
 
 ![](kali.png)

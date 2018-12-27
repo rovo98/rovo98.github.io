@@ -1,5 +1,5 @@
 ---
-title: Advanture 1 Leetcode 561 Array Partition I
+title: Advanture 1 - Leetcode 561 - Array Partition I
 author: rovo98
 date: '2018.02.01 14:12:30'
 categories:

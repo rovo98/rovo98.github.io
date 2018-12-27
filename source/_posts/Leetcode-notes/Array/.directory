@@ -1,6 +1,7 @@
 [Dolphin]
+HeaderColumnWidths=302,96,162,183,105,96
 SortOrder=1
-Timestamp=2018,11,19,19,28,12
+Timestamp=2018,12,1,0,12,48
 Version=4
 ViewMode=1
 VisibleRoles=Details_text,Details_size,Details_modificationtime,Details_type,Details_permissions,Details_owner,CustomizedDetails

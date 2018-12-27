@@ -1,5 +1,5 @@
 ---
-title: Advanture 1 -  leetcode 1 - Two Sum(两数之和)
+title: Advanture 1 - leetcode 1 - Two Sum
 author: rovo98
 date: '2018.2.1 09:00:30'
 categories:

@@ -1,5 +1,5 @@
 ---
-title: Advantrue 1 - Leetcode 11 Container With Most Water
+title: Advantrue 1 - Leetcode 11 - Container With Most Water
 author: rovo98
 date: '2018.2.1 16:01:00'
 categories:
