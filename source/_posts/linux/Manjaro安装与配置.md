@@ -83,7 +83,7 @@ bs=4M
 3. 屏幕亮度无法调节或异常的问题： ``Arch Wiki``已经给出很详细的解决方法:
 链接: [https://wiki.archlinux.org/index.php/backlight](https://wiki.archlinux.org/index.php/backlight)
 例如：开机亮度设置: ``vim /etc/rc.local``:
-```
+```zsh
 #!/bin/sh -e
 #
 # rc.local
@@ -110,7 +110,7 @@ exit 0
 #### 配置更新源并更新系统
 
 1. 配置中国的mirrors：
-```
+```zsh
 sudo pacman-mirrors -i -c China -m rank
 ```
 
@@ -127,14 +127,14 @@ sudo pacman -S archlinuxcn-keyring
 ```
 
 4. 同步并更新系统；
-```
+```zsh
 sudo pacman -Syyu
 ```
 
 #### 安装配置中文输入法
 
 1. 安装中文输入法和``fcitx``管理工具:
-```
+```zsh
 sudo pacman -S fcitx-sougoupinyin # 输入法看个人
 sudo pacman -S fcitx-im
 sudo pacman -S fcitx-configtool
@@ -162,7 +162,7 @@ Manjaro 提供了强大的硬件检测模块``mhwd``，可以很方便的安装�
 **[注意：]** 下面的这些依赖必须安装，否则会出现独立显卡无法正常工作的问题(fps跟集成显卡差不多)：
 {% endnote %}
 
-```
+```zsh
 sudo pacman -S virtualgl lib32-virtualgl
 ```
 
@@ -212,7 +212,7 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
 {% note danger%}
 说明: 对于上面给出的分区方案仅供参考，**例如: 对于``Linux``的``swap``分区(用于虚拟内存的置换)来说，由于系统启动时会对``swap``进行初始化，因此多个系统可以使用一个``swap``分区即可。只要配置``UUID``没错就行了，毕竟多系统主机每次也只能启动一个系统。。。**
 
-上面的分区旨在演示，基于``GPT`` (*GUID Partion Table*)分区表(可以分128主要分区，而``MBR``(*Master Boot Record*)分区表只能是4个主要分区, 请自行了解两者的区别)使用``UEFI``(*Unified Extensible Firmware Interface*)如何为安装多系统做准备。
+上面的分区旨在演示，基于``GPT`` (*GUID Partion Table* 分区表(可以分128主要分区，而``MBR``(*Master Boot Record*)分区表只能是4个主要分区, 请自行了解两者的区别) 使用``UEFI``(*Unified Extensible Firmware Interface*)如何为安装多系统做准备。
 {%endnote%}
 
 

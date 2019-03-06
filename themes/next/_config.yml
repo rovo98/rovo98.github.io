@@ -1,8 +1,4 @@
 # ===============================================================
-# ========================= ATTENTION! ==========================
-# ===============================================================
-# NexT repository is moving here: https://github.com/theme-next
-# ===============================================================
 # It's rebase to v6.0.0 and future maintenance will resume there
 # ===============================================================
 
@@ -125,7 +121,7 @@ menu_icons:
 # Schemes
 # scheme: Muse
 # scheme: Mist
-#scheme: Pisces
+# scheme: Pisces
 scheme: Gemini
 
 
@@ -291,7 +287,7 @@ custom_logo:
 # Available value:
 #    normal | night | night eighties | night blue | night bright
 # https://github.com/chriskempson/tomorrow-theme
-highlight_theme: normal
+highlight_theme: night
 
 
 # ---------------------------------------------------------------
