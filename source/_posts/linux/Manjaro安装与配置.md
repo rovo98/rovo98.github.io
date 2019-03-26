@@ -10,7 +10,7 @@ tags:
 abbrlink: a1898ce2
 ---
 
-![](/images/linux/manjaro-installed.png)
+![](/images/linux/manjaro-installed.jpg)
 
 > Manjaro是一款基于Arch Linux、对用户友好、全球排名第一的Linux发行版。（排名数据源于[DistroWatch](http://distrowatch.com/)，统计日期2018.08.22，时间段3个月。）
 > 在Linux圈，Arch的确是一个异常强大的发行版。它有3个无与伦比的优势：
@@ -58,7 +58,7 @@ bs=4M
 
 具体的安装步骤请直接参考官网的``Manjaro User Guide.pdf``,这里主要说说安装系统时可能遇到的问题(我基本踩过的坑...)。
 
-1. **对于双显卡的电脑,特别是有Nvidia卡的**: 在进入``live``系统之前,可以将``Driver``选项设置为``no-free``(让系统自动安装合适的闭源驱动),并在``boot``项那里按``E``编辑, 在``boot``那一行将``nouveau.modeset=1``设置为``nouveau.modeset=0``来禁用开源``nouveau``驱动,然后进入``Live``安装系统。<br>**但是,安装完系统后重启还有可能进不去桌面**,可以尝试在``Grub``菜单启动界面按[E]编辑,找到``quite``并在后面加入(注意空格):
+1. **对于双显卡的电脑,特别是有Nvidia卡的**: 在进入``live``系统之前,可以将``Driver``选项设置为``no-free``(让系统自动安装合适的闭源驱动),并在``boot``项那里按``E``编辑, 在``boot``那一行将``nouveau.modeset=1``设置为``nouveau.modeset=0``来禁用开源``nouveau``驱动,然后进入``Live``安装系统。<br>**但是,安装完系统后重启还有可能进不去桌面**,可以尝试在``Grub``菜单启动界面按[E]编辑,找到``quiet``并在后面加入(注意空格):
 > ``acpi_osi=! acpi_osi='Windows 2009'``
 > 或者 
 > ``acpi_osi=! acpi_osi=Linux acpi_osi='Windows 2015' pcie_port_pm=off``
@@ -77,7 +77,7 @@ bs=4M
 > 1. [https://forum.manjaro.org/t/a-start-job-is-running-for-livemedia-mhwd-script/3395/15](https://forum.manjaro.org/t/a-start-job-is-running-for-livemedia-mhwd-script/3395/15)
 > 2. [https://wiki.archlinux.org/index.php/Kernel_parameters](https://wiki.archlinux.org/index.php/Kernel_parameters)
 > 3. [https://www.kernel.org/doc/Documentation/admin-guide/kernel-parameters.txt](https://www.kernel.org/doc/Documentation/admin-guide/kernel-parameters.txt)
-2. 启动时出现的``ACPI ERROR``问题，很多都说是内核版本的原因，有尝试过添加内核启动参数``acpi=off``，启动正常进入系统，但键盘无法使用，所以这个提示``ACPI``错误的问题，由于不影响使用，所以可以不管(强迫症的可以再看看)
+2. 启动时出现的``ACPI ERROR``问题，很多都说是内核版本的原因，有尝试过添加内核启动参数``acpi=off``，启动正常进入系统，但键盘无法使用，所以这个提示``ACPI``错误的问题，由于不影响使用，可以不管(强迫症的可以再看看)
 > ![](boot-acpi-error.png)
 > 参考链接: [https://forum.manjaro.org/t/acpi-error-during-boot/35125](https://forum.manjaro.org/t/acpi-error-during-boot/35125)
 3. 屏幕亮度无法调节或异常的问题： ``Arch Wiki``已经给出很详细的解决方法:
@@ -232,12 +232,12 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
 
 - Win10 LTSB
 
-![](win10.png)
+![](win10.jpg)
 
 - Manjaro(DE: KDE)
 
-![](manjaro-desktop.png)
+![](manjaro-desktop.jpg)
 
 - Kali
 
-![](kali.png)
+![](kali.jpg)

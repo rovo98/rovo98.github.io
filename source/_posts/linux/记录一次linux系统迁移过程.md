@@ -15,7 +15,7 @@ abbrlink: 3babee60
 
 这里先给出系统迁移以及相关配置完成之后的机械硬盘和固态硬盘的简单测速对比:
 
-![](/images/linux/hdparam.png)
+![](/images/linux/hdparam.jpg)
 
 
 <!-- more -->

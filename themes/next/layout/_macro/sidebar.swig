@@ -144,7 +144,8 @@
         <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
           <div class="post-toc">
 
-            {% if page.toc_number === undefined %}
+            <!-- modified by rovo98 at 2019.3.24 00:10:00 -->
+            {% if page.toc_number === undefined or false %}
               {% set toc = toc(page.content, { "class": "nav", list_number: theme.toc.number }) %}
             {% else %}
               {% set toc = toc(page.content, { "class": "nav", list_number: page.toc_number }) %}

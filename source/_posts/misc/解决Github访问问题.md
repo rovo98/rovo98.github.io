@@ -13,7 +13,7 @@ date: 2018-06-10 15:58:34
 
 简单了解一下github, github是目前全球最大的男性同性交友网站(~滑稽~), 使用示例如下：
 
-![](/images/解决Github访问问题/communication.png)
+![](/images/解决Github访问问题/communication.jpg)
 
 <!-- more -->
 

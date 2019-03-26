@@ -55,7 +55,7 @@ gpg --help
 ```
 
 如果屏幕显示GPG的帮助信息，就表示安装成功。
-![](gpg-help.png)
+![](gpg-help.jpg)
 
 ### 密钥管理
 
@@ -134,7 +134,7 @@ Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?
 
 查看当前的所有密钥对:
 
-![](gpg-list-keys.png)
+![](gpg-list-keys.jpg)
 
 
 #### 密钥的导出和导入
@@ -213,7 +213,7 @@ gpg --output alice.gpg --export alice@gmail.com
 gpg --armor --output alice.gpg --export alice@gmail.com
 ```
 
-![](gpg-export-pub-key.png)
+![](gpg-export-pub-key.jpg)
 
 **导出私钥(Private key)**:
 
@@ -276,7 +276,7 @@ gpg --output sourceListforKali.de --decrypt sourceListforKali.en
 输入之前创建该密钥对的密码就可以对文件进行解密。
 
 
-![](gpg-encrypt-decrypt.png)
+![](gpg-encrypt-decrypt.jpg)
 
 
 {% note warning%}

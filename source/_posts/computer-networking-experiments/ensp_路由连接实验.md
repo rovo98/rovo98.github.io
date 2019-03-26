@@ -64,7 +64,7 @@ abbrlink: cc46ce96
 
 - 例如：``192.168.11.0``网段下的``192.168.11.11``主机：
 
-![PC1](pc1_setting.png)
+![PC1](pc1_setting.jpg)
 
 - 配置 ``192.168.11.1``作为``192.168.11.0``网段的网关：
 
@@ -72,7 +72,7 @@ abbrlink: cc46ce96
 
 所有主机经过配置后，他们应该可以ping通自己网段下的所有主机，如：``192.168.11.12`` ping ``192.168.11.11``
 
-![局域网ping测试](pingTest.png)
+![局域网ping测试](pingTest.jpg)
 
 **[需要注意的是]**： 由于路由器互连时使用的是serial串口，所以路由器之间配置的是serial串口的ip。
 
@@ -121,15 +121,15 @@ display ip routing-table
 
 - AR6路由表：
 
-![AR6路由表](route1_info.png)
+![AR6路由表](route1_info.jpg)
 
 - AR4路由表：
 
-![AR4路由表](route2_info.png)
+![AR4路由表](route2_info.jpg)
 
 - AR7路由表：
 
-![AR7路由表](route3_info.png)
+![AR7路由表](route3_info.jpg)
 
 ### 测试实验结果
 
@@ -137,15 +137,15 @@ display ip routing-table
 
 ``192.168.11.11`` ping ``192.168.13.12`` 和 ``192.168.12.12``:
 
-![tracert测试1](tracert1.png)
+![tracert测试1](tracert1.jpg)
 
 ``192.168.12.11`` ping ``192.168.11.12`` 和 ``192.168.13.13``:
 
-![tracert测试2](tracert2.png)
+![tracert测试2](tracert2.jpg)
 
 ``192.168.13.11`` ping ``192.168.11.11`` 和 ``192.168.12.11``：
 
-![tracert测试3](tracert3.png)
+![tracert测试3](tracert3.jpg)
 
 由以上测试可以看出简单的路由器连接实验成功。
 

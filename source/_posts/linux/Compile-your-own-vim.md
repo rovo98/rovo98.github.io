@@ -13,7 +13,7 @@ abbrlink: 97c4fd12
 
 最近换了``Manjaro`` linux系统，发现通过系统``pacman -S vim``安装的无图形版本``vim``不支持``clipboard``功能。
 
-![](/images/linux/vim-version-original.png)
+![](/images/linux/vim-version-original.jpg)
 
 
 本想看能不能通过某种方式，来扩展现有安装好的``vim``,但是通过``google``了解到：
@@ -86,7 +86,7 @@ make clean && make distclean
 
 **成果:**
 
-![](vim_installed.png)
+![](vim_installed.jpg)
 
 **为``vim``创建一个桌面图标**:
 
