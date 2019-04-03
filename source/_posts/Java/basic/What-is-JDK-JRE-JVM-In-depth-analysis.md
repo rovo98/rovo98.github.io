@@ -4,7 +4,7 @@ author: rovo98
 date: '2019.03.20 12:10:00'
 categories:
   - Java
-tags: []
+tags: [JVM]
 abbrlink: '12448424'
 toc_number: false
 ---
@@ -124,7 +124,7 @@ JVM触发类加载器去加载外部类的情况:
 
 #### 执行引擎
 
-存放到**JVM内存区(Memory Area)或运行数据区(Runtime Data Area)**中的字节码将由**执行引擎**(*Execution Engine*)。它使用两个内建的**解释器**(*inbuilt interpreter*)和一个**及时编译器**(*JIT compiler*)来将字节码转换成机器码，并执行。
+存放到**JVM内存区(Memory Area)或运行数据区(Runtime Data Area)**中的字节码将由**执行引擎**(*Execution Engine*)执行。它使用两个内建的**解释器**(*inbuilt interpreter*)和一个**及时编译器**(*JIT compiler*)来将字节码转换成机器码，并执行。
 
 ![](OS-Specific-Interpreters.png)
 > 不同平台有不同的解释器
