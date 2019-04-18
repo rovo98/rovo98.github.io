@@ -4,7 +4,7 @@ author: rovo98
 date: '2019.03.20 12:10:00'
 categories:
   - Java
-tags: [JVM]
+tags: [JVM, JRE, JDK]
 abbrlink: '12448424'
 toc_number: false
 ---
