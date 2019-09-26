@@ -402,15 +402,40 @@ lsblk --discard
 
 ``DISC-GRAN``和``DISC-MAX``不为``0``则表示支持，详细查看上面的``Arch Wiki``给出的文章。
 
-关于使用的``Trim``方式，我使用的``Continuous TRIM``(详见``Arch Wiki``)
-即在``/etc/fstab``文件的挂载项中添加参数``discard``
-```diff
-- UUID=D942-EEB0                            /boot/efi      vfat    defaults,noatime 0 2
-- UUID=67180790-92d0-48d3-8f00-448161019f2d swap           swap    defaults,noatime 0 2
-- UUID=e2708091-5a07-47a6-bc26-5fdaa044c5f3 /              ext4    defaults,noatime 0 1
-+ UUID=D942-EEB0                            /boot/efi      vfat    defaults,discard,noatime 0 2
-+ UUID=67180790-92d0-48d3-8f00-448161019f2d swap           swap    defaults,discard,noatime 0 2
-+ UUID=e2708091-5a07-47a6-bc26-5fdaa044c5f3 /              ext4    defaults,discard,noatime 0 1
+关于使用的``Trim``方式，Nvme 协议固态是不推荐使用的``Continuous TRIM``方式的。(详见[Arch Wiki](https://wiki.archlinux.org/index.php/Solid_state_drive/NVMe#Discards))
+
+所以使用的定期执行``fstrim``的方式，即添加一个定时任务或服务让其自动执行，如每周执行一次trim操作。 参考[Periodic TRIM](https://wiki.archlinux.org/index.php/Solid_state_drive#Periodic_TRIM)
+
+```bash
+sudo systemctl enable fstrim.service
+
+sudo systemctl enable fstrim.timer
+```
+
+```txt fstrim.service
+[Unit]
+Description=Discard unused blocks on filesystems from /etc/fstab
+Documentation=man:fstrim(8)
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/fstrim -Av
+```
+
+启用``fstrim.timer``服务则会自动每周做一次``trim``.
+
+```txt fstrim.timer
+[Unit]
+Description=Discard unused blocks once a week
+Documentation=man:fstrim
+
+[Timer]
+OnCalendar=weekly
+AccuracySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
 ```
 
 #### IO调度器选择

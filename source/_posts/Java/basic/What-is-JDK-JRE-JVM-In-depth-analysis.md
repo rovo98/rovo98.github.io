@@ -220,8 +220,7 @@ JDK(*Java Development Kit*, Java 开发工具)，它包含*JRE*, 同时包含用
 
 简单来说，Java开发人员需要在机器上安装*JDK*来开发Java程序；如果我们只需要能够运行Java程序，则只在机器上安装*JRE*即可。
 
-参考链接:
-
-1. [https://dzone.com/articles/jvm-architecture-explained](https://dzone.com/articles/jvm-architecture-explained)
-2. [https://stackoverflow.com/questions/11547458/what-is-the-difference-between-jvm-jdk-jre-openjdk](https://stackoverflow.com/questions/11547458/what-is-the-difference-between-jvm-jdk-jre-openjdk)
-3. [https://www.geeksforgeeks.org/jvm-works-jvm-architecture/](https://www.geeksforgeeks.org/jvm-works-jvm-architecture/)
+*References*
+1. *How JVM Works - JVM Architecture? GeeksforGeeks. October 2016*. https://www.geeksforgeeks.org/jvm-works-jvm-architecture/.
+2. *java - What is the difference between JVM, JDK, JRE & OpenJDK? Stack Overflow*. https://stackoverflow.com/questions/11547458/what-is-the-difference-between-jvm-jdk-jre-openjdk.
+3. *The JVM Architecture Explained - DZone Java*. https://dzone.com/articles/jvm-architecture-explained.

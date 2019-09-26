@@ -7,6 +7,7 @@ categories:
 tags:
   - linux
   - manjaro
+keywords: manjaro, linux, 安装， 配置
 abbrlink: a1898ce2
 ---
 
@@ -179,7 +180,7 @@ sudo pacman -S virtualgl lib32-virtualgl
 
 #### 使用 zsh 和 oh-my-zsh 配置终端
 
-我的 zsh 终端模拟器(theme: rjkirch_mod)：
+``zsh`` shell(theme: rjkirch_mod)：
 
 ![](my-zsh.png)
 
