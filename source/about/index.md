@@ -5,7 +5,7 @@ type: "about"
 ---
 
 {% cq %}
-<font size="10" style="color: #aaa;">我只是一名不合格的搬运工！</font>
+<font size="10" style="color: #aaa;">“为什么做？”比“该怎么做？”更重要！</font>
 {% endcq %}
 
 <font size="5">Coding Pages</font>
