@@ -17,12 +17,12 @@ abbrlink: 7ea77913
 > gpg features: complete key management and all the bells and whistles you would expect from a full OpenPGP implementation.
 
 {% note info %}
-``GnuPG``(GPG) 是 基于``OpenPGP``(由[RFC4880](https://www.ietf.org/rfc/rfc4880.txt)定义,也被称为``PGP``)的一个完整的和免费的实现.我们可以使用``GPG``来对我们的数据和通信进行加密(encrypt)和签名(sign), 它具有通用的密钥管理系统，以及各种公钥目录的访问模块. 我们可以很容易地使用``GPG``提供的命令行工具(当前它还提供不同平台下的图形界面工具*frontends*,以及库文件*libraries*)与其他的应用进行结合.同时还对``S/MIME``和``SSH(Security Shell)``提供支持.
+``GnuPG``(GPG) 是 基于``OpenPGP``(由 [RFC4880](https://www.ietf.org/rfc/rfc4880.txt) 定义,也被称为``PGP``)的一个完整的和免费的实现.我们可以使用``GPG``来对我们的数据和通信进行加密（encrypt）和签名（sign）, 它具有通用的密钥管理系统，以及各种公钥目录的访问模块. 我们可以很容易地使用``GPG``提供的命令行工具(当前它还提供不同平台下的图形界面工具*frontends*,以及库文件*libraries*)与其他的应用进行结合.同时还对``S/MIME``和``SSH(Security Shell)``提供支持.
 {%endnote%}
 
 <!-- more -->
 
-本文使用环境为Linux命令行，掌握命令行，Window(``Gpg4win``)等[其他客户端](https://www.gnupg.org/download/index.html)也很容易掌握。
+本文使用环境为 Linux 命令行，掌握命令行，Window （``Gpg4win``）等[其他客户端](https://www.gnupg.org/download/index.html)也很容易掌握。
 
 
 ### 安装
@@ -54,12 +54,12 @@ yum install gnupg
 gpg --help
 ```
 
-如果屏幕显示GPG的帮助信息，就表示安装成功。
+如果屏幕显示 GPG 的帮助信息，就表示安装成功。
 ![](gpg-help.jpg)
 
 ### 密钥管理
 
-在使用``GPG``进行加密和签名之前，我们应该清楚的知道，它还是一个优秀的密钥管理工具(key Manager).
+在使用``GPG``进行加密和签名之前，我们应该清楚的知道，它还是一个优秀的密钥管理工具（key Manager）.
 
 可以使用``gpg --list-keys``查看当前管理的所有密钥.
 
@@ -84,7 +84,7 @@ Your selection?
 
 ```
 
-(2).选择密钥的大小(默认2048位):
+(2).选择密钥的大小(默认 2048 位):
 
 {% note warning %}
 密钥的位数越大，对于防范暴力破解攻击就越安全,但是对于各种用途，使用默认的大小已经足够了，因为绕过加密比试图破解代价反而更少一些。此外，随着密钥大小的增加，加密和解密将变慢，较大的密钥位数可能会影响签名的长度。
@@ -96,7 +96,7 @@ What keysize do you want? (2048)
 
 ```
 
-(3). 配置密钥的失效时间(默认0, 永不失效)
+(3). 配置密钥的失效时间(默认 0, 永不失效)
 
 ```
 Please specify how long the key should be valid.
@@ -153,7 +153,7 @@ gpg --import rovo98.pri
 导入公钥之后，应进行验证。``GnuPG``提供了功能强大的信任模型，不需要我们亲自验证导入的每一个公钥。但是一些公钥还是需要亲自进行验证的，下面简单了解一下如何对导入的公钥进行验证。
 
 {% note danger %}
-通过验证公钥的指纹，然后签名(Sign)公钥以将其证明为有效公钥来验证密钥。可以使用``--fingerprint``命令行选项快速查看公钥的指纹，但为了验证公钥，必须对其进行编辑。
+通过验证公钥的指纹，然后签名（Sign）公钥以将其证明为有效公钥来验证密钥。可以使用``--fingerprint``命令行选项快速查看公钥的指纹，但为了验证公钥，必须对其进行编辑。
 {%endnote%}
 
 编辑公钥示例:
@@ -174,7 +174,7 @@ pub  1024D/9E98BC16 1999-06-04 Blake (Executioner) <blake@cyb.org>
 > **如果获得指纹与公钥所有者的指纹相同，才可以确定我们得到是正确的公钥副本**
 
 
-检查指纹之后，最后进行公钥的签名(Sign)完成验证。由于公钥签名是公钥加密中的一个弱点，因此在进行签名验证之前，必须确保指纹验证是正确的。
+检查指纹之后，最后进行公钥的签名（Sign）完成验证。由于公钥签名是公钥加密中的一个弱点，因此在进行签名验证之前，必须确保指纹验证是正确的。
 
 ```sh
 Command>> sign
@@ -190,7 +190,7 @@ with your key: "Alice (Judge) <alice@cyb.org>"
 Really sign?
 ```
 
-> 签名之后，可以检查公钥，以列出其上面的签名，并查看我们添加的签名。公钥上的每个用户ID都可以具有一个或多个自签名以及已经通过公钥验证的签名。
+> 签名之后，可以检查公钥，以列出其上面的签名，并查看我们添加的签名。公钥上的每个用户 ID 都可以具有一个或多个自签名以及已经通过公钥验证的签名。
 
 ```sh
 Command> check
@@ -215,7 +215,7 @@ gpg --armor --output alice.gpg --export alice@gmail.com
 
 ![](gpg-export-pub-key.jpg)
 
-**导出私钥(Private key)**:
+**导出私钥（Private key）**:
 
 ``GPG``还支持导出私钥，不过是对所有的私钥进行导出，同样可以二进制格式或``ASCII``格式导出.
 
@@ -226,7 +226,7 @@ gpg --export-secret-keys --armor
 
 #### 上传公钥
 
-公钥服务器是网络上专门储存用户公钥的服务器。send-keys参数可以将公钥上传到服务器。
+公钥服务器是网络上专门储存用户公钥的服务器。``send-keys``参数可以将公钥上传到服务器。
 
 ```sh
 gpg --send-keys [用户ID] --keyserver [服务器域名]
@@ -234,7 +234,7 @@ gpg --send-keys [用户ID] --keyserver [服务器域名]
 
 使用上面的命令，你的公钥就被传到了服务器，然后通过交换机制，所有的公钥服务器最终都会包含你的公钥。
 
-由于公钥服务器没有检查机制，任何人都可以用你的名义上传公钥，所以没有办法保证服务器上的公钥的可靠性。通常，你可以在网站上公布一个公钥指纹，让其他人核对下载到的公钥是否为真。fingerprint参数生成公钥指纹。
+由于公钥服务器没有检查机制，任何人都可以用你的名义上传公钥，所以没有办法保证服务器上的公钥的可靠性。通常，你可以在网站上公布一个公钥指纹，让其他人核对下载到的公钥是否为真。``fingerprint``参数生成公钥指纹。
 
 ```sh
 gpg --fingerprint [用户ID]
@@ -280,7 +280,7 @@ gpg --output sourceListforKali.de --decrypt sourceListforKali.en
 
 
 {% note warning%}
-我们还可以在不使用公钥的情况下，对文件进行加密，使用的是对称密码(symmetric chiper).使用``--symmetric``参数即可
+我们还可以在不使用公钥的情况下，对文件进行加密，使用的是对称密码（symmetric chiper）。使用``--symmetric``参数即可
 
 手动输入加密密码即可。
 {%endnote%}
@@ -323,7 +323,7 @@ gpg: Good signature from "Alice (Judge) <alice@cyb.org>"
 ```
 
 {% note danger %}
-一般情况下，数字签名多数应用于对互联网上的帖子*post*以及*email*进行签名。这种情况下，我们一般不希望对需要签名的文件进行压缩处理，因此可以使用``--clearsign``选项，在不修改文件的情况下，将文件以``ASCII``的形式包装在签名文件中。
+一般情况下，数字签名多数应用于对互联网上的帖子 *post* 以及 *email* 进行签名。这种情况下，我们一般不希望对需要签名的文件进行压缩处理，因此可以使用``--clearsign``选项，在不修改文件的情况下，将文件以``ASCII``的形式包装在签名文件中。
 {% endnote %}
 
 ```sh
@@ -348,9 +348,9 @@ oCoAoOuqpRqEzr4kOkQqHRLE/b8/Rw2k
 ```
 
 {% note primary%}
-分离的、独立的签名文件(*Detached signatures*): 一个签名过的文件的用途一般是很少的。
+分离的、独立的签名文件（*Detached signatures*）: 一个签名过的文件的用途一般是很少的。
 
-其他用户必须从签名文件中恢复原始文档，即使使用未压缩处理的签名文件(Clearsigned)，也必须编辑签名文档以恢复原始文档。
+其他用户必须从签名文件中恢复原始文档，即使使用未压缩处理的签名文件（Clearsigned），也必须编辑签名文档以恢复原始文档。
 
 因此，``GPG``还提供用于对文档创建分离签名第三种签名方法，该签名是单独的文件。使用``--detach-sig``选项创建分离签名。
 {% endnote%}
@@ -383,7 +383,7 @@ gpg: Good signature from "Alice (Judge) <alice@cyb.org>"
 
 
 {%note primary%}
-参看链接:
+参考链接:
 - [https://www.gnupg.org/gph/en/manual.html](https://www.gnupg.org/gph/en/manual.html)
 - [https://futureboy.us/pgp.html](https://futureboy.us/pgp.html)
 {%endnote%}
