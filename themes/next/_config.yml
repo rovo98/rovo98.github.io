@@ -32,7 +32,7 @@ favicon:
   #android_manifest: /images/manifest.json
   #ms_browserconfig: /images/browserconfig.xml
 
-  
+
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.jpg
 # in site  directory(source/uploads): /uploads/avatar.jpg
@@ -172,7 +172,7 @@ toc:
   enable: true
 
   # Automatically add list number to toc.
-  number: true
+  number: false
 
   # If true, all words will placed on next lines if header width longer then sidebar width.
   wrap: true
@@ -304,7 +304,7 @@ highlight_theme: night
 # Arial | Tahoma | Helvetica | Times New Roman | Courier New | Verdana | Georgia | Palatino | Garamond | Comic Sans MS | Trebuchet MS
 # ---------------------------------------------------------------
 font:
-  enable: false 
+  enable: false
 
   # Uri of fonts host. E.g. //fonts.googleapis.com (Default).
   host: https://fonts.loli.net
@@ -353,8 +353,10 @@ font:
 # MathJax Support
 mathjax:
   enable: true
-  per_page: true
-  cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
+  per_page: false
+  # cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
+  cdn: //cdn.bootcss.com/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML
+engine: mathjax
 
 # Han Support docs: https://hanzi.pro/
 han: false
@@ -466,7 +468,7 @@ baidushare:
 needmoreshare2:
   enable: false
   postbottom:
-    enable: false 
+    enable: false
     options:
       iconStyle: box
       boxForm: horizontal

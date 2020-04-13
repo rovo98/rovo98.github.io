@@ -8,10 +8,11 @@ categories:
 tags:
   - sorting algs
 mathjax: true
+number: true
 abbrlink: 6dcc34f7
 ---
 
-&nbsp;&nbsp;&nbsp;&nbsp;不同与归并排序``mergeSort``，快排序不需要使用额外的数组来辅助进行排序，但是这并不意味着快排序就属于原地排序 ([in-place](https://some-link))。
+&nbsp;&nbsp;&nbsp;&nbsp;不同与归并排序``mergeSort``，快排序不需要使用额外的数组来辅助进行排序，但是这并不意味着快排序就属于原地排序 ([in-place](https://en.wikipedia.org/wiki/In-place_algorithm))。
 
 >&nbsp;&nbsp;&nbsp;&nbsp;快排序递归时需要使用栈空间，当执行递归函数调用时，需要将当前执行函数的状态压入线程栈中，递归调用完成后再一层层返回。快排序不属于原地排序，那么有没有方法进行优化呢？
 
