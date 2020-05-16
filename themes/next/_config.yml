@@ -160,7 +160,7 @@ links_layout: block
 links:
     dcLunatic: https://dcLunatic.github.io
     Adj325: https://adj325.github.io
-    rovo98's Leetcode Adventure: https://rovo98.github.io/leetcode-java-solutions
+    rovo98's Leetcode Adventure: https://rovo98.github.io/leetcode-solutions
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
@@ -288,7 +288,7 @@ custom_logo:
 # Available value:
 #    normal | night | night eighties | night blue | night bright
 # https://github.com/chriskempson/tomorrow-theme
-highlight_theme: night
+highlight_theme: normal
 
 
 # ---------------------------------------------------------------

@@ -114,8 +114,7 @@ x_i = ((x^1_i,f^1), (x^2_i,f^2)),\qquad i=1,2,...,n
 $$
 我们有$f^1=f^2$。
 
-**Proof**: 对于必要性，假设$G$是可诊断的，但$G_d$中存在一个环$cl$，$cl=(x_k,\sigma_k,x_{k+1},...,x_n,\sigma_n,x_K), n\geq k, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = k, k+1,...,x_n$
-使得$f^1\neq f^2$。因为$G_d$是可达的，$G_d$中存在一个以环$cl$结尾的路径$tr$，即$tr = (x^d_0,\sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k)$。据**Lemma 2**，$G_o$中存在两个路径$tr_1$和$tr_2$：
+**Proof**: 对于必要性，假设$G$是可诊断的，但$$G_d$$中存在一个环$cl$，$$cl=(x_k,\sigma_k,x_{k+1},...,x_n,\sigma_n,x_K), n\geq k, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = k, k+1,...,x_n$$使得$f^1\neq f^2$。因为$G_d$是可达的，$G_d$中存在一个以环$cl$结尾的路径$tr$，即$tr = (x^d_0,\sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k)$。据**Lemma 2**，$G_o$中存在两个路径$tr_1$和$tr_2$：
 $$
 tr_1 = ((x_0,\emptyset),\sigma_0,(x^1_1,f^1_1),...,(x^1_k,f^1),\\
 \sigma_k,...,(x^1_n,f^1),\sigma_n,(x^1_k,f^1))\\
@@ -167,7 +166,7 @@ $$
 
 ## IV. CONCLUSION
 
-在本文中，我们提供了一个测试离散事件系统可诊断性的算法。与[^4]这的测试方法相比，我们的算法无需为待诊断系统构造诊断器。我们算法的复杂度是系统状态数的四阶和错误类型数的线性阶。而[^4]中测试方法的复杂度是系统状态数的指数阶和错误类型数的双倍指数阶。
+在本文中，我们提供了一个测试离散事件系统可诊断性的算法。与[^4]中的测试方法相比，我们的算法无需为待诊断系统构造诊断器。我们算法的复杂度是系统状态数的四阶和错误类型数的线性阶。而[^4]中测试方法的复杂度是系统状态数的指数阶和错误类型数的双倍指数阶。
 
 [^1]: Chen, Yi-Liang, and Gregory Provan. "Modeling and diagnosis of timed discrete event systems-a factory automation example." Proceedings of the 1997 American Control Conference (Cat. No. 97CH36041). Vol. 1. IEEE, 1997.
 [^2]: L. Holloway and S. Chand, “Time templates for discrete event fault monitoring in manufacturing systems,” in Proc. 1994 Amer. Control Conf.,1994, pp. 701–706.

@@ -10,6 +10,6 @@ type: "about"
 
 <font size="5">Coding Pages</font>
 
-如果觉得Github Pages 加载或访问慢，可以访问Coding Pages: [https://rovo98.coding.me](https://rovo98.coding.me).
+如果觉得Github Pages 加载或访问慢，可以访问Coding Pages: [https://rovo98.coding.me](http://qr76xr.coding-pages.com).
 内容是一样的，只不过页面的下端的访问人数不同(￣_￣).
 
