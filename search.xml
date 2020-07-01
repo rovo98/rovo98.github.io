@@ -1,252 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>理解Requests库的异常和HTTP协议</title>
-    <url>/posts/4ae864e2/</url>
-    <content><![CDATA[<p>简单理解Requests库中的异常和HTTP协议。</p>
-<a id="more"></a>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">异常</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">requests.ConnectionError</td>
-<td style="text-align:center">网络连接错误异常，如DNS查询失败、拒绝连接等</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.HTTPError</td>
-<td style="text-align:center">HTTP错误异常</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.URLRequired</td>
-<td style="text-align:center">URl缺失异常</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.TooManyRedirects</td>
-<td style="text-align:center">超过最大重定向次数，产生重定向异常</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.ConnectTimeout</td>
-<td style="text-align:center">连接远程服务器超时异常</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.Timeout</td>
-<td style="text-align:center">请求URL超时，产生超时异常</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Response的异常：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">异常</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">r.raise_for_status()</td>
-<td style="text-align:center">如果不是200， 产生异常requests.HTTPError</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>爬取网页的通用代码框架</strong></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getHTMLText</span><span class="params">(url)</span> :</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        r = requests.get(url, timeout=<span class="number">30</span>)</span><br><span class="line">        r.raise_for_status() <span class="comment">#如果状态不是200， 引发requests.HTTPError异常</span></span><br><span class="line">        r.encoding = r.apparent_encoding <span class="comment">#将encoding 设置为'utf-8'，一般用于没有charset的header</span></span><br><span class="line">        <span class="keyword">return</span> r.text</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'产生异常'</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    url = <span class="string">"http://www.baidu.com"</span></span><br><span class="line">    print(getHTMLText(url))</span><br></pre></td></tr></table></figure></div>
-<h4 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h4><p>HTTP, Hypertext Transfer Protocol, 超文本传输协议</p>
-<p>HTTP是一个基于“请求与响应”模式的、无状态的应用层协议。</p>
-<p>HTTP协议采用URL作为定位网络资源的标识。</p>
-<p><strong>URL格式：</strong> <code>http://host[ :port ][ path ]</code></p>
-<p>HTTP URL的理解：</p>
-<p>URL 是通过HTTP协议存取资源的Internet路径，一个URL对应一个数据资源。</p>
-<h4 id="HTTP协议对资源的操作"><a href="#HTTP协议对资源的操作" class="headerlink" title="HTTP协议对资源的操作"></a>HTTP协议对资源的操作</h4><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">方法</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">GET</td>
-<td style="text-align:center">请求获取URL位置的资源</td>
-</tr>
-<tr>
-<td style="text-align:center">HEAD</td>
-<td style="text-align:center">请求获取URL位置资源的响应消息报告，即获取该资源的头部信息</td>
-</tr>
-<tr>
-<td style="text-align:center">POST</td>
-<td style="text-align:center">请求URL位置的资源后附加新的数据</td>
-</tr>
-<tr>
-<td style="text-align:center">PUT</td>
-<td style="text-align:center">请求向URL位置存储一个资源，覆盖原URL位置的资源</td>
-</tr>
-<tr>
-<td style="text-align:center">PATCH</td>
-<td style="text-align:center">请求局部更新URL位置的资源，即改变该处资源的部分内容</td>
-</tr>
-<tr>
-<td style="text-align:center">DELETE</td>
-<td style="text-align:center">请求删除URL位置存储的资源</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>理解PATCH和PUT的区别</strong>：</p>
-<p>假设URL位置有一组数据<code>UserInfo</code>， 包括<code>UserID</code>、<code>UserName</code>等20个字段</p>
-<p> 需求：用户修改了<code>UserName</code>，其他不变。</p>
-<p>采用PATCH，仅向URL提交<code>UserName</code>的更新请求。</p>
-<p>采用PUT，必须将所有20个字段一并提交URL，未提交字段被删除。<br>PATCH的好处：节省网络带宽</p>
-]]></content>
-      <categories>
-        <category>Python</category>
-        <category>python爬虫</category>
-      </categories>
-      <tags>
-        <tag>Requests库</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Requests库的7个主要方法</title>
-    <url>/posts/c671c604/</url>
-    <content><![CDATA[<h3 id="Requests库的7个主要方法"><a href="#Requests库的7个主要方法" class="headerlink" title="Requests库的7个主要方法"></a>Requests库的7个主要方法</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">方法</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">requests.request()</td>
-<td style="text-align:center">构造一个请求，支撑以下各方法的基础方法</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.get()</td>
-<td style="text-align:center">获取HTML网页的主要方法，对应于HTTP的GET</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.head()</td>
-<td style="text-align:center">获取HTML网页头信息的方法，对应于HTTP的HEAD</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.post()</td>
-<td style="text-align:center">向HTML网页提交POST请求的方法，对应于HTTP的POST</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.put()</td>
-<td style="text-align:center">向HTML网页提交PUT请求的方法，对应于HTTP的PUT</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.patch()</td>
-<td style="text-align:center">向HTML网页提交局部修改请求，对应于HTTP的PATCH</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.delete()</td>
-<td style="text-align:center">向HTML页面提交删除请求，对应HTTP的DELETE</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h4 id="requests库的主要方法-基础方法"><a href="#requests库的主要方法-基础方法" class="headerlink" title="requests库的主要方法(基础方法)"></a>requests库的主要方法(基础方法)</h4><p><code>requests.request(method, url, **kwargs)</code></p>
-<ul>
-<li><strong>method:</strong>请求方式，对应get/put/post等7种<ul>
-<li><code>r = requests.request(&#39;GET&#39;,url, **kwargs)</code></li>
-<li><code>r = requsts.request(&#39;HEAD&#39;,url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;POST&#39;,url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;PATCH&#39;,url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;delete&#39;, url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;OPTIONS&#39;,url, **kwargs)</code></li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><strong>url:</strong>拟获取页面的URL链接</li>
-<li><code>**kwargs</code>: 控制访问的参数，共13个<ul>
-<li>1)<code>params</code>:字典或字节序列，作为参数增加到URL中</li>
-<li>2)<code>data</code>: 字典、字节序列或者文件对象，作为Request的内容</li>
-<li>3)<code>json</code> : JSON格式数据，作为Request内容</li>
-<li>4)<code>headers</code> : 字典，HTTP定制头</li>
-<li>5)<code>cookies</code> : 字典或CookieJar，Request中的cookie</li>
-<li>6)<code>auth</code> : 元组，支持HTTP认证功能</li>
-<li>7)<code>files</code> : 字典类型，传输文件</li>
-<li>8)<code>timeout</code> : 设定的超时时间，秒为单位</li>
-<li>9)<code>proxies</code> : 字典类型，设定访问代理服务器，可以增加登录认证</li>
-<li>10)<code>allow_redirects</code> : True/False, 默认为True,重定向开关</li>
-<li>11)<code>stream</code> : True/False, 默认为True ,获取内容立即下载开关</li>
-<li>12)<code>verify</code> : True/False , 默认为True ， 认证SSL证书开关</li>
-<li>13) <code>cert</code> : 本地SSL证书路径<h4 id="requests-get-方法："><a href="#requests-get-方法：" class="headerlink" title="requests.get()方法："></a>requests.get()方法：</h4></li>
-</ul>
-</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.get(url)    <span class="comment">#构造一个向服务器请求资源的Request对象</span></span><br><span class="line"><span class="comment">#返回一个包含服务器资源的Response对象</span></span><br></pre></td></tr></table></figure></div>
-<p>完整方法：<code>requests.get(url, params=None, **kwargs)</code></p>
-<p><code>url</code>: 拟获取页面的url链接</p>
-<p> <code>params</code>: url中的额外参数， 字典或字节流格式， 可选</p>
-<p><code>**kwargs</code> : 12个控制访问的参数，与request()的一样</p>
-<p>实际上是这样的：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(url, params=None, **kwargs)</span>:</span></span><br><span class="line">    <span class="comment">#Sends a GET request.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#:param url: URL for the new :class :'Request' object.</span></span><br><span class="line">    <span class="comment">#:param params: (optional) Dictionary ro bytes to be sent in the query</span></span><br><span class="line">    <span class="comment">#:return: :class :'Request &lt;Response&gt;' object</span></span><br><span class="line">    <span class="comment">#:rtype: requests.Response</span></span><br><span class="line">    </span><br><span class="line">    kwargs.setdefault(<span class="string">'allow redirect'</span>, <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> request(<span class="string">'get'</span>, url, params=params, **kwargs)</span><br></pre></td></tr></table></figure></div>
-<p>例子：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.get(<span class="string">"http://www.baidu.com"</span>)</span><br><span class="line">print(r)</span><br><span class="line">type(r)</span><br><span class="line">r.headers</span><br><span class="line"></span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">200</span></span><br><span class="line"><span class="string">&lt;class 'requests.models.Response'&gt;</span></span><br><span class="line"><span class="string">&#123;'Transfer-Encoding': 'chunked', 'Pragma': 'no-cache', 'Connection': 'Keep-Alive', 'Last-Modified': 'Mon, 23 Jan 2017 13:27:52 GMT', 'Cache-Control': 'private, no-cache, no-store, proxy-revalidate, no-transform', 'Server': 'bfe/1.0.8.18', 'Set-Cookie': 'BDORZ=27315; max-age=86400; domain=.baidu.com; path=/', 'Content-Encoding': 'gzip', 'Date': 'Sat, 15 Jul 2017 13:27:01 GMT', 'Content-Type': 'text/html'&#125;</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
-<h4 id="Response对象的属性"><a href="#Response对象的属性" class="headerlink" title="Response对象的属性"></a>Response对象的属性</h4><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">属性</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">r.status_code</td>
-<td style="text-align:center">HTTP请求的返回状态，200表示连接成功，404表示失败</td>
-</tr>
-<tr>
-<td style="text-align:center">r.text</td>
-<td style="text-align:center">HTTP响应内容的字符串形式，即，url对应的页面内容</td>
-</tr>
-<tr>
-<td style="text-align:center">r.encoding</td>
-<td style="text-align:center">从HTTP header中猜测的响应内容编码方式</td>
-</tr>
-<tr>
-<td style="text-align:center">r.apparent_encoding</td>
-<td style="text-align:center">从内容中分析出的响应内容编码方式(备用编码凡是)</td>
-</tr>
-<tr>
-<td style="text-align:center">r.content</td>
-<td style="text-align:center">HTTP响应内容的二进制形式</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>[注]：<code>r.encoding</code>: 如果<code>header</code>中不存在<code>charset</code>， 则认为编码为<code>ISO-8859-1</code></p>
-<h4 id="Requests库的head-方法"><a href="#Requests库的head-方法" class="headerlink" title="Requests库的head()方法"></a>Requests库的head()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.head(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line">r.headers</span><br><span class="line">r.text</span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">&#123;'Access-Control-Allow-Credentials': 'true', 'X-Processed-Time': '0.000805139541626', 'Via': '1.1 vegur', 'Access-Control-Allow-Origin': '*', 'X-Powered-By': 'Flask', 'Content-Length': '267', 'Server': 'meinheld/0.6.1', 'Content-Type': 'application/json', 'Date': 'Sat, 15 Jul 2017 14:23:41 GMT', 'Connection': 'keep-alive'&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'' -- r.text</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
-<h4 id="Requests库的post-方法"><a href="#Requests库的post-方法" class="headerlink" title="Requests库的post()方法"></a>Requests库的post()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = payload)</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = <span class="string">'ABC'</span>)</span><br><span class="line"><span class="comment">#向URL POST一个字典自动编码为form(表单)</span></span><br><span class="line">print(r.text)</span><br><span class="line"><span class="string">"""输出:</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "args": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "data": "ABC",    --- &gt; 向URLPOST一个字符串，自动编码为data</span></span><br><span class="line"><span class="string">  "files": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "form": &#123;</span></span><br><span class="line"><span class="string">    "key1": "value1", </span></span><br><span class="line"><span class="string">    "key2": "value2"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "headers": &#123;</span></span><br><span class="line"><span class="string">    "Accept": "*/*", </span></span><br><span class="line"><span class="string">    "Accept-Encoding": "gzip, deflate", </span></span><br><span class="line"><span class="string">    "Connection": "close", </span></span><br><span class="line"><span class="string">    "Content-Length": "23", </span></span><br><span class="line"><span class="string">    "Content-Type": "application/x-www-form-urlencoded", </span></span><br><span class="line"><span class="string">    "Host": "httpbin.org", </span></span><br><span class="line"><span class="string">    "User-Agent": "python-requests/2.18.1"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "json": null, </span></span><br><span class="line"><span class="string">  "origin": "120.85.181.141", </span></span><br><span class="line"><span class="string">  "url": "http://httpbin.org/post"</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
-<h4 id="Requests库的put-方法"><a href="#Requests库的put-方法" class="headerlink" title="Requests库的put()方法"></a>Requests库的put()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.put(<span class="string">'http://httpbin.org/put'</span>, data = payload)</span><br><span class="line">print(r.text)</span><br><span class="line"><span class="comment">#此方法与post方法类似，只不过是替换了URL位置上资源的内容</span></span><br></pre></td></tr></table></figure></div>
-]]></content>
-      <categories>
-        <category>Python</category>
-        <category>python爬虫</category>
-      </categories>
-      <tags>
-        <tag>Requests库</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>正则表达式基本使用</title>
     <url>/posts/f85f3c07/</url>
     <content><![CDATA[<p>regular expression regex  RE</p>
@@ -600,8 +354,137 @@
         <category>python爬虫</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>regex基础</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Requests库的7个主要方法</title>
+    <url>/posts/c671c604/</url>
+    <content><![CDATA[<h3 id="Requests库的7个主要方法"><a href="#Requests库的7个主要方法" class="headerlink" title="Requests库的7个主要方法"></a>Requests库的7个主要方法</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">requests.request()</td>
+<td style="text-align:center">构造一个请求，支撑以下各方法的基础方法</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.get()</td>
+<td style="text-align:center">获取HTML网页的主要方法，对应于HTTP的GET</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.head()</td>
+<td style="text-align:center">获取HTML网页头信息的方法，对应于HTTP的HEAD</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.post()</td>
+<td style="text-align:center">向HTML网页提交POST请求的方法，对应于HTTP的POST</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.put()</td>
+<td style="text-align:center">向HTML网页提交PUT请求的方法，对应于HTTP的PUT</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.patch()</td>
+<td style="text-align:center">向HTML网页提交局部修改请求，对应于HTTP的PATCH</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.delete()</td>
+<td style="text-align:center">向HTML页面提交删除请求，对应HTTP的DELETE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="requests库的主要方法-基础方法"><a href="#requests库的主要方法-基础方法" class="headerlink" title="requests库的主要方法(基础方法)"></a>requests库的主要方法(基础方法)</h4><p><code>requests.request(method, url, **kwargs)</code></p>
+<ul>
+<li><strong>method:</strong>请求方式，对应get/put/post等7种<ul>
+<li><code>r = requests.request(&#39;GET&#39;,url, **kwargs)</code></li>
+<li><code>r = requsts.request(&#39;HEAD&#39;,url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;POST&#39;,url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;PATCH&#39;,url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;delete&#39;, url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;OPTIONS&#39;,url, **kwargs)</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>url:</strong>拟获取页面的URL链接</li>
+<li><code>**kwargs</code>: 控制访问的参数，共13个<ul>
+<li>1)<code>params</code>:字典或字节序列，作为参数增加到URL中</li>
+<li>2)<code>data</code>: 字典、字节序列或者文件对象，作为Request的内容</li>
+<li>3)<code>json</code> : JSON格式数据，作为Request内容</li>
+<li>4)<code>headers</code> : 字典，HTTP定制头</li>
+<li>5)<code>cookies</code> : 字典或CookieJar，Request中的cookie</li>
+<li>6)<code>auth</code> : 元组，支持HTTP认证功能</li>
+<li>7)<code>files</code> : 字典类型，传输文件</li>
+<li>8)<code>timeout</code> : 设定的超时时间，秒为单位</li>
+<li>9)<code>proxies</code> : 字典类型，设定访问代理服务器，可以增加登录认证</li>
+<li>10)<code>allow_redirects</code> : True/False, 默认为True,重定向开关</li>
+<li>11)<code>stream</code> : True/False, 默认为True ,获取内容立即下载开关</li>
+<li>12)<code>verify</code> : True/False , 默认为True ， 认证SSL证书开关</li>
+<li>13) <code>cert</code> : 本地SSL证书路径<h4 id="requests-get-方法："><a href="#requests-get-方法：" class="headerlink" title="requests.get()方法："></a>requests.get()方法：</h4></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.get(url)    <span class="comment">#构造一个向服务器请求资源的Request对象</span></span><br><span class="line"><span class="comment">#返回一个包含服务器资源的Response对象</span></span><br></pre></td></tr></table></figure></div>
+<p>完整方法：<code>requests.get(url, params=None, **kwargs)</code></p>
+<p><code>url</code>: 拟获取页面的url链接</p>
+<p> <code>params</code>: url中的额外参数， 字典或字节流格式， 可选</p>
+<p><code>**kwargs</code> : 12个控制访问的参数，与request()的一样</p>
+<p>实际上是这样的：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(url, params=None, **kwargs)</span>:</span></span><br><span class="line">    <span class="comment">#Sends a GET request.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#:param url: URL for the new :class :'Request' object.</span></span><br><span class="line">    <span class="comment">#:param params: (optional) Dictionary ro bytes to be sent in the query</span></span><br><span class="line">    <span class="comment">#:return: :class :'Request &lt;Response&gt;' object</span></span><br><span class="line">    <span class="comment">#:rtype: requests.Response</span></span><br><span class="line">    </span><br><span class="line">    kwargs.setdefault(<span class="string">'allow redirect'</span>, <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> request(<span class="string">'get'</span>, url, params=params, **kwargs)</span><br></pre></td></tr></table></figure></div>
+<p>例子：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.get(<span class="string">"http://www.baidu.com"</span>)</span><br><span class="line">print(r)</span><br><span class="line">type(r)</span><br><span class="line">r.headers</span><br><span class="line"></span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">200</span></span><br><span class="line"><span class="string">&lt;class 'requests.models.Response'&gt;</span></span><br><span class="line"><span class="string">&#123;'Transfer-Encoding': 'chunked', 'Pragma': 'no-cache', 'Connection': 'Keep-Alive', 'Last-Modified': 'Mon, 23 Jan 2017 13:27:52 GMT', 'Cache-Control': 'private, no-cache, no-store, proxy-revalidate, no-transform', 'Server': 'bfe/1.0.8.18', 'Set-Cookie': 'BDORZ=27315; max-age=86400; domain=.baidu.com; path=/', 'Content-Encoding': 'gzip', 'Date': 'Sat, 15 Jul 2017 13:27:01 GMT', 'Content-Type': 'text/html'&#125;</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
+<h4 id="Response对象的属性"><a href="#Response对象的属性" class="headerlink" title="Response对象的属性"></a>Response对象的属性</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">属性</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">r.status_code</td>
+<td style="text-align:center">HTTP请求的返回状态，200表示连接成功，404表示失败</td>
+</tr>
+<tr>
+<td style="text-align:center">r.text</td>
+<td style="text-align:center">HTTP响应内容的字符串形式，即，url对应的页面内容</td>
+</tr>
+<tr>
+<td style="text-align:center">r.encoding</td>
+<td style="text-align:center">从HTTP header中猜测的响应内容编码方式</td>
+</tr>
+<tr>
+<td style="text-align:center">r.apparent_encoding</td>
+<td style="text-align:center">从内容中分析出的响应内容编码方式(备用编码凡是)</td>
+</tr>
+<tr>
+<td style="text-align:center">r.content</td>
+<td style="text-align:center">HTTP响应内容的二进制形式</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>[注]：<code>r.encoding</code>: 如果<code>header</code>中不存在<code>charset</code>， 则认为编码为<code>ISO-8859-1</code></p>
+<h4 id="Requests库的head-方法"><a href="#Requests库的head-方法" class="headerlink" title="Requests库的head()方法"></a>Requests库的head()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.head(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line">r.headers</span><br><span class="line">r.text</span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">&#123;'Access-Control-Allow-Credentials': 'true', 'X-Processed-Time': '0.000805139541626', 'Via': '1.1 vegur', 'Access-Control-Allow-Origin': '*', 'X-Powered-By': 'Flask', 'Content-Length': '267', 'Server': 'meinheld/0.6.1', 'Content-Type': 'application/json', 'Date': 'Sat, 15 Jul 2017 14:23:41 GMT', 'Connection': 'keep-alive'&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'' -- r.text</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
+<h4 id="Requests库的post-方法"><a href="#Requests库的post-方法" class="headerlink" title="Requests库的post()方法"></a>Requests库的post()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = payload)</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = <span class="string">'ABC'</span>)</span><br><span class="line"><span class="comment">#向URL POST一个字典自动编码为form(表单)</span></span><br><span class="line">print(r.text)</span><br><span class="line"><span class="string">"""输出:</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "args": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "data": "ABC",    --- &gt; 向URLPOST一个字符串，自动编码为data</span></span><br><span class="line"><span class="string">  "files": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "form": &#123;</span></span><br><span class="line"><span class="string">    "key1": "value1", </span></span><br><span class="line"><span class="string">    "key2": "value2"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "headers": &#123;</span></span><br><span class="line"><span class="string">    "Accept": "*/*", </span></span><br><span class="line"><span class="string">    "Accept-Encoding": "gzip, deflate", </span></span><br><span class="line"><span class="string">    "Connection": "close", </span></span><br><span class="line"><span class="string">    "Content-Length": "23", </span></span><br><span class="line"><span class="string">    "Content-Type": "application/x-www-form-urlencoded", </span></span><br><span class="line"><span class="string">    "Host": "httpbin.org", </span></span><br><span class="line"><span class="string">    "User-Agent": "python-requests/2.18.1"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "json": null, </span></span><br><span class="line"><span class="string">  "origin": "120.85.181.141", </span></span><br><span class="line"><span class="string">  "url": "http://httpbin.org/post"</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
+<h4 id="Requests库的put-方法"><a href="#Requests库的put-方法" class="headerlink" title="Requests库的put()方法"></a>Requests库的put()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.put(<span class="string">'http://httpbin.org/put'</span>, data = payload)</span><br><span class="line">print(r.text)</span><br><span class="line"><span class="comment">#此方法与post方法类似，只不过是替换了URL位置上资源的内容</span></span><br></pre></td></tr></table></figure></div>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>python爬虫</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>Requests库</tag>
       </tags>
   </entry>
   <entry>
@@ -667,6 +550,123 @@
       </categories>
       <tags>
         <tag>Spider demo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>理解Requests库的异常和HTTP协议</title>
+    <url>/posts/4ae864e2/</url>
+    <content><![CDATA[<p>简单理解Requests库中的异常和HTTP协议。</p>
+<a id="more"></a>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">异常</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">requests.ConnectionError</td>
+<td style="text-align:center">网络连接错误异常，如DNS查询失败、拒绝连接等</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.HTTPError</td>
+<td style="text-align:center">HTTP错误异常</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.URLRequired</td>
+<td style="text-align:center">URl缺失异常</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.TooManyRedirects</td>
+<td style="text-align:center">超过最大重定向次数，产生重定向异常</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.ConnectTimeout</td>
+<td style="text-align:center">连接远程服务器超时异常</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.Timeout</td>
+<td style="text-align:center">请求URL超时，产生超时异常</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Response的异常：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">异常</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">r.raise_for_status()</td>
+<td style="text-align:center">如果不是200， 产生异常requests.HTTPError</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>爬取网页的通用代码框架</strong></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getHTMLText</span><span class="params">(url)</span> :</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        r = requests.get(url, timeout=<span class="number">30</span>)</span><br><span class="line">        r.raise_for_status() <span class="comment">#如果状态不是200， 引发requests.HTTPError异常</span></span><br><span class="line">        r.encoding = r.apparent_encoding <span class="comment">#将encoding 设置为'utf-8'，一般用于没有charset的header</span></span><br><span class="line">        <span class="keyword">return</span> r.text</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'产生异常'</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    url = <span class="string">"http://www.baidu.com"</span></span><br><span class="line">    print(getHTMLText(url))</span><br></pre></td></tr></table></figure></div>
+<h4 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h4><p>HTTP, Hypertext Transfer Protocol, 超文本传输协议</p>
+<p>HTTP是一个基于“请求与响应”模式的、无状态的应用层协议。</p>
+<p>HTTP协议采用URL作为定位网络资源的标识。</p>
+<p><strong>URL格式：</strong> <code>http://host[ :port ][ path ]</code></p>
+<p>HTTP URL的理解：</p>
+<p>URL 是通过HTTP协议存取资源的Internet路径，一个URL对应一个数据资源。</p>
+<h4 id="HTTP协议对资源的操作"><a href="#HTTP协议对资源的操作" class="headerlink" title="HTTP协议对资源的操作"></a>HTTP协议对资源的操作</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">GET</td>
+<td style="text-align:center">请求获取URL位置的资源</td>
+</tr>
+<tr>
+<td style="text-align:center">HEAD</td>
+<td style="text-align:center">请求获取URL位置资源的响应消息报告，即获取该资源的头部信息</td>
+</tr>
+<tr>
+<td style="text-align:center">POST</td>
+<td style="text-align:center">请求URL位置的资源后附加新的数据</td>
+</tr>
+<tr>
+<td style="text-align:center">PUT</td>
+<td style="text-align:center">请求向URL位置存储一个资源，覆盖原URL位置的资源</td>
+</tr>
+<tr>
+<td style="text-align:center">PATCH</td>
+<td style="text-align:center">请求局部更新URL位置的资源，即改变该处资源的部分内容</td>
+</tr>
+<tr>
+<td style="text-align:center">DELETE</td>
+<td style="text-align:center">请求删除URL位置存储的资源</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>理解PATCH和PUT的区别</strong>：</p>
+<p>假设URL位置有一组数据<code>UserInfo</code>， 包括<code>UserID</code>、<code>UserName</code>等20个字段</p>
+<p> 需求：用户修改了<code>UserName</code>，其他不变。</p>
+<p>采用PATCH，仅向URL提交<code>UserName</code>的更新请求。</p>
+<p>采用PUT，必须将所有20个字段一并提交URL，未提交字段被删除。<br>PATCH的好处：节省网络带宽</p>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>python爬虫</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+        <tag>Requests库</tag>
       </tags>
   </entry>
   <entry>
@@ -746,67 +746,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PPP 点对点通信验证</title>
-    <url>/posts/28ff89ad/</url>
-    <content><![CDATA[<p><img src="/images/ppp通信验证/structure.png" alt></p>
-<p>使用Cisco Packet Tracer7 (思科网络模拟器)验证ppp点对点通信。</p>
-<a id="more"></a>
-<h3 id="实验内容"><a href="#实验内容" class="headerlink" title="实验内容"></a>实验内容</h3><p>使用<code>packet Tracer</code> 模拟两台路由器，进行点对点通信测试。</p>
-<h3 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h3><h4 id="配置路由器"><a href="#配置路由器" class="headerlink" title="配置路由器"></a>配置路由器</h4><p>由于只需要验证点对点通信，对路由器的配置，相对比较简单，<br>路由器之间使用的是serial DCE 串口线相连。</p>
-<p>配置Router1的<code>serial 2/0</code>串口为ip: <code>11.0.0.1</code> mask: <code>255.0.0.0</code>,并配置时钟频率为<code>64000</code></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Router&gt; enable</span><br><span class="line">Router# configure terminal</span><br><span class="line">Router(config) # hostname RA</span><br><span class="line">RA (config) # interface serial 2/0</span><br><span class="line">RA (config) # no shutdown</span><br><span class="line">RA (config-if) # ip address 11.0.0.1 255.0.0.0</span><br><span class="line">RA (config-if) # clock rate 64000</span><br></pre></td></tr></table></figure></div>
-<p>配置Router2的<code>serial 3/0</code> 串口为ip: <code>11.0.0.2</code> mask： <code>255.0.0.0</code></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Router&gt; enable</span><br><span class="line">Router# configure terminal</span><br><span class="line">Router(config) # hostname RB</span><br><span class="line">RB (config) # interface serial 3/0</span><br><span class="line">RB (config) # no shutdown</span><br><span class="line">RB (config-if) # ip address 11.0.0.2 255.0.0.0</span><br></pre></td></tr></table></figure></div>
-<ul>
-<li>查看两个路由的串口状态：</li>
-</ul>
-<p><code>RA</code>:</p>
-<p><img src="hdsl_rt1.png" alt="RA serial 2/0"></p>
-<p><code>RB</code>:</p>
-<p><img src="hdsl_rt2.png" alt="RB serial 3/0"></p>
-<p>可以看到，路由器这里点对点通信默认使用的<code>HDLC</code>(High Level Data Link Control, 面向比特的同步协议)协议。</p>
-<h4 id="HDLC情况下验证ping："><a href="#HDLC情况下验证ping：" class="headerlink" title="HDLC情况下验证ping："></a>HDLC情况下验证ping：</h4><p><code>11.0.0.1</code> ping <code>11.0.0.2</code>:</p>
-<p><img src="hdlc_ping_rt1.png" alt="RA ping Test"></p>
-<p><code>11.0.0.2</code> ping <code>11.0.0.1</code>:</p>
-<p><img src="hdlc_ping_rt2.png" alt="RB ping Test"></p>
-<p>ping 测试成功。</p>
-<h4 id="配置RA-RB使用ppp协议，再做ping测试："><a href="#配置RA-RB使用ppp协议，再做ping测试：" class="headerlink" title="配置RA,RB使用ppp协议，再做ping测试："></a>配置RA,RB使用ppp协议，再做ping测试：</h4><ul>
-<li>先配置<code>RA</code> 使用 <code>ppp</code>协议：</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RA # configure terminal</span><br><span class="line">RA (config) # interface serial 2/0</span><br><span class="line">RA (config-if) # encapsulation ppp</span><br></pre></td></tr></table></figure></div>
-<p><img src="RA_ppp_setting.png" alt="RA serial 2/0"></p>
-<p>可以看到<code>RA</code>当前使用的是<code>ppp</code>写协议，<code>LCP</code>处于<code>Closed</code>,此时，路由器应当无法进行点对点通信。</p>
-<p><img src="RA_ppp_fTest.png" alt="ping Test"></p>
-<ul>
-<li>配置<code>RB</code>使用<code>ppp</code>协议：</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RB # configure terminal</span><br><span class="line">RB (config) # interface serial 3/0</span><br><span class="line">RB (config-if) # encapsulation ppp</span><br></pre></td></tr></table></figure></div>
-<p><img src="RB_ppp_setting.png" alt="RB serial 3/0"></p>
-<p>这时，可以看到<code>RB</code>也是使用了<code>ppp</code>协议，且<code>LCP</code>也处于<code>Open</code>状态，路由器之间可以进行通信。</p>
-<p><img src="RB_ppp_sTest.png" alt="ping Test"></p>
-<h4 id="给ppp协议添加authentication鉴别"><a href="#给ppp协议添加authentication鉴别" class="headerlink" title="给ppp协议添加authentication鉴别"></a>给ppp协议添加authentication鉴别</h4><ul>
-<li>先配置<code>RA</code>，使其开启<code>ppp chap</code> (Challenge Handshake Authentication Protocol), 给<code>RB</code> 添加身份验证</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RA # config terminal</span><br><span class="line">RA (config) # username RB password password</span><br><span class="line">RA (config) # interface serial 2/0</span><br><span class="line">RA (config-if) # ppp authentication chap</span><br></pre></td></tr></table></figure></div>
-<p><img src="RA_ppp_au.png" alt="RA serial 2/0"></p>
-<p>此时，虽然<code>RA</code>和<code>RB</code>都是使用<code>ppp</code>协议，但是<code>RA</code>给<code>RB</code>添加了身份认证，而<code>RB</code>则没有，此时<code>LCP</code>处于<code>Closed</code>状态，它们之间无法进行通信。</p>
-<ul>
-<li>配置<code>RB</code>, 添加对<code>RA</code>的身份验证：</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RB # config terminal</span><br><span class="line">RB (config) # username RA password password</span><br><span class="line">RB (config) # interface serial 2/0</span><br><span class="line">RB (config-if) # ppp authentication chap</span><br></pre></td></tr></table></figure></div>
-<p><img src="RB_ppp_au.png" alt="RB serial 3/0"></p>
-<p>可以看到此时，<code>LCP</code>已经打开，路由器之间可以进行点对点通信。</p>
-<p><img src="RB_ping_final.png" alt="ping"></p>
-<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p>通过该实验，简单地验证了<code>ppp</code>协议在点对点信道中的使用。</p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>ppp通信</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>编译自己的Vim8.1</title>
     <url>/posts/97c4fd12/</url>
     <content><![CDATA[<p>最近换了<code>Manjaro</code> linux系统，发现通过系统<code>pacman -S vim</code>安装的无图形版本<code>vim</code>不支持<code>clipboard</code>功能。</p>
@@ -883,6 +822,67 @@
       <tags>
         <tag>linux</tag>
         <tag>markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PPP 点对点通信验证</title>
+    <url>/posts/28ff89ad/</url>
+    <content><![CDATA[<p><img src="/images/ppp通信验证/structure.png" alt></p>
+<p>使用Cisco Packet Tracer7 (思科网络模拟器)验证ppp点对点通信。</p>
+<a id="more"></a>
+<h3 id="实验内容"><a href="#实验内容" class="headerlink" title="实验内容"></a>实验内容</h3><p>使用<code>packet Tracer</code> 模拟两台路由器，进行点对点通信测试。</p>
+<h3 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h3><h4 id="配置路由器"><a href="#配置路由器" class="headerlink" title="配置路由器"></a>配置路由器</h4><p>由于只需要验证点对点通信，对路由器的配置，相对比较简单，<br>路由器之间使用的是serial DCE 串口线相连。</p>
+<p>配置Router1的<code>serial 2/0</code>串口为ip: <code>11.0.0.1</code> mask: <code>255.0.0.0</code>,并配置时钟频率为<code>64000</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Router&gt; enable</span><br><span class="line">Router# configure terminal</span><br><span class="line">Router(config) # hostname RA</span><br><span class="line">RA (config) # interface serial 2/0</span><br><span class="line">RA (config) # no shutdown</span><br><span class="line">RA (config-if) # ip address 11.0.0.1 255.0.0.0</span><br><span class="line">RA (config-if) # clock rate 64000</span><br></pre></td></tr></table></figure></div>
+<p>配置Router2的<code>serial 3/0</code> 串口为ip: <code>11.0.0.2</code> mask： <code>255.0.0.0</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Router&gt; enable</span><br><span class="line">Router# configure terminal</span><br><span class="line">Router(config) # hostname RB</span><br><span class="line">RB (config) # interface serial 3/0</span><br><span class="line">RB (config) # no shutdown</span><br><span class="line">RB (config-if) # ip address 11.0.0.2 255.0.0.0</span><br></pre></td></tr></table></figure></div>
+<ul>
+<li>查看两个路由的串口状态：</li>
+</ul>
+<p><code>RA</code>:</p>
+<p><img src="hdsl_rt1.png" alt="RA serial 2/0"></p>
+<p><code>RB</code>:</p>
+<p><img src="hdsl_rt2.png" alt="RB serial 3/0"></p>
+<p>可以看到，路由器这里点对点通信默认使用的<code>HDLC</code>(High Level Data Link Control, 面向比特的同步协议)协议。</p>
+<h4 id="HDLC情况下验证ping："><a href="#HDLC情况下验证ping：" class="headerlink" title="HDLC情况下验证ping："></a>HDLC情况下验证ping：</h4><p><code>11.0.0.1</code> ping <code>11.0.0.2</code>:</p>
+<p><img src="hdlc_ping_rt1.png" alt="RA ping Test"></p>
+<p><code>11.0.0.2</code> ping <code>11.0.0.1</code>:</p>
+<p><img src="hdlc_ping_rt2.png" alt="RB ping Test"></p>
+<p>ping 测试成功。</p>
+<h4 id="配置RA-RB使用ppp协议，再做ping测试："><a href="#配置RA-RB使用ppp协议，再做ping测试：" class="headerlink" title="配置RA,RB使用ppp协议，再做ping测试："></a>配置RA,RB使用ppp协议，再做ping测试：</h4><ul>
+<li>先配置<code>RA</code> 使用 <code>ppp</code>协议：</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RA # configure terminal</span><br><span class="line">RA (config) # interface serial 2/0</span><br><span class="line">RA (config-if) # encapsulation ppp</span><br></pre></td></tr></table></figure></div>
+<p><img src="RA_ppp_setting.png" alt="RA serial 2/0"></p>
+<p>可以看到<code>RA</code>当前使用的是<code>ppp</code>写协议，<code>LCP</code>处于<code>Closed</code>,此时，路由器应当无法进行点对点通信。</p>
+<p><img src="RA_ppp_fTest.png" alt="ping Test"></p>
+<ul>
+<li>配置<code>RB</code>使用<code>ppp</code>协议：</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RB # configure terminal</span><br><span class="line">RB (config) # interface serial 3/0</span><br><span class="line">RB (config-if) # encapsulation ppp</span><br></pre></td></tr></table></figure></div>
+<p><img src="RB_ppp_setting.png" alt="RB serial 3/0"></p>
+<p>这时，可以看到<code>RB</code>也是使用了<code>ppp</code>协议，且<code>LCP</code>也处于<code>Open</code>状态，路由器之间可以进行通信。</p>
+<p><img src="RB_ppp_sTest.png" alt="ping Test"></p>
+<h4 id="给ppp协议添加authentication鉴别"><a href="#给ppp协议添加authentication鉴别" class="headerlink" title="给ppp协议添加authentication鉴别"></a>给ppp协议添加authentication鉴别</h4><ul>
+<li>先配置<code>RA</code>，使其开启<code>ppp chap</code> (Challenge Handshake Authentication Protocol), 给<code>RB</code> 添加身份验证</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RA # config terminal</span><br><span class="line">RA (config) # username RB password password</span><br><span class="line">RA (config) # interface serial 2/0</span><br><span class="line">RA (config-if) # ppp authentication chap</span><br></pre></td></tr></table></figure></div>
+<p><img src="RA_ppp_au.png" alt="RA serial 2/0"></p>
+<p>此时，虽然<code>RA</code>和<code>RB</code>都是使用<code>ppp</code>协议，但是<code>RA</code>给<code>RB</code>添加了身份认证，而<code>RB</code>则没有，此时<code>LCP</code>处于<code>Closed</code>状态，它们之间无法进行通信。</p>
+<ul>
+<li>配置<code>RB</code>, 添加对<code>RA</code>的身份验证：</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">RB # config terminal</span><br><span class="line">RB (config) # username RA password password</span><br><span class="line">RB (config) # interface serial 2/0</span><br><span class="line">RB (config-if) # ppp authentication chap</span><br></pre></td></tr></table></figure></div>
+<p><img src="RB_ppp_au.png" alt="RB serial 3/0"></p>
+<p>可以看到此时，<code>LCP</code>已经打开，路由器之间可以进行点对点通信。</p>
+<p><img src="RB_ping_final.png" alt="ping"></p>
+<h3 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h3><p>通过该实验，简单地验证了<code>ppp</code>协议在点对点信道中的使用。</p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>ppp通信</tag>
       </tags>
   </entry>
   <entry>
@@ -1704,160 +1704,6 @@ tr_2 = ((x_0,\emptyset),\sigma_0,(x^2_1,f^2_1),...,(x^2_k,f^2),\\
       </tags>
   </entry>
   <entry>
-    <title>The Notion of the Diagnosability</title>
-    <url>/posts/57ea30e/</url>
-    <content><![CDATA[<blockquote>
-<p>文献内容翻译：可诊断性概念<br>authors: Meera Sampath, Raja Sengupta, StCphane Lafortune, Member, IEEE, Kasim Sinnamohideen, Member, IEEE, and Demosthenis Teneketzis, Member, IEEE<br>原文: <a href="https://ieeexplore.ieee.org/document/412626" target="_blank" rel="noopener">Diagnosability of discrete-event systems</a></p>
-</blockquote>
-<a id="more"></a>
-<h2 id="A-The-System-Model"><a href="#A-The-System-Model" class="headerlink" title="A. The System Model"></a>A. The System Model</h2><p>待诊断系统通常使用一个 FSM 或生成器（generator）来进行建模。</p>
-<script type="math/tex; mode=display">
-G = (X, \Sigma, \delta, x_0)</script><p>其中$X$是状态空间，$\Sigma$是事件集，$\delta$是一个部分转移函数，$x_0$是系统的初始状态。系统模型$G$记录系统正常和错误行为。系统的行为使用$G$生成的前缀闭合语言$L(G)$来描述<sup><a href="#fn_1" id="reffn_1">1</a></sup>。此后，我们使用$L$直接表示$L(G)$，$L$是<script type="math/tex">\Sigma^*</script>的子集，其中<script type="math/tex">\Sigma^*</script>是事件集的 Kleene 闭包<sup><a href="#fn_2" id="reffn_2">2</a></sup>。</p>
-<p>$\Sigma$中一些事件是可观的，即它们的发生是被观测到的，其他的是不可观的。因此，事件集可以划分为<script type="math/tex">\Sigma = \Sigma_o\cup\Sigma_{uo}</script>，其中<script type="math/tex">\Sigma_o</script>表示可观事件集，而<script type="math/tex">\Sigma_{uo}</script>表示不可观事件集。系统中可观事件可能是以下情况下之一：控制器发出的指令，在执行上述命令后立即读取的传感器读数以及传感器读数的变化。不可观事件可以是错误事件或导致传感器未记录的系统状态更改（见<sup><a href="#fn_3" id="reffn_3">3</a></sup>）。</p>
-<p>令<script type="math/tex">\Sigma_f\subseteq \Sigma</script>表示待诊断的错误事件集。不失一般性地，我们假设<script type="math/tex">\Sigma_f\subseteq\Sigma_{uo}</script>，因为一个可观的错误事件显然是容易诊断的。我们的目标是根据系统生成的串来诊断是否有错误事件的发生，其中串中包含的事件均是可观的。在这种情况下，我们将错误事件集划分成多个不相交的集（disjoint set），对应表示不同的错误类型。</p>
-<script type="math/tex; mode=display">
-\Sigma_f = \Sigma_{f1}\cup\cdots\cup\Sigma_{fm}.</script><p>用$\Pi_f$表示这个划分。使用$\Pi_f$主要出于以下考虑：</p>
-<ul>
-<li>1) 仪器不足可能会导致无法诊断每个可能的错误；</li>
-<li>2) 我们可能不需要唯一标识每个错误事件的发生。我们可能只是想知道一组错误事件集中是否有一个错误事件发生了，例如，当一组错误事件对系统的影响相同时。</li>
-</ul>
-<p>此后，当我们写到”<script type="math/tex">F_i</script>类型的错误发生了“，意味着”集合<script type="math/tex">\Sigma_{fi}</script>中有错误事件发生了“。</p>
-<p>我们假设研究的系统：</p>
-<ul>
-<li>A1) 系统$G$的生成语言是活语言，即$X$中的每一个状态$x$均有定义转移，即系统不会到达一个没有事件标签的点；</li>
-<li>A2) 系统$G$中不存在任何由不可观事件形成的环，即<script type="math/tex">\exists n_o\in \mathbb{IN}</script>使得<script type="math/tex">\forall ust\in L, s\in \Sigma^*_{uo}\Rightarrow\lVert s\rVert\leq n_o</script>，其中$\lVert s\rVert$表示串$s$的长度。</li>
-</ul>
-<p>针对$L$是活语言的假设主要是为了研究简单。稍作修改，当该假设放松时，本文的所有主要结果均成立。假设2) 确保了系统生成的观察具备某些规律。由于错误的检测是基于系统的可观转移，我们要求$G$不产生任意长度的不可观事件序列。</p>
-<p>在<sup><a href="#fn_2" id="reffn_2">2</a></sup>中，我们详细讨论了用于错误诊断的离散事件系统建模。假设待诊断系统包含许多不同的物理组件以及一组传感器。我们首先为每个独立的组件构建相应的 FSM。这些模型会记录相应组件的正常和错误行为。考虑一个这样的例子，一个由泵、阀门和控制器组成的简单 HVAC 系统。Fig. 1描绘了该系统组件的模型。从组件模型和传感器图开始，然后我们生成了一个复合模型，该模型捕获了组件之间的交互并将传感器图纳入其中。这个复合模型就是我们执行错误诊断的系统$G$。</p>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="component-models-for-a-simple-HVAC-system.png">
-    <span>Fig. 1. Component models for a simple HVAC system.</span>
-</div>
-
-<p>我们在本节的系统模型上总结一些符号和生成器$G’$的结构，以便之后使用。</p>
-<p><strong>1) Notation:</strong> 空串用$\varepsilon$表示。用$\overline{s}$表示任意串<script type="math/tex">s\in\Sigma^*</script>的前缀闭包。$L$的$s$后语言用$L/s$表示，即</p>
-<script type="math/tex; mode=display">
-L/s = \{t\in\Sigma^*|st\in L\}</script><p>我们通常定义投影<script type="math/tex">P:\Sigma^*\to \Sigma^*_o</script> <sup><a href="#fn_1" id="reffn_1">1</a></sup></p>
-<script type="math/tex; mode=display">
-\begin{eqnarray}
-P(\varepsilon)& = &\varepsilon \\
-P(\sigma)& = &\sigma &if\quad \sigma\in\Sigma_o \\
-P(\sigma)& =& \varepsilon& if\quad \sigma \in \Sigma_{uo}\\
-P(s\sigma)& = &P(s)P(\sigma) &s\in \Sigma^*, \sigma\in\Sigma.
-\end{eqnarray}</script><p>换句话说，$P$简单地”清除“了串中的不可观事件。逆投影操作$P^{-1}_L$定义如下：</p>
-<script type="math/tex; mode=display">
-P^{-1}_L(y) = \{s\in L:P(s)=y\}</script><p>用$s_f$表示串$s$的最后一个事件，我们定义：</p>
-<script type="math/tex; mode=display">\Psi(\Sigma_{fi} = \{s\sigma_f\in L:\sigma_f\in \Sigma_{fi}\}</script><p>即<script type="math/tex">\Psi(\Sigma_{fi})</script>表示$L$中所有以错误类型为<script type="math/tex">F_i</script>的错误事件结尾的串的集合。考虑<script type="math/tex">\sigma\in\Sigma</script>以及<script type="math/tex">s\in\Sigma^*</script>。我们用<script type="math/tex">\sigma\in s</script>表示串$s$发生了事件<script type="math/tex">\sigma</script>。略微滥用符号，我们用<script type="math/tex">\Sigma_{fi}\in s</script>表示对于<script type="math/tex">\sigma_f\in\Sigma_{fi}</script>有<script type="math/tex">\sigma_f\in s</script>，或正式地，<script type="math/tex">\overline{s}\cap\Psi(\Sigma_{fi})\neq\emptyset</script>。我们定义</p>
-<script type="math/tex; mode=display">
-X_o = \{x_0\}\cup\{x\in X:x中包含一个可观事件\}.</script><p>用$L(G,x)$表示从$G$中状态$x$出发产生的所有串的集合，我们定义</p>
-<script type="math/tex; mode=display">
-L_o(G, x) = \{s\in L(G,x):s=u\sigma, u\in \Sigma^*_{uo}, \sigma\in \Sigma_o\}</script><p>以及</p>
-<script type="math/tex; mode=display">
-L_{\sigma}(G,x) = \{s\in L_o(G,x):s_f=\sigma\}.</script><p>其中，$L<em>o(G,x)$表示从状态$x$开始以第一个可观事件结束的所有串的集合。$$L</em>{\sigma}(G,x)$$表示$L_o(G,x)$中以一个特定可观事件结束的串的集合。</p>
-<p><strong>2) The Generator G’</strong>: 接下来的部分，我们需要特殊构造一个拥有语言$P(L)$的生成器$G’$</p>
-<script type="math/tex; mode=display">
-P(L) = \{t:t=P(s) 对于某些 s\in L\}</script><p>$G’$通常是不确定的（nondeterministic），并且它的结构如下</p>
-<script type="math/tex; mode=display">
-G' = (X_o, \Sigma_o, \delta_{G'}, x_0)</script><p>其中<script type="math/tex">X_o</script>，<script type="math/tex">\Sigma_o</script>和$x<em>0$先前已经定义过了。$G’$的转移关系由$$\delta</em>{G’}\subseteq (X_o\times\Sigma\times X_o)$$，其定义如下</p>
-<script type="math/tex; mode=display">
-(x,\sigma,x')\in \delta_{G'} \\
-如果 \delta(x,s) = x' 对于某些 s\in L_{\sigma}(G,x)</script><p>可以很轻易地验证$L(G’) = P(L)$. Figs. 4-6 展示了如果为$G$三个不同系统构造$G’$。</p>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser-Gd.png">
-    <span>Fig. 4. Example of system with F1 indeterminate cycle in its diagnoser Gd.</span>
-</div>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Example-of-a-system-with-a-cycle-of-F1-uncertain-states-in-its-diagnoser-Gd.png">
-    <span>Fig. 5. Example of system with a cycle of F1-uncertain states in its diagnoser Gd.</span>
-</div>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Another-example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser.png">
-    <span>Fig. 6. Another example of system with F1 indeterminate cycle in its diagnoser.</span>
-</div>
-
-<h2 id="B-Approaches-to-Defining-Diagnosability"><a href="#B-Approaches-to-Defining-Diagnosability" class="headerlink" title="B. Approaches to Defining Diagnosability"></a>B. Approaches to Defining Diagnosability</h2><p>我们现在准备定义可诊断性的概念。一般而言，一个语言$L$是可诊断的若它能够在有限确切延迟内，使用记录的可观事件串诊断出任意错误类型的发生。我们将给出可诊断性的两种定义方式，其中第一个定义要比第二个定义严格。我们之后将参考的概念是可诊断性和I-可诊断性。</p>
-<p><strong>Diagnosability</strong>: 通常，我们定义可诊断性如下。<br><strong>Definition 1:</strong> 一个前缀闭合语言$L$对于投影$P$和$\Sigma_f$上的错误划分$\Pi_f$是可诊断的当</p>
-<script type="math/tex; mode=display">
-(\forall i\in \Pi_f)(\exists n_i\in \mathbb{IN})[\forall s\in \Psi(\Sigma_{fi})](\forall t\in L/s) \\
-[\lVert t\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D</p>
-<script type="math/tex; mode=display">
-w \in P^{-1}_L[P(st)]\Rightarrow\Sigma_{fi}\in w</script><p>上面可诊断性的定义意味着，$s$是一个以错误事件集<script type="math/tex">\Sigma_{fi}</script>中一个错误事件结尾的串，$t$是$s$的充分长后缀。诊断条件D表示系统语言中任何一个与串$st$产生相同投影序列的串必定包含错误事件集<script type="math/tex">\Sigma_{fi}</script>中的一个错误事件。这意味着，$s$的每一个连续的$t$都可以用于在有限延迟之内，在具体最多$n$个系统状态转移之后，来诊断错误类型<script type="math/tex">F_i</script>对应错误事件的发生。换句话说，可诊断性要求系统每一个错误事件发生后，再记录更多的可观事件，以便系统诊断该错误事件的发生。</p>
-<p>来自同一个错误划分的多错误情况需要特别注意。当一个串$s$中发生同一个错误类型$F<em>i$的多个错误事件，上面的可诊断性定义不要求每一个错误事件的发生都被检测到。能够在发生第一个错误后的有限多个事件中得出串$s$中发生了错误事件集$\Sigma</em>{fi}$中的错误事件。在后面的部分中， 我们将看到这一特性是如何区分可能的多个错误发生的情况与任何划分集合中没有多个错误发生的情况。</p>
-<p>我们展示上面可诊断性概念的一个简单例子。考虑Fig. 2中表示的系统。这里$\alpha, \beta, \gamma$和$\delta$是可观事件，<script type="math/tex">\sigma_{uo}</script>是不可观事件，而<script type="math/tex">\sigma_{f1},\sigma_{f2},\sigma_{f3}</script>是错误事件，<script type="math/tex">x_0</script>是系统的初始状态<script type="math/tex">1</script>。如果选择错误划分<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1},\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f2}=\{\sigma_{f3}\}</script>，即它不需要区分错误事件<script type="math/tex">\sigma_{f1}</script>和<script type="math/tex">\sigma_{f2}</script>，对于<script type="math/tex">n_1=2</script>和<script type="math/tex">n_2=1</script>，上面的系统是可诊断的。另一方面，如果错误划分是<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}</script>，<script type="math/tex">\Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>，则系统是不可诊断的，因为它无法推断出错误事件<script type="math/tex">\sigma_{f2}</script>是否发生。</p>
-<p><strong>2) I-Diagnosability</strong>: 上面的可诊断性定义要求$L$中的所有串满足诊断条件D。我们现在提出一个宽松的可诊断性定义（术语表示为I-可诊断性），它不需要$L$的所有的串都满足诊断条件D，但适用于那些错误事件后跟与每种错误类型相关的某些指示可观事件形成的串。这种修改是出于对下面实际情况的考虑。例如，考虑一个拥有控制单元的 HVAC 系统。正常模式操作下，每当控制器检测到系统上的热负荷时，它都会发出”open value“（打开阀门）来作出响应，同样，当负载消失时，它会发出”close value“（关闭阀门）指令。假设控制器发生了错误，它无法检测到系统是否出现负荷，因此不会发出任何指令控制。假设在运行期间控制器确实发生了错误，并且进一步假设系统有可能执行任意长度的事件序列，而这不涉及任何指令。在这种情况下，很明显无法诊断任何错误的发生。根据之前的定义，这样的系统是不可诊断的。在修改后的可诊断性定义情况中，我们将”open value“和”close value“分别与指示器事件（“stuck-closed“和”stuck-open”）相关联作为指示事件，并要求系统在确定其可诊断性之前，执行”open value”事件或”close value”事件。在执行对应指示事件之后能够探测到错误事件，则系统是可诊断的，反之，若在执行指示事件之后，仍无法探测到错误事件，则系统是不可诊断的。总结一下，I-可诊断性仅需要在错误事件相关的指示事件发生后，诊断出该错误的发生。</p>
-<p>我们首先将$\Sigma_f$中的每一个错误事件与一个或多个可观指示事件相关联。令$\Sigma_I\subseteq \Sigma_o$表示指示事件集，$I_f:\Sigma_f\to 2^{\Sigma_f}$表示指示映射函数（indicator map）。接着，我们选择一个$\Sigma_f$的一个错误划分，使得</p>
-<script type="math/tex; mode=display">
-\bigcup_{i\in \Pi_f}\Sigma_{fi} = \Sigma_f</script><p>额外的限制，对于每一个 $i = 1,\cdots,m$</p>
-<script type="math/tex; mode=display">
-\sigma_{f1},\sigma_{f2}\in\Sigma_{fi}\Rightarrow I_f(\sigma_{f1}) = I_f(\sigma_{f2})</script><p>然后定义</p>
-<script type="math/tex; mode=display">
-I(\Sigma_{fi}) = I_f(\sigma_f) 对于任一 \sigma_f\in \Sigma_{fi}.</script><p>我们现在有一个与每个错误类型<script type="math/tex">F_i</script>相关联的可观指示事件集<script type="math/tex">I(\Sigma_{fi})</script>（更多关于实际系统指示事件选择的内容见<sup><a href="#fn_2" id="reffn_2">2</a></sup>）。</p>
-<p>我们现在给出I-可诊断性的定义。<br><strong>Definition 2</strong>: 一个前缀闭合活语言$L$对于投影$P$，$\Sigma_f$上的错误划分$\Psi_f$和指示映射$I$是I-可诊断的当</p>
-<script type="math/tex; mode=display">
-(\forall i\in\Pi_f)(\exists n_i\in IN)(\forall s\in \Psi(\Sigma_{fi}))\\
-(\forall t_1t_2\in L/s:st_1\in \Psi[I(\Sigma_{fi})])\quad[\lVert t_2\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D为</p>
-<script type="math/tex; mode=display">
-w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script type="math/tex">\Psi(I(\Sigma_{fi}))</script>表示$L$中所有以<script type="math/tex">I(\Sigma_{fi})</script>集合中的一个可观事件结尾的串的集合。因此，对于I-可诊断性，它要求在<script type="math/tex">I(\Sigma_f)</script>中指示事件发生后，最多进行<script type="math/tex">n_i</script>次系统状态转移推断出<script type="math/tex">F_i</script>错误类型的错误事件的发生。</p>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Example-of-a-system-with-multiple-failures.png">
-    <span>Fig. 2. Example of system with multiple failures.</span>
-</div>
-
-<p>考虑如 Fig. 2图中的系统。假设其选择的指示事件集如下：<script type="math/tex">I(\Sigma_{f1})=\{\gamma\}, I(\Sigma_{f2})=\{\delta\}</script>和<script type="math/tex">I(\Sigma_{f3})=\{\delta\}</script>。系统的错误划分为：<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}, \Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>。对于<script type="math/tex">n_1=0,n_3=0</script>，系统是I-可诊断的。应该注意的是，尽管不可能推断指示事件对应错误事件<script type="math/tex">\sigma_{f2}</script>的发生，即$\delta$没有跟踪该错误事件，但这并不违反I-可诊断性的诊断条件。</p>
-<p><sup><a href="#fn_1" id="reffn_1">1</a></sup>:P. J. Ramadge and W. M. Wonham, “The control of discrete-event systems,” Proc. ZEEE, vol. 77, no. 1, pp. 81-98, 1989.<br><sup><a href="#fn_2" id="reffn_2">2</a></sup>:J. Hopcroft and J. Ullman, Introduction to Automata Theory, Languages, and Computation. Reading, MA: Addison Wesley, 1979.<br><sup><a href="#fn_3" id="reffn_3">3</a></sup>:__, “Failure diagnosis using discrete-event models,” Dept. EECS, Umv. of Michigan, MI 48109, 1994, Tech. Rep. CGR 94-3. (Accepted for publication% IEEE Trans. Conrr. Syst. Tech..)</p>
-]]></content>
-      <categories>
-        <category>dissertation</category>
-      </categories>
-      <tags>
-        <tag>paper translation</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解决Github国内访问出现的问题</title>
-    <url>/posts/7e3029b3/</url>
-    <content><![CDATA[<p>主要通过修改hosts文件解决Github在国内访问不了、访问慢和页面加载异常的问题(没钱买vpn~)。</p>
-<p>简单了解一下github, github是目前全球最大的男性同性交友网站(~滑稽~), 使用示例如下：</p>
-<p><img src="/images/解决Github访问问题/communication.jpg" alt></p>
-<a id="more"></a>
-<p>开个玩笑，回归正题。</p>
-<h3 id="为什么访问不了以及访问速度会很慢？"><a href="#为什么访问不了以及访问速度会很慢？" class="headerlink" title="为什么访问不了以及访问速度会很慢？"></a>为什么访问不了以及访问速度会很慢？</h3><p>GitHub在中国大陆访问速度慢的问题原因有很多，但最直接和最主要的原因是GitHub的分发加速网络的域名遭到DNS污染。</p>
-<p>由于GitHub的加速分发CDN域名assets-cdn.github.com遭到DNS污染，导致无法连接使用GitHub的加速分发服务器，才使得中国大陆访问速度很慢。</p>
-<p><img src="github_problem.png" alt="problem"></p>
-<h3 id="如何解决DNS污染？"><a href="#如何解决DNS污染？" class="headerlink" title="如何解决DNS污染？"></a>如何解决DNS污染？</h3><p>一般的DNS问题都可以通过修改Hosts文件来解决，GitHub的CDN域名被污染问题也不例外，同样可以通过修改Hosts文件解决。</p>
-<p>将域名解析直接指向IP地址来绕过DNS的解析，以此解决污染问题。</p>
-<h4 id="获取被污染域名的实际IP地址"><a href="#获取被污染域名的实际IP地址" class="headerlink" title="获取被污染域名的实际IP地址"></a>获取被污染域名的实际IP地址</h4><p>访问<a href="https://www.ipaddress.com" target="_blank" rel="noopener">ipaddress.com</a>,使用ip lookup 工具获得相关域名的ip地址。</p>
-<p>例如： github.com</p>
-<p><img src="github_ipaddress.png" alt="ip address"></p>
-<p>可以看到，我查出的域名ip地址为： <code>192.30.253.112</code> 和 <code>192.30.253.113</code> (任取一个即可)</p>
-<h4 id="修改host文件，在文件中添加一行："><a href="#修改host文件，在文件中添加一行：" class="headerlink" title="修改host文件，在文件中添加一行："></a>修改host文件，在文件中添加一行：</h4><p><strong>[注] ： windows的hosts文件位置为： </strong><br><code>C:/windows/system32/drivers/etc/hosts</code></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">192.30.253.112 github.com</span><br></pre></td></tr></table></figure></div>
-<h4 id="刷新dns缓存"><a href="#刷新dns缓存" class="headerlink" title="刷新dns缓存"></a>刷新dns缓存</h4><p>打开命令行cmd,输入如下命令：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ipconfig /flushdns</span><br></pre></td></tr></table></figure></div>
-<p>此时再刷新页面即可。此时可以正常访问github，但是访问速度还是很慢，我们接着做优化。</p>
-<h4 id="Github-访问提速"><a href="#Github-访问提速" class="headerlink" title="Github 访问提速"></a>Github 访问提速</h4><p>在hosts文件中继续加入，如下代码：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># GitHub Start</span><br><span class="line">192.30.253.112 github.com</span><br><span class="line">192.30.253.119 gist.github.com</span><br><span class="line">151.101.228.133 assets-cdn.github.com</span><br><span class="line">151.101.228.133 raw.githubusercontent.com</span><br><span class="line">151.101.228.133 gist.githubusercontent.com</span><br><span class="line">151.101.228.133 cloud.githubusercontent.com</span><br><span class="line">151.101.228.133 camo.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars0.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars1.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars2.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars3.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars4.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars5.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars6.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars7.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars8.githubusercontent.com</span><br><span class="line">192.30.253.116  api.github.com</span><br><span class="line"># GitHub End</span><br></pre></td></tr></table></figure></div>
-<div class="note warning"><p><strong>注意</strong> : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。</p></div>
-<p>例如，上面的<code>151.101.228.133</code>是对我来说较好的ip:</p>
-<p><img src="ping_test.png" alt="dns 查询检测"></p>
-<div class="note info"><p>推荐的dns查询检测工具：</p>
-<ul>
-<li><a href="https://tool.lu/dns/" target="_blank" rel="noopener">DNS查询 - 在线工具</a></li>
-<li><a href="http://tool.chinaz.com/dns/" target="_blank" rel="noopener">DNS检测|DNS查询-站长工具</a></li>
-</ul>
-<p>你可对单个域名多查询几次，以挑选稳定且速度较快的ip。</p></div>
-<h4 id="快速地访问github"><a href="#快速地访问github" class="headerlink" title="快速地访问github"></a>快速地访问github</h4><p>再次刷新dns缓存后，你已经可以快速地访问github了。</p>
-<p><img src="github_test.gif" alt></p>
-<div class="note primary"><p>参考：<a href="https://github.com/chenxuhua/issues-blog/issues/3" target="_blank" rel="noopener">https://github.com/chenxuhua/issues-blog/issues/3</a></p></div>
-]]></content>
-      <categories>
-        <category>tips</category>
-      </categories>
-      <tags>
-        <tag>github</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Character-level Convolutional Networks for Text Classification</title>
     <url>/posts/1b531d86/</url>
     <content><![CDATA[<blockquote>
@@ -2025,6 +1871,160 @@ h(y) = max_{x=1}^k g(y\cdot d -x +c)</script><p>其中 $c=k-d+1$ 是一个偏置
       </tags>
   </entry>
   <entry>
+    <title>解决Github国内访问出现的问题</title>
+    <url>/posts/7e3029b3/</url>
+    <content><![CDATA[<p>主要通过修改hosts文件解决Github在国内访问不了、访问慢和页面加载异常的问题(没钱买vpn~)。</p>
+<p>简单了解一下github, github是目前全球最大的男性同性交友网站(~滑稽~), 使用示例如下：</p>
+<p><img src="/images/解决Github访问问题/communication.jpg" alt></p>
+<a id="more"></a>
+<p>开个玩笑，回归正题。</p>
+<h3 id="为什么访问不了以及访问速度会很慢？"><a href="#为什么访问不了以及访问速度会很慢？" class="headerlink" title="为什么访问不了以及访问速度会很慢？"></a>为什么访问不了以及访问速度会很慢？</h3><p>GitHub在中国大陆访问速度慢的问题原因有很多，但最直接和最主要的原因是GitHub的分发加速网络的域名遭到DNS污染。</p>
+<p>由于GitHub的加速分发CDN域名assets-cdn.github.com遭到DNS污染，导致无法连接使用GitHub的加速分发服务器，才使得中国大陆访问速度很慢。</p>
+<p><img src="github_problem.png" alt="problem"></p>
+<h3 id="如何解决DNS污染？"><a href="#如何解决DNS污染？" class="headerlink" title="如何解决DNS污染？"></a>如何解决DNS污染？</h3><p>一般的DNS问题都可以通过修改Hosts文件来解决，GitHub的CDN域名被污染问题也不例外，同样可以通过修改Hosts文件解决。</p>
+<p>将域名解析直接指向IP地址来绕过DNS的解析，以此解决污染问题。</p>
+<h4 id="获取被污染域名的实际IP地址"><a href="#获取被污染域名的实际IP地址" class="headerlink" title="获取被污染域名的实际IP地址"></a>获取被污染域名的实际IP地址</h4><p>访问<a href="https://www.ipaddress.com" target="_blank" rel="noopener">ipaddress.com</a>,使用ip lookup 工具获得相关域名的ip地址。</p>
+<p>例如： github.com</p>
+<p><img src="github_ipaddress.png" alt="ip address"></p>
+<p>可以看到，我查出的域名ip地址为： <code>192.30.253.112</code> 和 <code>192.30.253.113</code> (任取一个即可)</p>
+<h4 id="修改host文件，在文件中添加一行："><a href="#修改host文件，在文件中添加一行：" class="headerlink" title="修改host文件，在文件中添加一行："></a>修改host文件，在文件中添加一行：</h4><p><strong>[注] ： windows的hosts文件位置为： </strong><br><code>C:/windows/system32/drivers/etc/hosts</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">192.30.253.112 github.com</span><br></pre></td></tr></table></figure></div>
+<h4 id="刷新dns缓存"><a href="#刷新dns缓存" class="headerlink" title="刷新dns缓存"></a>刷新dns缓存</h4><p>打开命令行cmd,输入如下命令：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ipconfig /flushdns</span><br></pre></td></tr></table></figure></div>
+<p>此时再刷新页面即可。此时可以正常访问github，但是访问速度还是很慢，我们接着做优化。</p>
+<h4 id="Github-访问提速"><a href="#Github-访问提速" class="headerlink" title="Github 访问提速"></a>Github 访问提速</h4><p>在hosts文件中继续加入，如下代码：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># GitHub Start</span><br><span class="line">192.30.253.112 github.com</span><br><span class="line">192.30.253.119 gist.github.com</span><br><span class="line">151.101.228.133 assets-cdn.github.com</span><br><span class="line">151.101.228.133 raw.githubusercontent.com</span><br><span class="line">151.101.228.133 gist.githubusercontent.com</span><br><span class="line">151.101.228.133 cloud.githubusercontent.com</span><br><span class="line">151.101.228.133 camo.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars0.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars1.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars2.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars3.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars4.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars5.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars6.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars7.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars8.githubusercontent.com</span><br><span class="line">192.30.253.116  api.github.com</span><br><span class="line"># GitHub End</span><br></pre></td></tr></table></figure></div>
+<div class="note warning"><p><strong>注意</strong> : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。</p></div>
+<p>例如，上面的<code>151.101.228.133</code>是对我来说较好的ip:</p>
+<p><img src="ping_test.png" alt="dns 查询检测"></p>
+<div class="note info"><p>推荐的dns查询检测工具：</p>
+<ul>
+<li><a href="https://tool.lu/dns/" target="_blank" rel="noopener">DNS查询 - 在线工具</a></li>
+<li><a href="http://tool.chinaz.com/dns/" target="_blank" rel="noopener">DNS检测|DNS查询-站长工具</a></li>
+</ul>
+<p>你可对单个域名多查询几次，以挑选稳定且速度较快的ip。</p></div>
+<h4 id="快速地访问github"><a href="#快速地访问github" class="headerlink" title="快速地访问github"></a>快速地访问github</h4><p>再次刷新dns缓存后，你已经可以快速地访问github了。</p>
+<p><img src="github_test.gif" alt></p>
+<div class="note primary"><p>参考：<a href="https://github.com/chenxuhua/issues-blog/issues/3" target="_blank" rel="noopener">https://github.com/chenxuhua/issues-blog/issues/3</a></p></div>
+]]></content>
+      <categories>
+        <category>tips</category>
+      </categories>
+      <tags>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>The Notion of the Diagnosability</title>
+    <url>/posts/57ea30e/</url>
+    <content><![CDATA[<blockquote>
+<p>文献内容翻译：可诊断性概念<br>authors: Meera Sampath, Raja Sengupta, StCphane Lafortune, Member, IEEE, Kasim Sinnamohideen, Member, IEEE, and Demosthenis Teneketzis, Member, IEEE<br>原文: <a href="https://ieeexplore.ieee.org/document/412626" target="_blank" rel="noopener">Diagnosability of discrete-event systems</a></p>
+</blockquote>
+<a id="more"></a>
+<h2 id="A-The-System-Model"><a href="#A-The-System-Model" class="headerlink" title="A. The System Model"></a>A. The System Model</h2><p>待诊断系统通常使用一个 FSM 或生成器（generator）来进行建模。</p>
+<script type="math/tex; mode=display">
+G = (X, \Sigma, \delta, x_0)</script><p>其中$X$是状态空间，$\Sigma$是事件集，$\delta$是一个部分转移函数，$x_0$是系统的初始状态。系统模型$G$记录系统正常和错误行为。系统的行为使用$G$生成的前缀闭合语言$L(G)$来描述<sup><a href="#fn_1" id="reffn_1">1</a></sup>。此后，我们使用$L$直接表示$L(G)$，$L$是<script type="math/tex">\Sigma^*</script>的子集，其中<script type="math/tex">\Sigma^*</script>是事件集的 Kleene 闭包<sup><a href="#fn_2" id="reffn_2">2</a></sup>。</p>
+<p>$\Sigma$中一些事件是可观的，即它们的发生是被观测到的，其他的是不可观的。因此，事件集可以划分为<script type="math/tex">\Sigma = \Sigma_o\cup\Sigma_{uo}</script>，其中<script type="math/tex">\Sigma_o</script>表示可观事件集，而<script type="math/tex">\Sigma_{uo}</script>表示不可观事件集。系统中可观事件可能是以下情况下之一：控制器发出的指令，在执行上述命令后立即读取的传感器读数以及传感器读数的变化。不可观事件可以是错误事件或导致传感器未记录的系统状态更改（见<sup><a href="#fn_3" id="reffn_3">3</a></sup>）。</p>
+<p>令<script type="math/tex">\Sigma_f\subseteq \Sigma</script>表示待诊断的错误事件集。不失一般性地，我们假设<script type="math/tex">\Sigma_f\subseteq\Sigma_{uo}</script>，因为一个可观的错误事件显然是容易诊断的。我们的目标是根据系统生成的串来诊断是否有错误事件的发生，其中串中包含的事件均是可观的。在这种情况下，我们将错误事件集划分成多个不相交的集（disjoint set），对应表示不同的错误类型。</p>
+<script type="math/tex; mode=display">
+\Sigma_f = \Sigma_{f1}\cup\cdots\cup\Sigma_{fm}.</script><p>用$\Pi_f$表示这个划分。使用$\Pi_f$主要出于以下考虑：</p>
+<ul>
+<li>1) 仪器不足可能会导致无法诊断每个可能的错误；</li>
+<li>2) 我们可能不需要唯一标识每个错误事件的发生。我们可能只是想知道一组错误事件集中是否有一个错误事件发生了，例如，当一组错误事件对系统的影响相同时。</li>
+</ul>
+<p>此后，当我们写到”<script type="math/tex">F_i</script>类型的错误发生了“，意味着”集合<script type="math/tex">\Sigma_{fi}</script>中有错误事件发生了“。</p>
+<p>我们假设研究的系统：</p>
+<ul>
+<li>A1) 系统$G$的生成语言是活语言，即$X$中的每一个状态$x$均有定义转移，即系统不会到达一个没有事件标签的点；</li>
+<li>A2) 系统$G$中不存在任何由不可观事件形成的环，即<script type="math/tex">\exists n_o\in \mathbb{IN}</script>使得<script type="math/tex">\forall ust\in L, s\in \Sigma^*_{uo}\Rightarrow\lVert s\rVert\leq n_o</script>，其中$\lVert s\rVert$表示串$s$的长度。</li>
+</ul>
+<p>针对$L$是活语言的假设主要是为了研究简单。稍作修改，当该假设放松时，本文的所有主要结果均成立。假设2) 确保了系统生成的观察具备某些规律。由于错误的检测是基于系统的可观转移，我们要求$G$不产生任意长度的不可观事件序列。</p>
+<p>在<sup><a href="#fn_2" id="reffn_2">2</a></sup>中，我们详细讨论了用于错误诊断的离散事件系统建模。假设待诊断系统包含许多不同的物理组件以及一组传感器。我们首先为每个独立的组件构建相应的 FSM。这些模型会记录相应组件的正常和错误行为。考虑一个这样的例子，一个由泵、阀门和控制器组成的简单 HVAC 系统。Fig. 1描绘了该系统组件的模型。从组件模型和传感器图开始，然后我们生成了一个复合模型，该模型捕获了组件之间的交互并将传感器图纳入其中。这个复合模型就是我们执行错误诊断的系统$G$。</p>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="component-models-for-a-simple-HVAC-system.png">
+    <span>Fig. 1. Component models for a simple HVAC system.</span>
+</div>
+
+<p>我们在本节的系统模型上总结一些符号和生成器$G’$的结构，以便之后使用。</p>
+<p><strong>1) Notation:</strong> 空串用$\varepsilon$表示。用$\overline{s}$表示任意串<script type="math/tex">s\in\Sigma^*</script>的前缀闭包。$L$的$s$后语言用$L/s$表示，即</p>
+<script type="math/tex; mode=display">
+L/s = \{t\in\Sigma^*|st\in L\}</script><p>我们通常定义投影<script type="math/tex">P:\Sigma^*\to \Sigma^*_o</script> <sup><a href="#fn_1" id="reffn_1">1</a></sup></p>
+<script type="math/tex; mode=display">
+\begin{eqnarray}
+P(\varepsilon)& = &\varepsilon \\
+P(\sigma)& = &\sigma &if\quad \sigma\in\Sigma_o \\
+P(\sigma)& =& \varepsilon& if\quad \sigma \in \Sigma_{uo}\\
+P(s\sigma)& = &P(s)P(\sigma) &s\in \Sigma^*, \sigma\in\Sigma.
+\end{eqnarray}</script><p>换句话说，$P$简单地”清除“了串中的不可观事件。逆投影操作$P^{-1}_L$定义如下：</p>
+<script type="math/tex; mode=display">
+P^{-1}_L(y) = \{s\in L:P(s)=y\}</script><p>用$s_f$表示串$s$的最后一个事件，我们定义：</p>
+<script type="math/tex; mode=display">\Psi(\Sigma_{fi} = \{s\sigma_f\in L:\sigma_f\in \Sigma_{fi}\}</script><p>即<script type="math/tex">\Psi(\Sigma_{fi})</script>表示$L$中所有以错误类型为<script type="math/tex">F_i</script>的错误事件结尾的串的集合。考虑<script type="math/tex">\sigma\in\Sigma</script>以及<script type="math/tex">s\in\Sigma^*</script>。我们用<script type="math/tex">\sigma\in s</script>表示串$s$发生了事件<script type="math/tex">\sigma</script>。略微滥用符号，我们用<script type="math/tex">\Sigma_{fi}\in s</script>表示对于<script type="math/tex">\sigma_f\in\Sigma_{fi}</script>有<script type="math/tex">\sigma_f\in s</script>，或正式地，<script type="math/tex">\overline{s}\cap\Psi(\Sigma_{fi})\neq\emptyset</script>。我们定义</p>
+<script type="math/tex; mode=display">
+X_o = \{x_0\}\cup\{x\in X:x中包含一个可观事件\}.</script><p>用$L(G,x)$表示从$G$中状态$x$出发产生的所有串的集合，我们定义</p>
+<script type="math/tex; mode=display">
+L_o(G, x) = \{s\in L(G,x):s=u\sigma, u\in \Sigma^*_{uo}, \sigma\in \Sigma_o\}</script><p>以及</p>
+<script type="math/tex; mode=display">
+L_{\sigma}(G,x) = \{s\in L_o(G,x):s_f=\sigma\}.</script><p>其中，$L<em>o(G,x)$表示从状态$x$开始以第一个可观事件结束的所有串的集合。$$L</em>{\sigma}(G,x)$$表示$L_o(G,x)$中以一个特定可观事件结束的串的集合。</p>
+<p><strong>2) The Generator G’</strong>: 接下来的部分，我们需要特殊构造一个拥有语言$P(L)$的生成器$G’$</p>
+<script type="math/tex; mode=display">
+P(L) = \{t:t=P(s) 对于某些 s\in L\}</script><p>$G’$通常是不确定的（nondeterministic），并且它的结构如下</p>
+<script type="math/tex; mode=display">
+G' = (X_o, \Sigma_o, \delta_{G'}, x_0)</script><p>其中<script type="math/tex">X_o</script>，<script type="math/tex">\Sigma_o</script>和$x<em>0$先前已经定义过了。$G’$的转移关系由$$\delta</em>{G’}\subseteq (X_o\times\Sigma\times X_o)$$，其定义如下</p>
+<script type="math/tex; mode=display">
+(x,\sigma,x')\in \delta_{G'} \\
+如果 \delta(x,s) = x' 对于某些 s\in L_{\sigma}(G,x)</script><p>可以很轻易地验证$L(G’) = P(L)$. Figs. 4-6 展示了如果为$G$三个不同系统构造$G’$。</p>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="Example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser-Gd.png">
+    <span>Fig. 4. Example of system with F1 indeterminate cycle in its diagnoser Gd.</span>
+</div>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="Example-of-a-system-with-a-cycle-of-F1-uncertain-states-in-its-diagnoser-Gd.png">
+    <span>Fig. 5. Example of system with a cycle of F1-uncertain states in its diagnoser Gd.</span>
+</div>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="Another-example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser.png">
+    <span>Fig. 6. Another example of system with F1 indeterminate cycle in its diagnoser.</span>
+</div>
+
+<h2 id="B-Approaches-to-Defining-Diagnosability"><a href="#B-Approaches-to-Defining-Diagnosability" class="headerlink" title="B. Approaches to Defining Diagnosability"></a>B. Approaches to Defining Diagnosability</h2><p>我们现在准备定义可诊断性的概念。一般而言，一个语言$L$是可诊断的若它能够在有限确切延迟内，使用记录的可观事件串诊断出任意错误类型的发生。我们将给出可诊断性的两种定义方式，其中第一个定义要比第二个定义严格。我们之后将参考的概念是可诊断性和I-可诊断性。</p>
+<p><strong>Diagnosability</strong>: 通常，我们定义可诊断性如下。<br><strong>Definition 1:</strong> 一个前缀闭合语言$L$对于投影$P$和$\Sigma_f$上的错误划分$\Pi_f$是可诊断的当</p>
+<script type="math/tex; mode=display">
+(\forall i\in \Pi_f)(\exists n_i\in \mathbb{IN})[\forall s\in \Psi(\Sigma_{fi})](\forall t\in L/s) \\
+[\lVert t\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D</p>
+<script type="math/tex; mode=display">
+w \in P^{-1}_L[P(st)]\Rightarrow\Sigma_{fi}\in w</script><p>上面可诊断性的定义意味着，$s$是一个以错误事件集<script type="math/tex">\Sigma_{fi}</script>中一个错误事件结尾的串，$t$是$s$的充分长后缀。诊断条件D表示系统语言中任何一个与串$st$产生相同投影序列的串必定包含错误事件集<script type="math/tex">\Sigma_{fi}</script>中的一个错误事件。这意味着，$s$的每一个连续的$t$都可以用于在有限延迟之内，在具体最多$n$个系统状态转移之后，来诊断错误类型<script type="math/tex">F_i</script>对应错误事件的发生。换句话说，可诊断性要求系统每一个错误事件发生后，再记录更多的可观事件，以便系统诊断该错误事件的发生。</p>
+<p>来自同一个错误划分的多错误情况需要特别注意。当一个串$s$中发生同一个错误类型$F<em>i$的多个错误事件，上面的可诊断性定义不要求每一个错误事件的发生都被检测到。能够在发生第一个错误后的有限多个事件中得出串$s$中发生了错误事件集$\Sigma</em>{fi}$中的错误事件。在后面的部分中， 我们将看到这一特性是如何区分可能的多个错误发生的情况与任何划分集合中没有多个错误发生的情况。</p>
+<p>我们展示上面可诊断性概念的一个简单例子。考虑Fig. 2中表示的系统。这里$\alpha, \beta, \gamma$和$\delta$是可观事件，<script type="math/tex">\sigma_{uo}</script>是不可观事件，而<script type="math/tex">\sigma_{f1},\sigma_{f2},\sigma_{f3}</script>是错误事件，<script type="math/tex">x_0</script>是系统的初始状态<script type="math/tex">1</script>。如果选择错误划分<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1},\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f2}=\{\sigma_{f3}\}</script>，即它不需要区分错误事件<script type="math/tex">\sigma_{f1}</script>和<script type="math/tex">\sigma_{f2}</script>，对于<script type="math/tex">n_1=2</script>和<script type="math/tex">n_2=1</script>，上面的系统是可诊断的。另一方面，如果错误划分是<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}</script>，<script type="math/tex">\Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>，则系统是不可诊断的，因为它无法推断出错误事件<script type="math/tex">\sigma_{f2}</script>是否发生。</p>
+<p><strong>2) I-Diagnosability</strong>: 上面的可诊断性定义要求$L$中的所有串满足诊断条件D。我们现在提出一个宽松的可诊断性定义（术语表示为I-可诊断性），它不需要$L$的所有的串都满足诊断条件D，但适用于那些错误事件后跟与每种错误类型相关的某些指示可观事件形成的串。这种修改是出于对下面实际情况的考虑。例如，考虑一个拥有控制单元的 HVAC 系统。正常模式操作下，每当控制器检测到系统上的热负荷时，它都会发出”open value“（打开阀门）来作出响应，同样，当负载消失时，它会发出”close value“（关闭阀门）指令。假设控制器发生了错误，它无法检测到系统是否出现负荷，因此不会发出任何指令控制。假设在运行期间控制器确实发生了错误，并且进一步假设系统有可能执行任意长度的事件序列，而这不涉及任何指令。在这种情况下，很明显无法诊断任何错误的发生。根据之前的定义，这样的系统是不可诊断的。在修改后的可诊断性定义情况中，我们将”open value“和”close value“分别与指示器事件（“stuck-closed“和”stuck-open”）相关联作为指示事件，并要求系统在确定其可诊断性之前，执行”open value”事件或”close value”事件。在执行对应指示事件之后能够探测到错误事件，则系统是可诊断的，反之，若在执行指示事件之后，仍无法探测到错误事件，则系统是不可诊断的。总结一下，I-可诊断性仅需要在错误事件相关的指示事件发生后，诊断出该错误的发生。</p>
+<p>我们首先将$\Sigma_f$中的每一个错误事件与一个或多个可观指示事件相关联。令$\Sigma_I\subseteq \Sigma_o$表示指示事件集，$I_f:\Sigma_f\to 2^{\Sigma_f}$表示指示映射函数（indicator map）。接着，我们选择一个$\Sigma_f$的一个错误划分，使得</p>
+<script type="math/tex; mode=display">
+\bigcup_{i\in \Pi_f}\Sigma_{fi} = \Sigma_f</script><p>额外的限制，对于每一个 $i = 1,\cdots,m$</p>
+<script type="math/tex; mode=display">
+\sigma_{f1},\sigma_{f2}\in\Sigma_{fi}\Rightarrow I_f(\sigma_{f1}) = I_f(\sigma_{f2})</script><p>然后定义</p>
+<script type="math/tex; mode=display">
+I(\Sigma_{fi}) = I_f(\sigma_f) 对于任一 \sigma_f\in \Sigma_{fi}.</script><p>我们现在有一个与每个错误类型<script type="math/tex">F_i</script>相关联的可观指示事件集<script type="math/tex">I(\Sigma_{fi})</script>（更多关于实际系统指示事件选择的内容见<sup><a href="#fn_2" id="reffn_2">2</a></sup>）。</p>
+<p>我们现在给出I-可诊断性的定义。<br><strong>Definition 2</strong>: 一个前缀闭合活语言$L$对于投影$P$，$\Sigma_f$上的错误划分$\Psi_f$和指示映射$I$是I-可诊断的当</p>
+<script type="math/tex; mode=display">
+(\forall i\in\Pi_f)(\exists n_i\in IN)(\forall s\in \Psi(\Sigma_{fi}))\\
+(\forall t_1t_2\in L/s:st_1\in \Psi[I(\Sigma_{fi})])\quad[\lVert t_2\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D为</p>
+<script type="math/tex; mode=display">
+w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script type="math/tex">\Psi(I(\Sigma_{fi}))</script>表示$L$中所有以<script type="math/tex">I(\Sigma_{fi})</script>集合中的一个可观事件结尾的串的集合。因此，对于I-可诊断性，它要求在<script type="math/tex">I(\Sigma_f)</script>中指示事件发生后，最多进行<script type="math/tex">n_i</script>次系统状态转移推断出<script type="math/tex">F_i</script>错误类型的错误事件的发生。</p>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="Example-of-a-system-with-multiple-failures.png">
+    <span>Fig. 2. Example of system with multiple failures.</span>
+</div>
+
+<p>考虑如 Fig. 2图中的系统。假设其选择的指示事件集如下：<script type="math/tex">I(\Sigma_{f1})=\{\gamma\}, I(\Sigma_{f2})=\{\delta\}</script>和<script type="math/tex">I(\Sigma_{f3})=\{\delta\}</script>。系统的错误划分为：<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}, \Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>。对于<script type="math/tex">n_1=0,n_3=0</script>，系统是I-可诊断的。应该注意的是，尽管不可能推断指示事件对应错误事件<script type="math/tex">\sigma_{f2}</script>的发生，即$\delta$没有跟踪该错误事件，但这并不违反I-可诊断性的诊断条件。</p>
+<p><sup><a href="#fn_1" id="reffn_1">1</a></sup>:P. J. Ramadge and W. M. Wonham, “The control of discrete-event systems,” Proc. ZEEE, vol. 77, no. 1, pp. 81-98, 1989.<br><sup><a href="#fn_2" id="reffn_2">2</a></sup>:J. Hopcroft and J. Ullman, Introduction to Automata Theory, Languages, and Computation. Reading, MA: Addison Wesley, 1979.<br><sup><a href="#fn_3" id="reffn_3">3</a></sup>:__, “Failure diagnosis using discrete-event models,” Dept. EECS, Umv. of Michigan, MI 48109, 1994, Tech. Rep. CGR 94-3. (Accepted for publication% IEEE Trans. Conrr. Syst. Tech..)</p>
+]]></content>
+      <categories>
+        <category>dissertation</category>
+      </categories>
+      <tags>
+        <tag>paper translation</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SQL - 查找并清除重复的数据行</title>
     <url>/posts/a264c38d/</url>
     <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
@@ -2034,14 +2034,12 @@ h(y) = max_{x=1}^k g(y\cdot d -x +c)</script><p>其中 $c=k-d+1$ 是一个偏置
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SQL"><figure class="iseeu highlight /sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing 'find&amp;remove dupicate rows experiment'.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">schema</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">schema</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">USE</span> testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> auto_increment,</span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="built_in">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    primary <span class="keyword">key</span> (<span class="keyword">id</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">'Stu1'</span>, <span class="string">'stu1@testdb.com'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">'Stu2'</span>, <span class="string">'stu2@testdb.com'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">'Stu3'</span>, <span class="string">'stu3@testdb.com'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">'Stu4'</span>, <span class="string">'stu4@testdb.com'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">'Stu5'</span>, <span class="string">'stu5@testdb.com'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">'Stu4'</span>, <span class="string">'stu4@testdb.com'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">'Stu5'</span>, <span class="string">'stu5@testdb.com'</span>);</span><br></pre></td></tr></table></figure></div>
 <h2 id="2-查找重复的数据行"><a href="#2-查找重复的数据行" class="headerlink" title="2. 查找重复的数据行"></a>2. 查找重复的数据行</h2><p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
 <ol>
-<li>使用自连接 self <code>join</code>:</li>
-</ol>
+<li><p>使用自连接 self <code>join</code>:</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SQL"><figure class="iseeu highlight /sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.* <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name = s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id &lt;&gt; s2.id;</span><br></pre></td></tr></table></figure></div>
-<ol>
-<li>使用子查询:</li>
-</ol>
+</li>
+<li><p>使用子查询:</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SQL"><figure class="iseeu highlight /sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.*</span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="keyword">name</span></span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> <span class="keyword">name</span> <span class="keyword">HAVING</span> <span class="keyword">COUNT</span>(<span class="number">1</span>) &gt; <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name = s2.name;</span><br></pre></td></tr></table></figure></div>
-<ol>
+</li>
 <li><p>使用双表查询:</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SQL"><figure class="iseeu highlight /sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.* </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name = s2.name <span class="keyword">AND</span> s1.id &lt;&gt; s2.id;</span><br></pre></td></tr></table></figure></div>
 </li>
@@ -3048,63 +3046,6 @@ h(y) = max_{x=1}^k g(y\cdot d -x +c)</script><p>其中 $c=k-d+1$ 是一个偏置
       </tags>
   </entry>
   <entry>
-    <title>归并排序 - mergeSort</title>
-    <url>/posts/1368334/</url>
-    <content><![CDATA[<a id="more"></a>
-<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>归并排序属于<strong>分治算法(Divide and Conquer)</strong>。通过递归不断把待排序数组分成两个部分，将有序的两部分再重新归并一起来实现对数组的排序。</p>
-<p><strong>[pseudo code for 2-way merge sort]</strong>:</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">MergeSort(arr[], aux[], lo, hi)</span><br><span class="line">If hi &gt; lo</span><br><span class="line">	1. Find the middle point to divide the array into two halves;</span><br><span class="line">		int mid = lo + (hi - lo) / 2;</span><br><span class="line">	2. Call MergeSort for first half;</span><br><span class="line">		MergeSort(arr, aux, lo, mid);</span><br><span class="line">	3. Call MergeSort for second half;</span><br><span class="line">		MergeSort(arr, aux, mid+1, hi);</span><br><span class="line">	4. Merge the two halves sorted in step 2 and 3;</span><br><span class="line">		Call merge(arr, aux, lo, mid, hi);</span><br></pre></td></tr></table></figure></div>
-<h3 id="原地归并的抽象方法"><a href="#原地归并的抽象方法" class="headerlink" title="原地归并的抽象方法"></a>原地归并的抽象方法</h3><p>要实现上述的归并方法 — <strong>merge()</strong>很简单，创建一个数组将需要归并的<strong>原数组的两个部分</strong>中的元素放到这个数组中，然后再归并按大小顺序放回原数组。</p>
-<blockquote>
-<p>但是，这里我们要考虑一个问题，当我们用归并排序对一个比较大的数组进行排序时，我们需要进行很多次归并，因此在每一次归并时都创建一个新的数组来存储排序结果会带来问题。我们可以考虑只创建一个<strong>辅助数组<code>aux[]</code></strong>, 在每一个归并时，将原数组需要归并的两个部分复制到<code>aux[]</code>中，再把归并结果放回原数组。</p>
-</blockquote>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">merge</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> mid, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// precondition: a[lo .. mid] and a[mid+1 .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, mid)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, mid+<span class="number">1</span>, hi)</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// copy a[lo .. hi] to aux[lo .. hi].</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	aux[k] = a[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> i = lo;</span><br><span class="line">    <span class="keyword">int</span> j = mid+<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	<span class="keyword">if</span>      (i &gt; mid)               a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (j &gt; hi)                a[k] = aux[i++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(aux[j], aux[i]))  a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> 			               a[k] = aux[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// postcondition: a[lo .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, hi)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>[说明] : 该方法先将原数组两个需要归并的部分复制到aux[]中，然后<strong>从两个部分的起始位置开始取元素，一直选择两个部分中较小的元素放回原数组中，当有一部分元素取完了，则将另一部分剩余的元素全部放回原数组</strong>。</p>
-<p>原地归并抽象方法轨迹： [from algs4]</p>
-<p><img src="mergeSort_merge.png" alt="原地归并抽象方法轨迹"></p>
-<h3 id="自顶向下的归并排序"><a href="#自顶向下的归并排序" class="headerlink" title="自顶向下的归并排序"></a>自顶向下的归并排序</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mergeSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    sort(a, aux, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// If array size is 1 then return.</span></span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo)    <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// Find the middle point to divide array into two halves.</span></span><br><span class="line">    <span class="keyword">int</span> mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// Call the mergeSort for first half.</span></span><br><span class="line">    sort(a, aux, lo, mid);</span><br><span class="line">    <span class="comment">// Call the mergeSort for second half.</span></span><br><span class="line">    sort(a, aux, mid+<span class="number">1</span>, hi);</span><br><span class="line">    <span class="comment">// Merge two halves sorted.</span></span><br><span class="line">    merge(a, aux, lo, mid, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>自顶向下归并结果轨迹 : [from algs4]</p>
-<p><img src="mergeSort_ubSort_1.png" alt="自顶向下归并结果轨迹"></p>
-<p>自顶向下归并排序调用轨迹 : [from algs4]</p>
-<p><img src="mergeSort_ubSort_2.png" alt="自顶向下归并排序调用轨迹"></p>
-<blockquote>
-<p><strong>命题 F: 对于长度为 $N$ 的任意数组， 自顶向下归并排序需要 $1/2NlgN$ 至 $NlgN$ 次比较。</strong></p>
-<p>自顶向下的所需时间表达式为 : $T(N) = 2T(N/2) + O(n)$使用解决递归式的 <code>Master method</code> 解得 $T(N) = \Theta(n log n)$</p>
-</blockquote>
-<p>我们可以通过下图来理解命题F, 每个节点都表示一个<code>sort()</code>方法通过<code>merge()</code>方法归并而成的子数组。<strong>这棵树正好有 $n$ 层。对于$0 ~ n-1$ 之间的任意 $k$, 自顶向下的第 $k$ 层有 $2^k$个子数组，每个数组长度为 $2^{n-k}$, 归并最多需要 $2^{n-k}$ 次比较。</strong>因此每层的比较次数为$2^k X 2^{n-k} = 2^n$, n 层总共为 $n2^n = NlgN$。</p>
-<p>子数组树状图 : [from algs4]</p>
-<p><img src="mergeSort_ubSort_3.png" alt="子数组树状图"></p>
-<blockquote>
-<p><strong>命题 G : 对于长度为 $N$ 的任意数组，自顶向下的归并排序最多需要访问数组 $6NlgN$ 次。</strong></p>
-<p>证明： 每次归并最多需要访问数组 $6N$ 次（$2N$ 次用来复制， $2N$次用来将排好序的元素移动回去，另外最多比较$2N$次），根据<strong>命题F</strong>即可得到这个命题的结果。</p>
-</blockquote>
-<p><strong>[小结]</strong>: 归并排序排序算法的缺点是辅助数组所使用的额外空间和N的大小成正比。一些能够大幅度缩短归并排序的运行时间的想法：</p>
-<ul>
-<li>对小规模子数组进行插入排序；</li>
-<li>测试数组是否已经有序；</li>
-<li>不将元素复制到辅助数组中。</li>
-</ul>
-<h3 id="自底向上的归并排序"><a href="#自底向上的归并排序" class="headerlink" title="自底向上的归并排序"></a>自底向上的归并排序</h3><p>实现归并排序另外一种方法是<strong>先归并那些微型数组， 然后再成对归并得到的子数组，直到将整个数组归并在一起</strong>。</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MergeBU</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> sz = <span class="number">1</span>; sz &lt; n; sz += sz) &#123;</span><br><span class="line">    	<span class="keyword">for</span> (<span class="keyword">int</span> lo = sz; lo &lt; n-sz; lo += sz+sz) &#123;</span><br><span class="line">        	merge(a, aux, lo, lo+sz-<span class="number">1</span>, Math.min(lo+sz+sz-<span class="number">1</span>, n-<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure></div>
-<p>[注] : 自底向上的归并排序会多次遍历整个数组，根据子数组大小进行两两归并。子数组的大小 sz 的初始值为 1， 每次加倍。最后一个子数组的大小只有在数组大小是 sz 的偶数倍的时候才会等于 sz(否则它会比sz小)。</p>
-<p>自底向上归并排序结果轨迹 ： [from algs4]</p>
-<p><img src="mergeSort_buSort_1.png" alt="自底向上归并排序结果轨迹"></p>
-<blockquote>
-<p><strong>命题 H : 对于长度为 $N$ 的任意数组， 自底向上的归并排序需要 $1/2NlgN$ 至 $NlgN$次比较，最多访问数组 $6NlgN$ 次。</strong></p>
-<p>证明 ： 处理一个数组的遍数正好是 $lgN$(即 $2^n &lt;= N &lt;2^n+1$ 中的 $n$)。每一遍会访问数组6N次。比较次数在 $N/2$ 和 $N$ 之间。</p>
-</blockquote>
-<p>【补充】： 当数组长度为 2 的幂时，自顶向下和自底向上的归并排序所用的比较次数和数组访问次数正好相同，只是顺序不同。其他时候，两种方法的比较和数组访问的次序会有所不同。</p>
-<h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
-]]></content>
-      <categories>
-        <category>Algorithms</category>
-        <category>sorting algs</category>
-      </categories>
-      <tags>
-        <tag>sorting algs</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>快速排序 - quickSort</title>
     <url>/posts/d9de8e4c/</url>
     <content><![CDATA[<a id="more"></a>
@@ -3154,6 +3095,63 @@ h(y) = max_{x=1}^k g(y\cdot d -x +c)</script><p>其中 $c=k-d+1$ 是一个偏置
 <p>熵最优排序抽象实现： <a href="https://github.com/rovo98/ds-and-algs/blob/master/ds/sorting/exercises/Quick3Ways.java" target="_blank" rel="noopener">详细查看</a></p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo) <span class="keyword">return</span>;</span><br><span class="line">    Comparable v = a[lo];</span><br><span class="line">    <span class="keyword">int</span> lt = lo;</span><br><span class="line">    <span class="keyword">int</span> i = lo + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> gt = hi;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (i &lt;= gt) &#123;</span><br><span class="line">    	<span class="keyword">if</span> (less(a[i], v)) 	exch(a, i++,  lt++);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(v, a[i]))	exch(a, gt--, i);</span><br><span class="line">        <span class="keyword">else</span> 		i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// since a[lt .. i-1] is sorted.</span></span><br><span class="line">    <span class="comment">// sort the other subarrays recursively.</span></span><br><span class="line">    sort(a, lo, lt-<span class="number">1</span>);</span><br><span class="line">    sort(a, gt+<span class="number">1</span>, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 <p>[notice] : <strong>三向切分的最坏情况是所有主键均不相同。</strong>对于标准的快速排序，随着数组规模的增大其运行时间会趋于平均时间，大幅偏离的情况是非常罕见的，因此可以肯定<strong>三向切分的快速排序运行时间和输入的信息量的N倍是成正比的。</strong> ———— 因为对于包含大量重复元素的数组，它将排序时间从线性对数级降到了线性级别。</p>
+<h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
+]]></content>
+      <categories>
+        <category>Algorithms</category>
+        <category>sorting algs</category>
+      </categories>
+      <tags>
+        <tag>sorting algs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>归并排序 - mergeSort</title>
+    <url>/posts/1368334/</url>
+    <content><![CDATA[<a id="more"></a>
+<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>归并排序属于<strong>分治算法(Divide and Conquer)</strong>。通过递归不断把待排序数组分成两个部分，将有序的两部分再重新归并一起来实现对数组的排序。</p>
+<p><strong>[pseudo code for 2-way merge sort]</strong>:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">MergeSort(arr[], aux[], lo, hi)</span><br><span class="line">If hi &gt; lo</span><br><span class="line">	1. Find the middle point to divide the array into two halves;</span><br><span class="line">		int mid = lo + (hi - lo) / 2;</span><br><span class="line">	2. Call MergeSort for first half;</span><br><span class="line">		MergeSort(arr, aux, lo, mid);</span><br><span class="line">	3. Call MergeSort for second half;</span><br><span class="line">		MergeSort(arr, aux, mid+1, hi);</span><br><span class="line">	4. Merge the two halves sorted in step 2 and 3;</span><br><span class="line">		Call merge(arr, aux, lo, mid, hi);</span><br></pre></td></tr></table></figure></div>
+<h3 id="原地归并的抽象方法"><a href="#原地归并的抽象方法" class="headerlink" title="原地归并的抽象方法"></a>原地归并的抽象方法</h3><p>要实现上述的归并方法 — <strong>merge()</strong>很简单，创建一个数组将需要归并的<strong>原数组的两个部分</strong>中的元素放到这个数组中，然后再归并按大小顺序放回原数组。</p>
+<blockquote>
+<p>但是，这里我们要考虑一个问题，当我们用归并排序对一个比较大的数组进行排序时，我们需要进行很多次归并，因此在每一次归并时都创建一个新的数组来存储排序结果会带来问题。我们可以考虑只创建一个<strong>辅助数组<code>aux[]</code></strong>, 在每一个归并时，将原数组需要归并的两个部分复制到<code>aux[]</code>中，再把归并结果放回原数组。</p>
+</blockquote>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">merge</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> mid, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// precondition: a[lo .. mid] and a[mid+1 .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, mid)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, mid+<span class="number">1</span>, hi)</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// copy a[lo .. hi] to aux[lo .. hi].</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	aux[k] = a[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> i = lo;</span><br><span class="line">    <span class="keyword">int</span> j = mid+<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	<span class="keyword">if</span>      (i &gt; mid)               a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (j &gt; hi)                a[k] = aux[i++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(aux[j], aux[i]))  a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> 			               a[k] = aux[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// postcondition: a[lo .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, hi)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>[说明] : 该方法先将原数组两个需要归并的部分复制到aux[]中，然后<strong>从两个部分的起始位置开始取元素，一直选择两个部分中较小的元素放回原数组中，当有一部分元素取完了，则将另一部分剩余的元素全部放回原数组</strong>。</p>
+<p>原地归并抽象方法轨迹： [from algs4]</p>
+<p><img src="mergeSort_merge.png" alt="原地归并抽象方法轨迹"></p>
+<h3 id="自顶向下的归并排序"><a href="#自顶向下的归并排序" class="headerlink" title="自顶向下的归并排序"></a>自顶向下的归并排序</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mergeSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    sort(a, aux, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// If array size is 1 then return.</span></span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo)    <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// Find the middle point to divide array into two halves.</span></span><br><span class="line">    <span class="keyword">int</span> mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// Call the mergeSort for first half.</span></span><br><span class="line">    sort(a, aux, lo, mid);</span><br><span class="line">    <span class="comment">// Call the mergeSort for second half.</span></span><br><span class="line">    sort(a, aux, mid+<span class="number">1</span>, hi);</span><br><span class="line">    <span class="comment">// Merge two halves sorted.</span></span><br><span class="line">    merge(a, aux, lo, mid, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>自顶向下归并结果轨迹 : [from algs4]</p>
+<p><img src="mergeSort_ubSort_1.png" alt="自顶向下归并结果轨迹"></p>
+<p>自顶向下归并排序调用轨迹 : [from algs4]</p>
+<p><img src="mergeSort_ubSort_2.png" alt="自顶向下归并排序调用轨迹"></p>
+<blockquote>
+<p><strong>命题 F: 对于长度为 $N$ 的任意数组， 自顶向下归并排序需要 $1/2NlgN$ 至 $NlgN$ 次比较。</strong></p>
+<p>自顶向下的所需时间表达式为 : $T(N) = 2T(N/2) + O(n)$使用解决递归式的 <code>Master method</code> 解得 $T(N) = \Theta(n log n)$</p>
+</blockquote>
+<p>我们可以通过下图来理解命题F, 每个节点都表示一个<code>sort()</code>方法通过<code>merge()</code>方法归并而成的子数组。<strong>这棵树正好有 $n$ 层。对于$0 ~ n-1$ 之间的任意 $k$, 自顶向下的第 $k$ 层有 $2^k$个子数组，每个数组长度为 $2^{n-k}$, 归并最多需要 $2^{n-k}$ 次比较。</strong>因此每层的比较次数为$2^k X 2^{n-k} = 2^n$, n 层总共为 $n2^n = NlgN$。</p>
+<p>子数组树状图 : [from algs4]</p>
+<p><img src="mergeSort_ubSort_3.png" alt="子数组树状图"></p>
+<blockquote>
+<p><strong>命题 G : 对于长度为 $N$ 的任意数组，自顶向下的归并排序最多需要访问数组 $6NlgN$ 次。</strong></p>
+<p>证明： 每次归并最多需要访问数组 $6N$ 次（$2N$ 次用来复制， $2N$次用来将排好序的元素移动回去，另外最多比较$2N$次），根据<strong>命题F</strong>即可得到这个命题的结果。</p>
+</blockquote>
+<p><strong>[小结]</strong>: 归并排序排序算法的缺点是辅助数组所使用的额外空间和N的大小成正比。一些能够大幅度缩短归并排序的运行时间的想法：</p>
+<ul>
+<li>对小规模子数组进行插入排序；</li>
+<li>测试数组是否已经有序；</li>
+<li>不将元素复制到辅助数组中。</li>
+</ul>
+<h3 id="自底向上的归并排序"><a href="#自底向上的归并排序" class="headerlink" title="自底向上的归并排序"></a>自底向上的归并排序</h3><p>实现归并排序另外一种方法是<strong>先归并那些微型数组， 然后再成对归并得到的子数组，直到将整个数组归并在一起</strong>。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MergeBU</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> sz = <span class="number">1</span>; sz &lt; n; sz += sz) &#123;</span><br><span class="line">    	<span class="keyword">for</span> (<span class="keyword">int</span> lo = sz; lo &lt; n-sz; lo += sz+sz) &#123;</span><br><span class="line">        	merge(a, aux, lo, lo+sz-<span class="number">1</span>, Math.min(lo+sz+sz-<span class="number">1</span>, n-<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure></div>
+<p>[注] : 自底向上的归并排序会多次遍历整个数组，根据子数组大小进行两两归并。子数组的大小 sz 的初始值为 1， 每次加倍。最后一个子数组的大小只有在数组大小是 sz 的偶数倍的时候才会等于 sz(否则它会比sz小)。</p>
+<p>自底向上归并排序结果轨迹 ： [from algs4]</p>
+<p><img src="mergeSort_buSort_1.png" alt="自底向上归并排序结果轨迹"></p>
+<blockquote>
+<p><strong>命题 H : 对于长度为 $N$ 的任意数组， 自底向上的归并排序需要 $1/2NlgN$ 至 $NlgN$次比较，最多访问数组 $6NlgN$ 次。</strong></p>
+<p>证明 ： 处理一个数组的遍数正好是 $lgN$(即 $2^n &lt;= N &lt;2^n+1$ 中的 $n$)。每一遍会访问数组6N次。比较次数在 $N/2$ 和 $N$ 之间。</p>
+</blockquote>
+<p>【补充】： 当数组长度为 2 的幂时，自顶向下和自底向上的归并排序所用的比较次数和数组访问次数正好相同，只是顺序不同。其他时候，两种方法的比较和数组访问的次序会有所不同。</p>
 <h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
 ]]></content>
       <categories>
