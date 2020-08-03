@@ -118,6 +118,135 @@
       </tags>
   </entry>
   <entry>
+    <title>Requests库的7个主要方法</title>
+    <url>/posts/c671c604/</url>
+    <content><![CDATA[<h3 id="Requests库的7个主要方法"><a href="#Requests库的7个主要方法" class="headerlink" title="Requests库的7个主要方法"></a>Requests库的7个主要方法</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">requests.request()</td>
+<td style="text-align:center">构造一个请求，支撑以下各方法的基础方法</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.get()</td>
+<td style="text-align:center">获取HTML网页的主要方法，对应于HTTP的GET</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.head()</td>
+<td style="text-align:center">获取HTML网页头信息的方法，对应于HTTP的HEAD</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.post()</td>
+<td style="text-align:center">向HTML网页提交POST请求的方法，对应于HTTP的POST</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.put()</td>
+<td style="text-align:center">向HTML网页提交PUT请求的方法，对应于HTTP的PUT</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.patch()</td>
+<td style="text-align:center">向HTML网页提交局部修改请求，对应于HTTP的PATCH</td>
+</tr>
+<tr>
+<td style="text-align:center">requests.delete()</td>
+<td style="text-align:center">向HTML页面提交删除请求，对应HTTP的DELETE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="requests库的主要方法-基础方法"><a href="#requests库的主要方法-基础方法" class="headerlink" title="requests库的主要方法(基础方法)"></a>requests库的主要方法(基础方法)</h4><p><code>requests.request(method, url, **kwargs)</code></p>
+<ul>
+<li><strong>method:</strong>请求方式，对应get/put/post等7种<ul>
+<li><code>r = requests.request(&#39;GET&#39;,url, **kwargs)</code></li>
+<li><code>r = requsts.request(&#39;HEAD&#39;,url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;POST&#39;,url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;PATCH&#39;,url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;delete&#39;, url, **kwargs)</code></li>
+<li><code>r = requests.request(&#39;OPTIONS&#39;,url, **kwargs)</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>url:</strong>拟获取页面的URL链接</li>
+<li><code>**kwargs</code>: 控制访问的参数，共13个<ul>
+<li>1)<code>params</code>:字典或字节序列，作为参数增加到URL中</li>
+<li>2)<code>data</code>: 字典、字节序列或者文件对象，作为Request的内容</li>
+<li>3)<code>json</code> : JSON格式数据，作为Request内容</li>
+<li>4)<code>headers</code> : 字典，HTTP定制头</li>
+<li>5)<code>cookies</code> : 字典或CookieJar，Request中的cookie</li>
+<li>6)<code>auth</code> : 元组，支持HTTP认证功能</li>
+<li>7)<code>files</code> : 字典类型，传输文件</li>
+<li>8)<code>timeout</code> : 设定的超时时间，秒为单位</li>
+<li>9)<code>proxies</code> : 字典类型，设定访问代理服务器，可以增加登录认证</li>
+<li>10)<code>allow_redirects</code> : True/False, 默认为True,重定向开关</li>
+<li>11)<code>stream</code> : True/False, 默认为True ,获取内容立即下载开关</li>
+<li>12)<code>verify</code> : True/False , 默认为True ， 认证SSL证书开关</li>
+<li>13) <code>cert</code> : 本地SSL证书路径<h4 id="requests-get-方法："><a href="#requests-get-方法：" class="headerlink" title="requests.get()方法："></a>requests.get()方法：</h4></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.get(url)    <span class="comment">#构造一个向服务器请求资源的Request对象</span></span><br><span class="line"><span class="comment">#返回一个包含服务器资源的Response对象</span></span><br></pre></td></tr></table></figure></div>
+<p>完整方法：<code>requests.get(url, params=None, **kwargs)</code></p>
+<p><code>url</code>: 拟获取页面的url链接</p>
+<p> <code>params</code>: url中的额外参数， 字典或字节流格式， 可选</p>
+<p><code>**kwargs</code> : 12个控制访问的参数，与request()的一样</p>
+<p>实际上是这样的：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(url, params=None, **kwargs)</span>:</span></span><br><span class="line">    <span class="comment">#Sends a GET request.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#:param url: URL for the new :class :'Request' object.</span></span><br><span class="line">    <span class="comment">#:param params: (optional) Dictionary ro bytes to be sent in the query</span></span><br><span class="line">    <span class="comment">#:return: :class :'Request &lt;Response&gt;' object</span></span><br><span class="line">    <span class="comment">#:rtype: requests.Response</span></span><br><span class="line">    </span><br><span class="line">    kwargs.setdefault(<span class="string">'allow redirect'</span>, <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> request(<span class="string">'get'</span>, url, params=params, **kwargs)</span><br></pre></td></tr></table></figure></div>
+<p>例子：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.get(<span class="string">"http://www.baidu.com"</span>)</span><br><span class="line">print(r)</span><br><span class="line">type(r)</span><br><span class="line">r.headers</span><br><span class="line"></span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">200</span></span><br><span class="line"><span class="string">&lt;class 'requests.models.Response'&gt;</span></span><br><span class="line"><span class="string">&#123;'Transfer-Encoding': 'chunked', 'Pragma': 'no-cache', 'Connection': 'Keep-Alive', 'Last-Modified': 'Mon, 23 Jan 2017 13:27:52 GMT', 'Cache-Control': 'private, no-cache, no-store, proxy-revalidate, no-transform', 'Server': 'bfe/1.0.8.18', 'Set-Cookie': 'BDORZ=27315; max-age=86400; domain=.baidu.com; path=/', 'Content-Encoding': 'gzip', 'Date': 'Sat, 15 Jul 2017 13:27:01 GMT', 'Content-Type': 'text/html'&#125;</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
+<h4 id="Response对象的属性"><a href="#Response对象的属性" class="headerlink" title="Response对象的属性"></a>Response对象的属性</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">属性</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">r.status_code</td>
+<td style="text-align:center">HTTP请求的返回状态，200表示连接成功，404表示失败</td>
+</tr>
+<tr>
+<td style="text-align:center">r.text</td>
+<td style="text-align:center">HTTP响应内容的字符串形式，即，url对应的页面内容</td>
+</tr>
+<tr>
+<td style="text-align:center">r.encoding</td>
+<td style="text-align:center">从HTTP header中猜测的响应内容编码方式</td>
+</tr>
+<tr>
+<td style="text-align:center">r.apparent_encoding</td>
+<td style="text-align:center">从内容中分析出的响应内容编码方式(备用编码凡是)</td>
+</tr>
+<tr>
+<td style="text-align:center">r.content</td>
+<td style="text-align:center">HTTP响应内容的二进制形式</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>[注]：<code>r.encoding</code>: 如果<code>header</code>中不存在<code>charset</code>， 则认为编码为<code>ISO-8859-1</code></p>
+<h4 id="Requests库的head-方法"><a href="#Requests库的head-方法" class="headerlink" title="Requests库的head()方法"></a>Requests库的head()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.head(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line">r.headers</span><br><span class="line">r.text</span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">&#123;'Access-Control-Allow-Credentials': 'true', 'X-Processed-Time': '0.000805139541626', 'Via': '1.1 vegur', 'Access-Control-Allow-Origin': '*', 'X-Powered-By': 'Flask', 'Content-Length': '267', 'Server': 'meinheld/0.6.1', 'Content-Type': 'application/json', 'Date': 'Sat, 15 Jul 2017 14:23:41 GMT', 'Connection': 'keep-alive'&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'' -- r.text</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
+<h4 id="Requests库的post-方法"><a href="#Requests库的post-方法" class="headerlink" title="Requests库的post()方法"></a>Requests库的post()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = payload)</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = <span class="string">'ABC'</span>)</span><br><span class="line"><span class="comment">#向URL POST一个字典自动编码为form(表单)</span></span><br><span class="line">print(r.text)</span><br><span class="line"><span class="string">"""输出:</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "args": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "data": "ABC",    --- &gt; 向URLPOST一个字符串，自动编码为data</span></span><br><span class="line"><span class="string">  "files": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "form": &#123;</span></span><br><span class="line"><span class="string">    "key1": "value1", </span></span><br><span class="line"><span class="string">    "key2": "value2"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "headers": &#123;</span></span><br><span class="line"><span class="string">    "Accept": "*/*", </span></span><br><span class="line"><span class="string">    "Accept-Encoding": "gzip, deflate", </span></span><br><span class="line"><span class="string">    "Connection": "close", </span></span><br><span class="line"><span class="string">    "Content-Length": "23", </span></span><br><span class="line"><span class="string">    "Content-Type": "application/x-www-form-urlencoded", </span></span><br><span class="line"><span class="string">    "Host": "httpbin.org", </span></span><br><span class="line"><span class="string">    "User-Agent": "python-requests/2.18.1"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "json": null, </span></span><br><span class="line"><span class="string">  "origin": "120.85.181.141", </span></span><br><span class="line"><span class="string">  "url": "http://httpbin.org/post"</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
+<h4 id="Requests库的put-方法"><a href="#Requests库的put-方法" class="headerlink" title="Requests库的put()方法"></a>Requests库的put()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.put(<span class="string">'http://httpbin.org/put'</span>, data = payload)</span><br><span class="line">print(r.text)</span><br><span class="line"><span class="comment">#此方法与post方法类似，只不过是替换了URL位置上资源的内容</span></span><br></pre></td></tr></table></figure></div>
+]]></content>
+      <categories>
+        <category>Python</category>
+        <category>python爬虫</category>
+      </categories>
+      <tags>
+        <tag>Requests库</tag>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>正则表达式基本使用</title>
     <url>/posts/f85f3c07/</url>
     <content><![CDATA[<p>regular expression regex  RE</p>
@@ -476,135 +605,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Requests库的7个主要方法</title>
-    <url>/posts/c671c604/</url>
-    <content><![CDATA[<h3 id="Requests库的7个主要方法"><a href="#Requests库的7个主要方法" class="headerlink" title="Requests库的7个主要方法"></a>Requests库的7个主要方法</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">方法</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">requests.request()</td>
-<td style="text-align:center">构造一个请求，支撑以下各方法的基础方法</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.get()</td>
-<td style="text-align:center">获取HTML网页的主要方法，对应于HTTP的GET</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.head()</td>
-<td style="text-align:center">获取HTML网页头信息的方法，对应于HTTP的HEAD</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.post()</td>
-<td style="text-align:center">向HTML网页提交POST请求的方法，对应于HTTP的POST</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.put()</td>
-<td style="text-align:center">向HTML网页提交PUT请求的方法，对应于HTTP的PUT</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.patch()</td>
-<td style="text-align:center">向HTML网页提交局部修改请求，对应于HTTP的PATCH</td>
-</tr>
-<tr>
-<td style="text-align:center">requests.delete()</td>
-<td style="text-align:center">向HTML页面提交删除请求，对应HTTP的DELETE</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h4 id="requests库的主要方法-基础方法"><a href="#requests库的主要方法-基础方法" class="headerlink" title="requests库的主要方法(基础方法)"></a>requests库的主要方法(基础方法)</h4><p><code>requests.request(method, url, **kwargs)</code></p>
-<ul>
-<li><strong>method:</strong>请求方式，对应get/put/post等7种<ul>
-<li><code>r = requests.request(&#39;GET&#39;,url, **kwargs)</code></li>
-<li><code>r = requsts.request(&#39;HEAD&#39;,url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;POST&#39;,url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;PATCH&#39;,url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;delete&#39;, url, **kwargs)</code></li>
-<li><code>r = requests.request(&#39;OPTIONS&#39;,url, **kwargs)</code></li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><strong>url:</strong>拟获取页面的URL链接</li>
-<li><code>**kwargs</code>: 控制访问的参数，共13个<ul>
-<li>1)<code>params</code>:字典或字节序列，作为参数增加到URL中</li>
-<li>2)<code>data</code>: 字典、字节序列或者文件对象，作为Request的内容</li>
-<li>3)<code>json</code> : JSON格式数据，作为Request内容</li>
-<li>4)<code>headers</code> : 字典，HTTP定制头</li>
-<li>5)<code>cookies</code> : 字典或CookieJar，Request中的cookie</li>
-<li>6)<code>auth</code> : 元组，支持HTTP认证功能</li>
-<li>7)<code>files</code> : 字典类型，传输文件</li>
-<li>8)<code>timeout</code> : 设定的超时时间，秒为单位</li>
-<li>9)<code>proxies</code> : 字典类型，设定访问代理服务器，可以增加登录认证</li>
-<li>10)<code>allow_redirects</code> : True/False, 默认为True,重定向开关</li>
-<li>11)<code>stream</code> : True/False, 默认为True ,获取内容立即下载开关</li>
-<li>12)<code>verify</code> : True/False , 默认为True ， 认证SSL证书开关</li>
-<li>13) <code>cert</code> : 本地SSL证书路径<h4 id="requests-get-方法："><a href="#requests-get-方法：" class="headerlink" title="requests.get()方法："></a>requests.get()方法：</h4></li>
-</ul>
-</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.get(url)    <span class="comment">#构造一个向服务器请求资源的Request对象</span></span><br><span class="line"><span class="comment">#返回一个包含服务器资源的Response对象</span></span><br></pre></td></tr></table></figure></div>
-<p>完整方法：<code>requests.get(url, params=None, **kwargs)</code></p>
-<p><code>url</code>: 拟获取页面的url链接</p>
-<p> <code>params</code>: url中的额外参数， 字典或字节流格式， 可选</p>
-<p><code>**kwargs</code> : 12个控制访问的参数，与request()的一样</p>
-<p>实际上是这样的：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(url, params=None, **kwargs)</span>:</span></span><br><span class="line">    <span class="comment">#Sends a GET request.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#:param url: URL for the new :class :'Request' object.</span></span><br><span class="line">    <span class="comment">#:param params: (optional) Dictionary ro bytes to be sent in the query</span></span><br><span class="line">    <span class="comment">#:return: :class :'Request &lt;Response&gt;' object</span></span><br><span class="line">    <span class="comment">#:rtype: requests.Response</span></span><br><span class="line">    </span><br><span class="line">    kwargs.setdefault(<span class="string">'allow redirect'</span>, <span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> request(<span class="string">'get'</span>, url, params=params, **kwargs)</span><br></pre></td></tr></table></figure></div>
-<p>例子：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">r = requests.get(<span class="string">"http://www.baidu.com"</span>)</span><br><span class="line">print(r)</span><br><span class="line">type(r)</span><br><span class="line">r.headers</span><br><span class="line"></span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">200</span></span><br><span class="line"><span class="string">&lt;class 'requests.models.Response'&gt;</span></span><br><span class="line"><span class="string">&#123;'Transfer-Encoding': 'chunked', 'Pragma': 'no-cache', 'Connection': 'Keep-Alive', 'Last-Modified': 'Mon, 23 Jan 2017 13:27:52 GMT', 'Cache-Control': 'private, no-cache, no-store, proxy-revalidate, no-transform', 'Server': 'bfe/1.0.8.18', 'Set-Cookie': 'BDORZ=27315; max-age=86400; domain=.baidu.com; path=/', 'Content-Encoding': 'gzip', 'Date': 'Sat, 15 Jul 2017 13:27:01 GMT', 'Content-Type': 'text/html'&#125;</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
-<h4 id="Response对象的属性"><a href="#Response对象的属性" class="headerlink" title="Response对象的属性"></a>Response对象的属性</h4><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">属性</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">r.status_code</td>
-<td style="text-align:center">HTTP请求的返回状态，200表示连接成功，404表示失败</td>
-</tr>
-<tr>
-<td style="text-align:center">r.text</td>
-<td style="text-align:center">HTTP响应内容的字符串形式，即，url对应的页面内容</td>
-</tr>
-<tr>
-<td style="text-align:center">r.encoding</td>
-<td style="text-align:center">从HTTP header中猜测的响应内容编码方式</td>
-</tr>
-<tr>
-<td style="text-align:center">r.apparent_encoding</td>
-<td style="text-align:center">从内容中分析出的响应内容编码方式(备用编码凡是)</td>
-</tr>
-<tr>
-<td style="text-align:center">r.content</td>
-<td style="text-align:center">HTTP响应内容的二进制形式</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>[注]：<code>r.encoding</code>: 如果<code>header</code>中不存在<code>charset</code>， 则认为编码为<code>ISO-8859-1</code></p>
-<h4 id="Requests库的head-方法"><a href="#Requests库的head-方法" class="headerlink" title="Requests库的head()方法"></a>Requests库的head()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">r = requests.head(<span class="string">'http://httpbin.org/get'</span>)</span><br><span class="line">r.headers</span><br><span class="line">r.text</span><br><span class="line"><span class="string">"""输出：</span></span><br><span class="line"><span class="string">&#123;'Access-Control-Allow-Credentials': 'true', 'X-Processed-Time': '0.000805139541626', 'Via': '1.1 vegur', 'Access-Control-Allow-Origin': '*', 'X-Powered-By': 'Flask', 'Content-Length': '267', 'Server': 'meinheld/0.6.1', 'Content-Type': 'application/json', 'Date': 'Sat, 15 Jul 2017 14:23:41 GMT', 'Connection': 'keep-alive'&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'' -- r.text</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
-<h4 id="Requests库的post-方法"><a href="#Requests库的post-方法" class="headerlink" title="Requests库的post()方法"></a>Requests库的post()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = payload)</span><br><span class="line">r = requests.post(<span class="string">'http://httpbin.org/post'</span>, data = <span class="string">'ABC'</span>)</span><br><span class="line"><span class="comment">#向URL POST一个字典自动编码为form(表单)</span></span><br><span class="line">print(r.text)</span><br><span class="line"><span class="string">"""输出:</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "args": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "data": "ABC",    --- &gt; 向URLPOST一个字符串，自动编码为data</span></span><br><span class="line"><span class="string">  "files": &#123;&#125;, </span></span><br><span class="line"><span class="string">  "form": &#123;</span></span><br><span class="line"><span class="string">    "key1": "value1", </span></span><br><span class="line"><span class="string">    "key2": "value2"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "headers": &#123;</span></span><br><span class="line"><span class="string">    "Accept": "*/*", </span></span><br><span class="line"><span class="string">    "Accept-Encoding": "gzip, deflate", </span></span><br><span class="line"><span class="string">    "Connection": "close", </span></span><br><span class="line"><span class="string">    "Content-Length": "23", </span></span><br><span class="line"><span class="string">    "Content-Type": "application/x-www-form-urlencoded", </span></span><br><span class="line"><span class="string">    "Host": "httpbin.org", </span></span><br><span class="line"><span class="string">    "User-Agent": "python-requests/2.18.1"</span></span><br><span class="line"><span class="string">  &#125;, </span></span><br><span class="line"><span class="string">  "json": null, </span></span><br><span class="line"><span class="string">  "origin": "120.85.181.141", </span></span><br><span class="line"><span class="string">  "url": "http://httpbin.org/post"</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure></div>
-<h4 id="Requests库的put-方法"><a href="#Requests库的put-方法" class="headerlink" title="Requests库的put()方法"></a>Requests库的put()方法</h4><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PYTHON"><figure class="iseeu highlight /python"><table><tr><td class="code"><pre><span class="line">payload = &#123;<span class="string">'key1'</span>:<span class="string">'value1'</span>, <span class="string">'key2'</span>:<span class="string">'value2'</span>&#125;</span><br><span class="line">r = requests.put(<span class="string">'http://httpbin.org/put'</span>, data = payload)</span><br><span class="line">print(r.text)</span><br><span class="line"><span class="comment">#此方法与post方法类似，只不过是替换了URL位置上资源的内容</span></span><br></pre></td></tr></table></figure></div>
-]]></content>
-      <categories>
-        <category>Python</category>
-        <category>python爬虫</category>
-      </categories>
-      <tags>
-        <tag>Requests库</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>爬取校内腾讯企业邮箱通信录</title>
     <url>/posts/e675b5d9/</url>
     <content><![CDATA[<p>简单使用python <code>request</code> + <code>re</code> 爬取校内邮箱通信录(腾讯企业邮箱)的用户信息数据。</p>
@@ -807,6 +807,41 @@
       </tags>
   </entry>
   <entry>
+    <title>Arch linux系列 安装 haroopad markdown 编辑器</title>
+    <url>/posts/63e58ebb/</url>
+    <content><![CDATA[<blockquote>
+<p>Haroopad 是一个优秀的 Markdown 编辑器，是一个用于创建适宜 Web 的文档的处理器。使用 Haroopad 可以创作各种格式的文档，比如博客文章、幻灯片、演示文稿、报告和电子邮件等。Haroopad 在 Windows、Mac OS X 和 Linux 上均可用。它有 Debian/Ubuntu 的软件包，也有 Windows 和 Mac 的二进制文件。该应用程序使用 node-webkit、CodeMirror，marked，以及 Twitter 的 Bootstrap 。</p>
+<p>Haroo 在韩语中的意思是“一天”。</p>
+</blockquote>
+<p>本文主要介绍通过压缩包<code>**.tar.gz</code>的方式安装 <code>Haroopad</code>.</p>
+<a id="more"></a>
+<h3 id="一、下载-Haroopad"><a href="#一、下载-Haroopad" class="headerlink" title="一、下载 Haroopad"></a>一、下载 Haroopad</h3><p>我们可以从官网直接下载我们需要的压缩包，官网地址: <a href="http://pad.haroopress.com/user.html" target="_blank" rel="noopener">Haroopad官网地址</a></p>
+<p><img src="haroopad_website.png" alt></p>
+<p>这里我选择的是linux binary 64 位的压缩包。</p>
+<h3 id="二、解压并安装Haroopad"><a href="#二、解压并安装Haroopad" class="headerlink" title="二、解压并安装Haroopad"></a>二、解压并安装Haroopad</h3><p>根据下载的压缩包格式进行解压： 例如 **.tar.gz格式</p>
+<p>解压并放到<code>/opt/</code>目录下:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">tar zxvf haroopad-v0.13.1.x64.tar.gz -C haroopad</span><br><span class="line">sudo cp -r haroopad /opt/</span><br><span class="line"></span><br><span class="line">tar zxvf data.tar.gz</span><br><span class="line">tar zxvf control.tar.gz</span><br></pre></td></tr></table></figure></div>
+<p>把解压出来的 usr中的文件放到<code>/usr/</code>下：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">sudo cp -r ./usr /</span><br><span class="line"><span class="comment"># 执行 postinst</span></span><br><span class="line">chmod 755 postinst</span><br><span class="line">sudo ./postinst</span><br></pre></td></tr></table></figure></div>
+<p><img src="haroopad_install.png" alt></p>
+<h3 id="三、修复桌面图标"><a href="#三、修复桌面图标" class="headerlink" title="三、修复桌面图标"></a>三、修复桌面图标</h3><p>为haroopad 换一个合适的桌面图标:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">sudo vim /usr/share/applications/Haroopad.desktop</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=haroopad</span><br><span class="line">Version=0.13.1</span><br><span class="line">Exec=haroopad</span><br><span class="line">Comment=The Next Document processor based on Markdown</span><br><span class="line">#Icon=haroopad</span><br><span class="line">Icon=/usr/share/icons/hicolor/128x128/apps/haroopad.png</span><br><span class="line">Type=Application</span><br><span class="line">Terminal=false</span><br><span class="line">StartupNotify=true</span><br><span class="line">Encoding=UTF-8</span><br><span class="line">Categories=Development;GTK;GNOME;</span><br></pre></td></tr></table></figure></div>
+<h3 id="四、配置Haroopad"><a href="#四、配置Haroopad" class="headerlink" title="四、配置Haroopad"></a>四、配置Haroopad</h3><p>相关的Haroopad设置，可以打开 <code>偏好设置</code>进行配置:</p>
+<p><img src="haroopad_settings.png" alt></p>
+<p>到此，Haroopad 安装就完成了。</p>
+<p>参考链接: <a href="https://www.jianshu.com/p/dba9acabf0a7" target="_blank" rel="noopener">https://www.jianshu.com/p/dba9acabf0a7</a></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>softwares</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>markdown</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>编译自己的Vim8.1</title>
     <url>/posts/97c4fd12/</url>
     <content><![CDATA[<p>最近换了<code>Manjaro</code> linux系统，发现通过系统<code>pacman -S vim</code>安装的无图形版本<code>vim</code>不支持<code>clipboard</code>功能。</p>
@@ -961,41 +996,6 @@
       </categories>
       <tags>
         <tag>linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Arch linux系列 安装 haroopad markdown 编辑器</title>
-    <url>/posts/63e58ebb/</url>
-    <content><![CDATA[<blockquote>
-<p>Haroopad 是一个优秀的 Markdown 编辑器，是一个用于创建适宜 Web 的文档的处理器。使用 Haroopad 可以创作各种格式的文档，比如博客文章、幻灯片、演示文稿、报告和电子邮件等。Haroopad 在 Windows、Mac OS X 和 Linux 上均可用。它有 Debian/Ubuntu 的软件包，也有 Windows 和 Mac 的二进制文件。该应用程序使用 node-webkit、CodeMirror，marked，以及 Twitter 的 Bootstrap 。</p>
-<p>Haroo 在韩语中的意思是“一天”。</p>
-</blockquote>
-<p>本文主要介绍通过压缩包<code>**.tar.gz</code>的方式安装 <code>Haroopad</code>.</p>
-<a id="more"></a>
-<h3 id="一、下载-Haroopad"><a href="#一、下载-Haroopad" class="headerlink" title="一、下载 Haroopad"></a>一、下载 Haroopad</h3><p>我们可以从官网直接下载我们需要的压缩包，官网地址: <a href="http://pad.haroopress.com/user.html" target="_blank" rel="noopener">Haroopad官网地址</a></p>
-<p><img src="haroopad_website.png" alt></p>
-<p>这里我选择的是linux binary 64 位的压缩包。</p>
-<h3 id="二、解压并安装Haroopad"><a href="#二、解压并安装Haroopad" class="headerlink" title="二、解压并安装Haroopad"></a>二、解压并安装Haroopad</h3><p>根据下载的压缩包格式进行解压： 例如 **.tar.gz格式</p>
-<p>解压并放到<code>/opt/</code>目录下:</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">tar zxvf haroopad-v0.13.1.x64.tar.gz -C haroopad</span><br><span class="line">sudo cp -r haroopad /opt/</span><br><span class="line"></span><br><span class="line">tar zxvf data.tar.gz</span><br><span class="line">tar zxvf control.tar.gz</span><br></pre></td></tr></table></figure></div>
-<p>把解压出来的 usr中的文件放到<code>/usr/</code>下：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">sudo cp -r ./usr /</span><br><span class="line"><span class="comment"># 执行 postinst</span></span><br><span class="line">chmod 755 postinst</span><br><span class="line">sudo ./postinst</span><br></pre></td></tr></table></figure></div>
-<p><img src="haroopad_install.png" alt></p>
-<h3 id="三、修复桌面图标"><a href="#三、修复桌面图标" class="headerlink" title="三、修复桌面图标"></a>三、修复桌面图标</h3><p>为haroopad 换一个合适的桌面图标:</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">sudo vim /usr/share/applications/Haroopad.desktop</span><br></pre></td></tr></table></figure></div>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=haroopad</span><br><span class="line">Version=0.13.1</span><br><span class="line">Exec=haroopad</span><br><span class="line">Comment=The Next Document processor based on Markdown</span><br><span class="line">#Icon=haroopad</span><br><span class="line">Icon=/usr/share/icons/hicolor/128x128/apps/haroopad.png</span><br><span class="line">Type=Application</span><br><span class="line">Terminal=false</span><br><span class="line">StartupNotify=true</span><br><span class="line">Encoding=UTF-8</span><br><span class="line">Categories=Development;GTK;GNOME;</span><br></pre></td></tr></table></figure></div>
-<h3 id="四、配置Haroopad"><a href="#四、配置Haroopad" class="headerlink" title="四、配置Haroopad"></a>四、配置Haroopad</h3><p>相关的Haroopad设置，可以打开 <code>偏好设置</code>进行配置:</p>
-<p><img src="haroopad_settings.png" alt></p>
-<p>到此，Haroopad 安装就完成了。</p>
-<p>参考链接: <a href="https://www.jianshu.com/p/dba9acabf0a7" target="_blank" rel="noopener">https://www.jianshu.com/p/dba9acabf0a7</a></p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>softwares</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>markdown</tag>
       </tags>
   </entry>
   <entry>
@@ -1284,6 +1284,227 @@ bs=4M</code>, <code>of</code>指定烧录U盘的挂载位置;</li>
       </tags>
   </entry>
   <entry>
+    <title>CentOS7通过yum(yellow dog update modifier) 安装mysql5.7</title>
+    <url>/posts/86d29d2c/</url>
+    <content><![CDATA[<a id="more"></a>
+<h3 id="配置yum源"><a href="#配置yum源" class="headerlink" title="配置yum源"></a>配置yum源</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 下载mysql安装源包</span></span><br><span class="line">root @~&gt; wget http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm</span><br><span class="line"><span class="comment"># 安装mysql源</span></span><br><span class="line">root @~&gt; yum localinstall mysql57-community-release-el7-8.noarch.rpm</span><br></pre></td></tr></table></figure></div>
+<p>检查mysql源是否安装成功:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root @~&gt; yum repolist enabled | grep <span class="string">"mysql.*-community.*"</span></span><br></pre></td></tr></table></figure></div>
+<p>如下图则安装成功:</p>
+<p><img src="repo-resource.png" alt="mysql_source"></p>
+<h3 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; yum install -y mysql-community-server</span><br></pre></td></tr></table></figure></div>
+<h3 id="启动MySQL服务并设置开机自动启动"><a href="#启动MySQL服务并设置开机自动启动" class="headerlink" title="启动MySQL服务并设置开机自动启动"></a>启动MySQL服务并设置开机自动启动</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; systemctl start mysqld</span><br></pre></td></tr></table></figure></div>
+<p>查看MySQL启动状态</p>
+<p><img src="mysql-status.png" alt="mysqld进程状态"></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line">root@ ~&gt; systemctl daemon-reload</span><br></pre></td></tr></table></figure></div>
+<h3 id="修改默认密码"><a href="#修改默认密码" class="headerlink" title="修改默认密码"></a>修改默认密码</h3><p>刚安装完的mysql会自动给root用户分配一个临时密码，而且必须重新设置密码(从5.5版本开始)</p>
+<ul>
+<li>先查看root用户的临时密码</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; grep <span class="string">"temporary password"</span> /var/<span class="built_in">log</span>/mysqld.log</span><br></pre></td></tr></table></figure></div>
+<ul>
+<li>使用临时的密码登录进mysql来设置新的密码</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">set</span> PASSWORD = PASSWORD(<span class="string">'[YOUR_NEW_PASSWORD]'</span>)</span><br></pre></td></tr></table></figure></div>
+<p><img src="temporary-password.png" alt="查看临时密码"></p>
+<ul>
+<li>可能遇到的问题：设置的密码过于简单mysql报错:</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Your password does not satisfy the current policy requirements.</span><br></pre></td></tr></table></figure></div>
+<p>解决方法：由于刚安装的mysql的密码默认强度是最高的，若想要设置简单的密码就要修改<strong>validate_password_policy</strong>的值，</p>
+<h4 id="validate-password-policy有以下取值："><a href="#validate-password-policy有以下取值：" class="headerlink" title="validate_password_policy有以下取值："></a>validate_password_policy有以下取值：</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Policy</th>
+<th style="text-align:center">Tests Performed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0 or LOW</td>
+<td style="text-align:center">Length</td>
+</tr>
+<tr>
+<td style="text-align:center">1 or MEDIUM</td>
+<td style="text-align:center">Length;numeric,lowercase/uppercase,and special characters</td>
+</tr>
+<tr>
+<td style="text-align:center">2 or STRONG</td>
+<td style="text-align:center">Length;numeric,lowercase/uppercase,and special characters; dictionary file</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>操作：</p>
+<ul>
+<li>设置安全级别</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">set</span> global validate_password_policy=0;</span><br></pre></td></tr></table></figure></div>
+<ul>
+<li>设置密码长度为8，可以设置为其他值，最小为4位</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">set</span> global validate_password_length=4;</span><br></pre></td></tr></table></figure></div>
+<p>之后就可以设置简单的密码了。</p>
+<h3 id="允许root远程登录"><a href="#允许root远程登录" class="headerlink" title="允许root远程登录"></a>允许root远程登录</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO <span class="string">'root'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'[YOUR_PASSWORD]'</span> WITH GRANT OPTION;</span><br><span class="line">mysql&gt; flush privileges;</span><br></pre></td></tr></table></figure></div>
+<h3 id="修改字符集编码为UTF-8"><a href="#修改字符集编码为UTF-8" class="headerlink" title="修改字符集编码为UTF-8"></a>修改字符集编码为UTF-8</h3><ul>
+<li>查看当前字符编码</li>
+</ul>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">"char%';</span></span><br></pre></td></tr></table></figure></div>
+<p>检测是否都是utf-8(filesystem除外)，如果不是就需要修改。 <strong>character_set_server</strong>一般是lantin1。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 停止mysqld服务</span></span><br><span class="line">systemctl stop mysqld</span><br><span class="line"><span class="comment"># 进入my.cnf文件，一般是/etc/路径下</span></span><br><span class="line">vim /etc/my.cnf</span><br><span class="line"><span class="comment"># 在[mysqld]下追加character-set-server=utf-8</span></span><br><span class="line"><span class="comment"># 在[mysql]下追加default-character-set=utf-8</span></span><br><span class="line"><span class="comment"># 启动mysqld</span></span><br><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure></div>
+]]></content>
+      <categories>
+        <category>mysql</category>
+      </categories>
+      <tags>
+        <tag>mysql5.7安装</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>A Polynomial Algorithm for Testing Diagnosability of Discrete-Event Systems.</title>
+    <url>/posts/c598fb85/</url>
+    <content><![CDATA[<blockquote>
+<p>文献翻译：一个测试离散事件系统可诊断性的多项式时间算法<br>authors: Shengbing Jiang, Zhongdong Huang, Vigyan Chandra, and Ratnesh Kumar<br>原文: <a href="https://ieeexplore.ieee.org/document/940942" target="_blank" rel="noopener">A polynomial algorithm for testing diagnosability of discrete-event systems</a></p>
+</blockquote>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>&emsp;&emsp;大型复杂系统中的错误诊断是一项关键任务。在离散事件系统（DES）领域，Sampath 等人提出了一种基于语言的错误诊断方法。他们为DES引入可诊断性概念和定义，并使用根据系统构建的诊断器来测试系统的可诊断性。这种测试可诊断性的方法的复杂度是系统状态数的指数级别的，对于系统错误数量是双倍指数级别的。本文给出一种不构建系统诊断器的可诊断性测试算法，其复杂度在系统状态数上是四阶的，在故障类型数上是线性的。</p>
+<p>Index Terms: Complexity, diagnosability, discrete event system, failure diagnosis.</p>
+<a id="more"></a>
+<h2 id="I-INTRODUCTION"><a href="#I-INTRODUCTION" class="headerlink" title="I. INTRODUCTION"></a>I. INTRODUCTION</h2><p>&emsp;&emsp;错误诊断是大型复杂系统的一项关键任务。这个问题在包括离散事件系统<sup><a href="#fn_1" id="reffn_1">1</a></sup><sup><a href="#fn_2" id="reffn_2">2</a></sup><sup><a href="#fn_3" id="reffn_3">3</a></sup><sup><a href="#fn_4" id="reffn_4">4</a></sup><sup><a href="#fn_5" id="reffn_5">5</a></sup><sup><a href="#fn_6" id="reffn_6">6</a></sup>在内的各个领域的文献中都得到了相当多的关注。在<sup><a href="#fn_4" id="reffn_4">4</a></sup>中，Sampath等人提出了一种离散事件系统的错误诊断方法。他们提出了可诊断性的概念，并给出了测试可诊断性的充分必要条件。他们将条件表示为诊断器的一个属性。为了测试系统可诊断性，首先需要构造诊断器。构造诊断器和测试可诊断性的复杂度是系统状态数的指数级别的，对于错误事件数是双倍指数级别的。</p>
+<p>&emsp;&emsp;显然，如果我们能够不构建诊断器的情况下，来测试目标系统的可诊断性，那么我们将可以节省为不可诊断系统构建诊断器的时间。在本文中，我们给出一种无需构造诊断器即可测试可诊断性的方法。该方法的复杂度是系统状态数量和错误事件数量的多项式。接下来，我们首先介绍离散事件系统的可诊断性概念，然后介绍我们的测试算法，最后，给出一个说明性的例子。</p>
+<h2 id="II-DIAGNOSABILITY"><a href="#II-DIAGNOSABILITY" class="headerlink" title="II. DIAGNOSABILITY"></a>II. DIAGNOSABILITY</h2><p>我们首先给出系统模型，然后介绍由<sup><a href="#fn_4" id="reffn_4">4</a></sup>提出的可诊断性定义。</p>
+<h3 id="A-System-model"><a href="#A-System-model" class="headerlink" title="A. System model"></a>A. System model</h3><p>&emsp;&emsp;令$G = (X,\Sigma,\delta,x_0)$是待诊断系统的有限状态机模型，其中</p>
+<ul>
+<li>$X$                         是一个状态有限集</li>
+<li>$\Sigma$                          是一个事件标签的有限集</li>
+<li>$\delta\subseteq X\times\Sigma\times X$ 是状态转移有限集</li>
+<li>$x_0\in X$                是系统的初始状态</li>
+</ul>
+<p>我们假设所有状态自动机是可达的（accessible，所有状态可以从初始状态出发，经若干转移后到达），否则我们只考虑状态自动机中的可达部分。<br>我们用<script type="math/tex">\Sigma^*</script>表示包含所有有限长度事件序列的集合，其中包括空序<script type="math/tex">\varepsilon</script>。把<script type="math/tex">\Sigma^*</script>集合中的一个元素称为串（trace），用<script type="math/tex">\Sigma^*</script>的子集表示语言（language）。<br>对于一个串<script type="math/tex">s</script>和事件<script type="math/tex">\sigma</script>，我们用<script type="math/tex">\sigma\in s</script>表示事件<script type="math/tex">\sigma</script>包含于串<script type="math/tex">s</script>中，即串<script type="math/tex">s</script>发生了事件<script type="math/tex">\sigma</script>。系统<script type="math/tex">G</script>中的一个路径（path）是一个状态转移序列<script type="math/tex">(x_1,\delta_1,x_2,....,\delta_{n-1},x_n)</script>，其中对于每个<script type="math/tex">i\in \{1,...,n-1\},(x_i,\delta_i,x_{i+1})\in \delta</script>，如果<script type="math/tex">x_n=x_1</script>，则表示该路径是一个环（cycle）。我们用<script type="math/tex">L(G)\subseteq\Sigma^*</script>来描述系统<script type="math/tex">G</script>的生成语言，即系统<script type="math/tex">G</script>从初始状态开始能够执行的串的集合。同时假设<script type="math/tex">L(G)</script>是前缀闭合（prefix-closed）的，即<script type="math/tex">L(G)=pr(L(G))</script>，其中<script type="math/tex">pr(L(G))=\{u|\exists v\in\Sigma^*, uv\in L(G)\}</script>是一个由所有<script type="math/tex">L(G)</script>中的串的前缀组成的集合。用<script type="math/tex">\Sigma_o\subseteq\Sigma</script>表示系统的可观事件集，<script type="math/tex">\Sigma_{uo}=\Sigma - \Sigma_o</script>表示不可观事件集，<script type="math/tex">M:\Sigma\to \Sigma_o\cup \{\varepsilon\}</script>表示一个观察映射函数，<script type="math/tex">F={F_i,i=1,2,...,m}</script>表示错误类型的集合，<script type="math/tex">\psi:\Sigma\to F\cup\{\emptyset\}</script>表示一个为<script type="math/tex">\Sigma</script>中每个事件错误分配的函数（failure assignment function）。$M$的定义通常从$\Sigma$扩展到<script type="math/tex">\Sigma^*</script>，如下所示：$M(\varepsilon)=\varepsilon$，并且对于每一个串<script type="math/tex">s\in \Sigma^*, \sigma\in\Sigma:M(s\sigma)=M(s)M(\sigma)</script>。</p>
+<p>对于本文研究的系统，和<sup><a href="#fn_4" id="reffn_4">4</a></sup>一样，我们作出以下假设：</p>
+<ul>
+<li>A1) 系统$G$的生成语言是活语言（live language）。这意味着系统中的每一个状态均定义相应的状态转移。</li>
+<li>A2) 系统$G$中不存在不可观事件的环。</li>
+<li>A3) 所有错误事件均是不可观的，即$(\forall\sigma\in\Sigma,\psi(\sigma)\neq\emptyset)\Rightarrow M(\sigma)=\varepsilon$。</li>
+</ul>
+<h3 id="B-Diagnosability"><a href="#B-Diagnosability" class="headerlink" title="B. Diagnosability"></a>B. Diagnosability</h3><p>离散事件系统的可诊断性<sup><a href="#fn_4" id="reffn_4">4</a></sup>定义描述如下：</p>
+<p><strong>Definition 1:</strong> 一个前缀封闭语言$L$关于观察映射$M$和错误分配函数$\psi$是可诊断的当：</p>
+<script type="math/tex; mode=display">
+(\forall F_i\in F)(\exists n_i\in N)(\forall s\in L, \psi(s_f)=F_i) \\
+(\forall v = st \in L, \lVert t\rVert \ge n_i) \\
+\Rightarrow(\forall w\in L, M(w)=M(v))(\exists u\in pr(\{w\}),\psi(u_f)=F_i)</script><p>其中$s_f$和$u_f$分别表示串$s$和串$u$的最后一个事件，$pr({w})$是$w$所有前缀组成的集合。如果系统$G$的生成语言$L(G)$是可诊断的，则该系统是可诊断的。</p>
+<p>根据上面定义，若$s$是$L$中一个以$F_i$错误事件结尾的串，$v$是$s$的任意一个充分长后缀，则任意一个$L$中与$v$拥有相同观察序列的的串$w$，即$M(w)=M(v)$，串$w$中一定包含错误事件$F_i$。</p>
+<h2 id="III-ALGORITHM"><a href="#III-ALGORITHM" class="headerlink" title="III. ALGORITHM"></a>III. ALGORITHM</h2><p>我们现在展示测试可诊断性的算法。</p>
+<p><strong>Algorithm 1:</strong> 对于给定系统$G=(X,\Sigma, \delta, x_0)$，一个观察映射$M$和一个错误分配函数$\psi$，做以下操作：</p>
+<ul>
+<li>1) 获取一个非确定有限状态自动机（nondeterministic finite-state machine）$G_o = (X_o,\Sigma_o,\delta_o,x^o_0)$，其中语言$L(G_o)=M(L(G))$：<ul>
+<li>$X_o = {(x,f)|x\in X_1\cup{x_0},f\subseteq F}$是自动机的有限状态集，其中$X_1={x\in X|\exists(x’,\sigma,x)\in\delta 且 M(\sigma)\neq\varepsilon}$是$G$能通过可观序列转移到达的状态组成的集合，$f$是一个从$x_0$到$x$的路径的错误类型。</li>
+<li>$\Sigma_o$是可观事件集，$G_o$的事件标签集合。</li>
+<li>$\delta_o\subseteq X_o\times\Sigma_o\times X_o$是状态转移集。$((x,f),\delta,(x’,f’))\in \delta_o$当且仅当对于$\forall i \in {1,2,…,n}, M(\sigma_i)=\varepsilon, M(\sigma)=\sigma$且$f’={\psi(\sigma_i)|\psi(\sigma_i)\neq\emptyset, 1\leq i\leq n}\cup f$，系统$G$中存在这样一个路径$(x,\sigma_1,x_1,…,\sigma_n,x_n,\sigma,x’)(n\geq 0)$。</li>
+<li>$x^o_0=(x_0,\emptyset)\in X_o$是$G_o$的初始状态。</li>
+</ul>
+</li>
+<li>2) 计算$G_d=(G_o||G_o)$，即$G_o$与其自身的严格组合（composition）计算。$G_o=(X_d,\Sigma_o,\delta_d,x^d_0)$，其中<ul>
+<li>$X_d={(x^o_1,x^o_2)|x^o_1,x^o_2\in X_o}$ 是状态集；</li>
+<li>$\Sigma_o$是$G_d$的事件标签集；</li>
+<li>$\delta_d\subseteq X_d\times\Sigma_o\times X_d$是状态转移集。$((x^o_1,x^o_2),\delta,(y^o_1,y^o_2))\in \delta_d$当且仅当$(x^o_1,\sigma, y^o_2)$和$(x^o_2,\sigma,y^o_2)$均包含于$\delta_o$中；</li>
+<li>$x^d_0$是$G_d$的初始状态。</li>
+</ul>
+</li>
+<li>3) 检查$G_d$中是否存在这样一个环$cl = (x_1,\sigma_1,x_2, …, x_n, \sigma_n, x_1), n\geq 1, x_i = ((x^1_i, f^1_i),(x^2_i,f^2_i)), i = 1, 2, …, n$, 使得 $f^1_1\neq f^2_1$。如果存在，则输出该系统是不可诊断的，最后这一步骤可以先标识$G_d$中的状态$((x^1,f^1),(x^2,f^2))$，其中$f^1\neq f^2$，然后删除其他所有状态以及相关的转移，判断剩余的图中是否存在环即可得到结果。</li>
+</ul>
+<p>接下来，我们给出两个定理，展示<strong>Algorithm 1</strong> 中状态机$G_o$和$G_d$的一些属性。这里省略了证明，因为它们可以直接遵循$G_o$和$G_d$的定义得到。</p>
+<p><strong>Lemma 1:</strong> 对于状态机$G_o$：</p>
+<ul>
+<li>1) $L(G_o) = M(L(G))$；</li>
+<li>2) 对于$G_o$中每一个作为环的路径$tr$：<script type="math/tex; mode=display">
+tr = ((x_0,\emptyset), \sigma_0, (x_1,f_1), ..., (x_k,f_k), \\
+\sigma_k, ..., (x_n,f_n), \sigma_n, (x_k,f_k))</script></li>
+</ul>
+<p>我们有</p>
+<ul>
+<li>对于任意$i, j\in {k,k+1,…,n}; f_i=f_j$；</li>
+<li><script type="math/tex; mode=display">\exists uv^*\in L(G) 使得 M(u) = \sigma_0...\sigma_{k-1},M(v)=\sigma_k...\delta_n; \\ \{\psi(\sigma)|\sigma\in u, \psi(\sigma)\neq\emptyset\}=f_k</script></li>
+</ul>
+<p><strong>Lemma 2:</strong> 对于$G_d$中每一个作为环的路径$tr$：<script type="math/tex">tr = (x^d_0, \sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k) \\
+x_i = ((x^1_i,f^1_i),(x^2_i,f^2_i)), i = 1, 2, ..., n</script>有：</p>
+<ul>
+<li>1) $G_o$中存在两个作为环的路径 $tr_1$和$tr_2$：<script type="math/tex; mode=display">
+tr_1 = ((x_0,\emptyset), \sigma_0, (x^1_1,f^1_1),...,(x^1_k,f^1_k),\\
+\sigma_k, ..., (x^1_n,f^1_n),\sigma_n, (x^1_k,f^1_k))\\
+tr_2 = ((x_0,\emptyset), \sigma_0, (x^2_1,f^2_1),...,(x^2_k,f^2_k),\\
+\sigma_k, ..., (x^2_n, f^2_n), \sigma_n, (x^2_k, f^2_k)).</script></li>
+<li>2) 对于任意$i, j \in{k, k+1, …, n}$, 有$(f^1_i=f^1_j) \land (f^2_i=f^2_j)$。</li>
+</ul>
+<p>接着，我们再提供一个定理确保<strong>Algorithm 1</strong>的正确性。</p>
+<p><strong>Theorem 1</strong>: $G$ 是可诊断的当且仅当$G_d$中的每一个环$cl$：</p>
+<script type="math/tex; mode=display">
+cl = (x_1,\sigma_1,x_2,...,x_n,\sigma_n,x_1),\qquad n\geq 1 \\
+x_i = ((x^1_i,f^1), (x^2_i,f^2)),\qquad i=1,2,...,n</script><p>我们有$f^1=f^2$。</p>
+<p><strong>Proof</strong>: 对于必要性，假设$G$是可诊断的，但<script type="math/tex">G_d</script>中存在一个环$cl$，<script type="math/tex">cl=(x_k,\sigma_k,x_{k+1},...,x_n,\sigma_n,x_K), n\geq k, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = k, k+1,...,x_n</script>使得$f^1\neq f^2$。因为$G_d$是可达的，$G_d$中存在一个以环$cl$结尾的路径$tr$，即$tr = (x^d_0,\sigma_0,x_1,…,x_k,\sigma_k,…,x_n,\sigma_n,x_k)$。据<strong>Lemma 2</strong>，$G_o$中存在两个路径$tr_1$和$tr_2$：</p>
+<script type="math/tex; mode=display">
+tr_1 = ((x_0,\emptyset),\sigma_0,(x^1_1,f^1_1),...,(x^1_k,f^1),\\
+\sigma_k,...,(x^1_n,f^1),\sigma_n,(x^1_k,f^1))\\
+tr_2 = ((x_0,\emptyset),\sigma_0,(x^2_1,f^2_1),...,(x^2_k,f^2),\\
+\sigma_k,...,(x^2_n,f^2),\sigma_n,(x^2_k,f^2))\\</script><p>更多地，根据<strong>Lemma 1</strong>，我们可得<script type="math/tex">\exists u_1v^*_1\in L(G)</script>使得<script type="math/tex">M(u_1)=M(u_2) = \sigma_0...\sigma_{k-1}, M(v_1)=M(v_2)=\sigma_k...\sigma_n</script> 并且<script type="math/tex">\{\psi(\sigma)|\sigma\in u_i, \psi(\sigma)\neq \emptyset\}=\{\psi(\sigma)|\sigma\in u_iv_i,\psi(\sigma)\neq \emptyset\}=f^i, i = 1,2</script>。因为$f^1\neq f^2$，我们假设$F_k\in f^1 - f^2\neq \emptyset$。然后$\exists s\in L(G)$使得 $\psi(s_f)=F_k$ 且对于某些<script type="math/tex">t\in \Sigma^*; u_1\in st</script>。对于任意整数$n_k$，我们可以选择另一个整数$l$，使得$\lVert tv^l_1\rVert &gt;n_k$。<br>则有$M(u_2,v^l_2)=M(stv^l_1)$并且<script type="math/tex">\{\psi(\sigma)|\sigma\in u_2v_2, \psi(\sigma)\neq \emptyset\}=f^2</script>，这意味着$u_2v^l_2$中不包含任何类型为$F_k$对应的错误事件。因此，根据可诊断性的定义，系统$G$是不可诊断的。与假设矛盾，所以必要性成立。</p>
+<p>对于充分性，假设$G_d$中的每一个环$cl$，$cl = (x_1,\sigma_1,x_2,…,x_n,\sigma_n,x_1), n\geq 1, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = 1, 2, …, n$, 我们有$f^1=f^2$。<br>根据<strong>Lemma 2</strong>的第二句，我们知道该假设意味着$\forall x = ((x^1,f^1),(x^2,f^2)) \in X_d, if f^1\neq f^2$，则$x$不包含于一个循环中。更进一步地，对于$x_i=(x^1_i,f^1_i),(x^2_i,f^2), 1 \leq i\geq k$, $G_d$中的任意状态序列$(x_1,x_2,…,x_k)$，如果对于$\forall i\in {1,2,…,k}$有$f^1_i\neq f^2_i$，则状态序列的长度限制在$G_d$状态数之内，即$k\leq |X_d|$。</p>
+<p>现在，令$s$是$L(G)$中以$F_k$类型错误事件结尾的串，即$\psi(s_f)=F_k$，我们称对于$\lVert t\rVert &gt; |X_d|\times(|X|-1), \forall w\in L(G), M(w)=M(v)$， $\forall v=st\in L(G)$, 则$w$中包含$F_k$类型的错误事件。综上，对于任何从$x^d_0$出发通过执行$G_d$中$M(s)$到达的状态$x\in X_d$，有对于$G_d$中任意从$x$开始的状态序列，一个状态$y = ((y^1,f^1),(y^2,f^2))\in X_d, \land f^1=f^2$可以在$|X_d|-1$步之内到达。这意味着$\forall v = st \in L(G) \land \lVert M(t)\rVert &gt; |X_d|, \forall w \in L(G) \land M(w)=M(v)$，$w$中必定包含$F_k$类型的错误事件。进一步假设$G$中不存在不可观环，任何$M(t)$中的可观事件最多可在$|X|-1$个不可观事件之后被跟踪到。因此，对于上面的串$t$，$\lVert t\rVert \leq ((\lVert M(t)\rVert + 1) \times (|X|-1)$，即$\lVert M(t)\rVert \geq \lVert t\rVert / (|X|-1)-1$。所以如果$\lVert t\rVert &gt; |X_d|\times(|X|-1)$，则$\lVert M(t)\rVert\geq \lVert t\rVert/(|X|-1)-1 &gt; (|X_d|\times(|X|-1))/(|X|-1)-1 = |X_d|-1$，确立我们的主张（注意，我们隐式地假设$|X|&gt;1$；否则如果$|X|=1$，根据不存在不可观环的假设，将不存在任何使用错误标签的转移，系统显然是可诊断的）。根据<strong>Lemma 1</strong>，系统$G$是可诊断的，充分性也证明完毕。</p>
+<p><strong>Remark 1</strong>: 根据<strong>Algorithm 1</strong>，我们知道$G_o$中的状态数是$|X|\times 2^{|F|}$，$G_o$中的转移数是$|X|^2\times 2^{2|F|}\times|\Sigma_o|$。因为$G_d = G_o||G_o$，$G_d$中的状态数为$|X|^2\times 2^{2|F|}$，$G_d$中的转移数为$|X|^4\times 2^{4|F|}\times|\Sigma_o|$。</p>
+<p><strong>Algorithm 1</strong>的第一步，构造$G_o$的复杂度为$O(|X|^2\times 2^{2|F|}$， 而<strong>Algorithm 1</strong>的第二步，构造$G_d$的复杂度为$O(|X|^4\times 2^{4|F|}\times|\Sigma_o|)$。执行<strong>Algorithm 1</strong>的第三步，它适当地修剪$G_d$中检测到的“违规”环的的存在，与状态数和转移数是呈线性关系的，即$O(|X|^4\times 2^{4|F|})$。注意当移除所有不符合规则的环后，转移标签将是不相关的。</p>
+<p>所以<strong>Algorithm 1</strong>的复杂度是$O(|X|^4\times 2^{4|F|}\times|\Sigma_o|)$，它是$G$中状态数的多项式级别和$G$中错误类型数的指数级别。</p>
+<p>在<sup><a href="#fn_4" id="reffn_4">4</a></sup>中，提供了另一个可诊断性的充分必要条件。该条件被表示为系统诊断器的一个属性。所以为了测试可诊断性，我们必须先构造目标系统的诊断器，然后检查诊断器的属性。其中构造诊断器和检查诊断器属性的复杂度都是系统状态数的指数级别和错误类型数的双倍指数级别。在<strong>Algorithm 1</strong>中，测试系统的可诊断性不需要构造诊断器。</p>
+<p><strong>Remark 2</strong>: 测试可诊断性的复杂度对于错误类型数量可以是多项式级别的，对于一个拥有错误类型$F = {F_i, i = 1, 2, …, m}$的系统是可诊断的，当且仅当系统的每一个错误类型$F_i, i = 1, 2, …,m$都是可诊断的。换句话说，对于每个单独的错误类型集${F_1}, …, {F_m}$应用<strong>Algorithm 1</strong> $m$ 次。因为每一个错误类型集中只包含一个错误类型，根据<strong>Remark 1</strong>，可知每一次测试的复杂度为$O(|X|^4\times 2^{4|1|}\times|\Sigma_o|) = O(|X|^4\times|\Sigma_o|)$。因此，总的测试复杂度为$O(|X|^4\times|\Sigma_o|\times|F|)$。</p>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="diagram-of-system-G.png">
+    <span>Fig. 1. Diagram of system G.</span>
+</div>
+
+<p><strong>Example 1</strong>: 考虑一个系统 $G = (X, \Sigma, \delta, x_0)$</p>
+<ul>
+<li><script type="math/tex; mode=display">X = \{x_0, x_1, x_2, x_3, x_4\}</script></li>
+<li><script type="math/tex; mode=display">\Sigma = \{\sigma_1, \sigma_2, \sigma_3, \sigma_{uo}, \sigma_{f1},\sigma_{f2},\sigma_{f3}\}</script></li>
+<li><script type="math/tex; mode=display">\{(x_0,\sigma_1,x_1), (x_1,\sigma_{f1},x_2), (x_1, \sigma_{uo}, x_2), (x_2, \sigma_{f2}, x_3), (x_3, \sigma_2, x_3), (x_2, \sigma_{f1}, x_4), (x_4, \sigma_3, x_4)\}</script></li>
+</ul>
+<p>并拥有可观事件集<script type="math/tex">\Sigma_o = \{\sigma_1, \sigma_2, \sigma_3\}</script>。系统见图<em>Fig. 1</em>。令<script type="math/tex">F = \{F_1, F_2\}</script>作为错误类型集，$\psi$是一个错误分配函数， <script type="math/tex">\psi(\sigma_{uo}) = \psi(\sigma_i) = \emptyset, i = 1, 2, 3, \psi(\sigma_{f1}) = F_1, \psi(\sigma_{f2})=F_2</script>。根据<strong>Algorithm 1</strong>的第一步，我们可以从$G$来获取$G_o$，见<em>Fig. 2</em>。<strong>Algorithm 1</strong>的第二步，计算$G_o$和其自身的严格组合，$G_d = G_o||G_o$，见<em>Fig. 3</em>。在<em>Fig. 3</em>中，在$((x_3,{F_2}), (x_3, {F_1,F_2}$上存在一个自环。所以，根据<strong>Algorithm 1</strong>的最后一步，我们知道该系统$G$是不可诊断的。</p>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="diagram-of-system-G_o.png">
+    <span>Fig. 2. Diagram of system Go.</span>
+</div>
+
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="diagram-of-system-G_d.png">
+    <span>Fig. 3. Diagram of system Gd.</span>
+</div>
+
+<p>现在，我们假设不区分错误类型$F_1$和$F_2$，即令<strong>Fig. 3</strong>中$F_2 = F_1$并删除一些冗余的状态，我们计算修改后系统对应的$G_d$，这里忽略了该结果。在修改后的$G_d$中，不存在任何违反<strong>Algorithm 1</strong>中第三步规则的环。因此，修改后的系统是可诊断的。</p>
+<h2 id="IV-CONCLUSION"><a href="#IV-CONCLUSION" class="headerlink" title="IV. CONCLUSION"></a>IV. CONCLUSION</h2><p>在本文中，我们提供了一个测试离散事件系统可诊断性的算法。与<sup><a href="#fn_4" id="reffn_4">4</a></sup>中的测试方法相比，我们的算法无需为待诊断系统构造诊断器。我们算法的复杂度是系统状态数的四阶和错误类型数的线性阶。而<sup><a href="#fn_4" id="reffn_4">4</a></sup>中测试方法的复杂度是系统状态数的指数阶和错误类型数的双倍指数阶。</p>
+<blockquote id="fn_1">
+<sup>1</sup>. Chen, Yi-Liang, and Gregory Provan. “Modeling and diagnosis of timed discrete event systems-a factory automation example.” Proceedings of the 1997 American Control Conference (Cat. No. 97CH36041). Vol. 1. IEEE, 1997.<a href="#reffn_1" title="Jump back to footnote [1] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_2">
+<sup>2</sup>. L. Holloway and S. Chand, “Time templates for discrete event fault monitoring in manufacturing systems,” in Proc. 1994 Amer. Control Conf.,1994, pp. 701–706.<a href="#reffn_2" title="Jump back to footnote [2] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_3">
+<sup>3</sup>. F. Lin, “Diagnosability of discrete-event systems and its applications,” J. Discrete Event Dyn. Syst.: Theory Appl., vol. 4, no. 2, pp. 197–212, May 1994.<a href="#reffn_3" title="Jump back to footnote [3] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_4">
+<sup>4</sup>. M. Sampath, R. Sengupta, S. Lafortune, K. Sinnamohideen, and D. Teneketzis, “Diagnosability of discrete-event systems,” IEEE Trans. Automat. Contr., vol. 40, pp. 1555–1575, Sept. 1995.<a href="#reffn_4" title="Jump back to footnote [4] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_5">
+<sup>5</sup>. S. H. Zad, R. H. Kwong, and W. M. Wonham, “Fault diagnosis in timed discrete-event systems,” in Proc. 38th IEEE Conf. Decision Control, Phoenix, AZ, Dec. 1999, pp. 1756–1761.<a href="#reffn_5" title="Jump back to footnote [5] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_6">
+<sup>6</sup>. G. Westerman, R. Kumar, C. Stroud, and J. R. Heath, “Discrete-event systems approach for delay fault analysis in digital circuits,” in Proc. 1998 Amer. Control Conf., Philadelphia, PA, 1998.<a href="#reffn_6" title="Jump back to footnote [6] in the text."> &#8617;</a>
+</blockquote>
+]]></content>
+      <categories>
+        <category>dissertation</category>
+      </categories>
+      <tags>
+        <tag>paper translation</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>A Compact Encoding for Efficient Character-level Deep Text Classification</title>
     <url>/posts/ea5d9796/</url>
     <content><![CDATA[<blockquote>
@@ -1483,224 +1704,157 @@ bs=4M</code>, <code>of</code>指定烧录U盘的挂载位置;</li>
       </tags>
   </entry>
   <entry>
-    <title>A Polynomial Algorithm for Testing Diagnosability of Discrete-Event Systems.</title>
-    <url>/posts/c598fb85/</url>
-    <content><![CDATA[<blockquote>
-<p>文献翻译：一个测试离散事件系统可诊断性的多项式时间算法<br>authors: Shengbing Jiang, Zhongdong Huang, Vigyan Chandra, and Ratnesh Kumar<br>原文: <a href="https://ieeexplore.ieee.org/document/940942" target="_blank" rel="noopener">A polynomial algorithm for testing diagnosability of discrete-event systems</a></p>
-</blockquote>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>&emsp;&emsp;大型复杂系统中的错误诊断是一项关键任务。在离散事件系统（DES）领域，Sampath 等人提出了一种基于语言的错误诊断方法。他们为DES引入可诊断性概念和定义，并使用根据系统构建的诊断器来测试系统的可诊断性。这种测试可诊断性的方法的复杂度是系统状态数的指数级别的，对于系统错误数量是双倍指数级别的。本文给出一种不构建系统诊断器的可诊断性测试算法，其复杂度在系统状态数上是四阶的，在故障类型数上是线性的。</p>
-<p>Index Terms: Complexity, diagnosability, discrete event system, failure diagnosis.</p>
+    <title>解决Github国内访问出现的问题</title>
+    <url>/posts/7e3029b3/</url>
+    <content><![CDATA[<p>主要通过修改hosts文件解决Github在国内访问不了、访问慢和页面加载异常的问题(没钱买vpn~)。</p>
+<p>简单了解一下github, github是目前全球最大的男性同性交友网站(~滑稽~), 使用示例如下：</p>
+<p><img src="/images/解决Github访问问题/communication.jpg" alt></p>
 <a id="more"></a>
-<h2 id="I-INTRODUCTION"><a href="#I-INTRODUCTION" class="headerlink" title="I. INTRODUCTION"></a>I. INTRODUCTION</h2><p>&emsp;&emsp;错误诊断是大型复杂系统的一项关键任务。这个问题在包括离散事件系统<sup><a href="#fn_1" id="reffn_1">1</a></sup><sup><a href="#fn_2" id="reffn_2">2</a></sup><sup><a href="#fn_3" id="reffn_3">3</a></sup><sup><a href="#fn_4" id="reffn_4">4</a></sup><sup><a href="#fn_5" id="reffn_5">5</a></sup><sup><a href="#fn_6" id="reffn_6">6</a></sup>在内的各个领域的文献中都得到了相当多的关注。在<sup><a href="#fn_4" id="reffn_4">4</a></sup>中，Sampath等人提出了一种离散事件系统的错误诊断方法。他们提出了可诊断性的概念，并给出了测试可诊断性的充分必要条件。他们将条件表示为诊断器的一个属性。为了测试系统可诊断性，首先需要构造诊断器。构造诊断器和测试可诊断性的复杂度是系统状态数的指数级别的，对于错误事件数是双倍指数级别的。</p>
-<p>&emsp;&emsp;显然，如果我们能够不构建诊断器的情况下，来测试目标系统的可诊断性，那么我们将可以节省为不可诊断系统构建诊断器的时间。在本文中，我们给出一种无需构造诊断器即可测试可诊断性的方法。该方法的复杂度是系统状态数量和错误事件数量的多项式。接下来，我们首先介绍离散事件系统的可诊断性概念，然后介绍我们的测试算法，最后，给出一个说明性的例子。</p>
-<h2 id="II-DIAGNOSABILITY"><a href="#II-DIAGNOSABILITY" class="headerlink" title="II. DIAGNOSABILITY"></a>II. DIAGNOSABILITY</h2><p>我们首先给出系统模型，然后介绍由<sup><a href="#fn_4" id="reffn_4">4</a></sup>提出的可诊断性定义。</p>
-<h3 id="A-System-model"><a href="#A-System-model" class="headerlink" title="A. System model"></a>A. System model</h3><p>&emsp;&emsp;令$G = (X,\Sigma,\delta,x_0)$是待诊断系统的有限状态机模型，其中</p>
+<p>开个玩笑，回归正题。</p>
+<h3 id="为什么访问不了以及访问速度会很慢？"><a href="#为什么访问不了以及访问速度会很慢？" class="headerlink" title="为什么访问不了以及访问速度会很慢？"></a>为什么访问不了以及访问速度会很慢？</h3><p>GitHub在中国大陆访问速度慢的问题原因有很多，但最直接和最主要的原因是GitHub的分发加速网络的域名遭到DNS污染。</p>
+<p>由于GitHub的加速分发CDN域名assets-cdn.github.com遭到DNS污染，导致无法连接使用GitHub的加速分发服务器，才使得中国大陆访问速度很慢。</p>
+<p><img src="github_problem.png" alt="problem"></p>
+<h3 id="如何解决DNS污染？"><a href="#如何解决DNS污染？" class="headerlink" title="如何解决DNS污染？"></a>如何解决DNS污染？</h3><p>一般的DNS问题都可以通过修改Hosts文件来解决，GitHub的CDN域名被污染问题也不例外，同样可以通过修改Hosts文件解决。</p>
+<p>将域名解析直接指向IP地址来绕过DNS的解析，以此解决污染问题。</p>
+<h4 id="获取被污染域名的实际IP地址"><a href="#获取被污染域名的实际IP地址" class="headerlink" title="获取被污染域名的实际IP地址"></a>获取被污染域名的实际IP地址</h4><p>访问<a href="https://www.ipaddress.com" target="_blank" rel="noopener">ipaddress.com</a>,使用ip lookup 工具获得相关域名的ip地址。</p>
+<p>例如： github.com</p>
+<p><img src="github_ipaddress.png" alt="ip address"></p>
+<p>可以看到，我查出的域名ip地址为： <code>192.30.253.112</code> 和 <code>192.30.253.113</code> (任取一个即可)</p>
+<h4 id="修改host文件，在文件中添加一行："><a href="#修改host文件，在文件中添加一行：" class="headerlink" title="修改host文件，在文件中添加一行："></a>修改host文件，在文件中添加一行：</h4><p><strong>[注] ： windows的hosts文件位置为： </strong><br><code>C:/windows/system32/drivers/etc/hosts</code></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">192.30.253.112 github.com</span><br></pre></td></tr></table></figure></div>
+<h4 id="刷新dns缓存"><a href="#刷新dns缓存" class="headerlink" title="刷新dns缓存"></a>刷新dns缓存</h4><p>打开命令行cmd,输入如下命令：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ipconfig /flushdns</span><br></pre></td></tr></table></figure></div>
+<p>此时再刷新页面即可。此时可以正常访问github，但是访问速度还是很慢，我们接着做优化。</p>
+<h4 id="Github-访问提速"><a href="#Github-访问提速" class="headerlink" title="Github 访问提速"></a>Github 访问提速</h4><p>在hosts文件中继续加入，如下代码：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># GitHub Start</span><br><span class="line">192.30.253.112 github.com</span><br><span class="line">192.30.253.119 gist.github.com</span><br><span class="line">151.101.228.133 assets-cdn.github.com</span><br><span class="line">151.101.228.133 raw.githubusercontent.com</span><br><span class="line">151.101.228.133 gist.githubusercontent.com</span><br><span class="line">151.101.228.133 cloud.githubusercontent.com</span><br><span class="line">151.101.228.133 camo.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars0.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars1.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars2.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars3.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars4.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars5.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars6.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars7.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars8.githubusercontent.com</span><br><span class="line">192.30.253.116  api.github.com</span><br><span class="line"># GitHub End</span><br></pre></td></tr></table></figure></div>
+<div class="note warning"><p><strong>注意</strong> : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。</p></div>
+<p>例如，上面的<code>151.101.228.133</code>是对我来说较好的ip:</p>
+<p><img src="ping_test.png" alt="dns 查询检测"></p>
+<div class="note info"><p>推荐的dns查询检测工具：</p>
 <ul>
-<li>$X$                         是一个状态有限集</li>
-<li>$\Sigma$                          是一个事件标签的有限集</li>
-<li>$\delta\subseteq X\times\Sigma\times X$ 是状态转移有限集</li>
-<li>$x_0\in X$                是系统的初始状态</li>
+<li><a href="https://tool.lu/dns/" target="_blank" rel="noopener">DNS查询 - 在线工具</a></li>
+<li><a href="http://tool.chinaz.com/dns/" target="_blank" rel="noopener">DNS检测|DNS查询-站长工具</a></li>
 </ul>
-<p>我们假设所有状态自动机是可达的（accessible，所有状态可以从初始状态出发，经若干转移后到达），否则我们只考虑状态自动机中的可达部分。<br>我们用<script type="math/tex">\Sigma^*</script>表示包含所有有限长度事件序列的集合，其中包括空序<script type="math/tex">\varepsilon</script>。把<script type="math/tex">\Sigma^*</script>集合中的一个元素称为串（trace），用<script type="math/tex">\Sigma^*</script>的子集表示语言（language）。<br>对于一个串<script type="math/tex">s</script>和事件<script type="math/tex">\sigma</script>，我们用<script type="math/tex">\sigma\in s</script>表示事件<script type="math/tex">\sigma</script>包含于串<script type="math/tex">s</script>中，即串<script type="math/tex">s</script>发生了事件<script type="math/tex">\sigma</script>。系统<script type="math/tex">G</script>中的一个路径（path）是一个状态转移序列<script type="math/tex">(x_1,\delta_1,x_2,....,\delta_{n-1},x_n)</script>，其中对于每个<script type="math/tex">i\in \{1,...,n-1\},(x_i,\delta_i,x_{i+1})\in \delta</script>，如果<script type="math/tex">x_n=x_1</script>，则表示该路径是一个环（cycle）。我们用<script type="math/tex">L(G)\subseteq\Sigma^*</script>来描述系统<script type="math/tex">G</script>的生成语言，即系统<script type="math/tex">G</script>从初始状态开始能够执行的串的集合。同时假设<script type="math/tex">L(G)</script>是前缀闭合（prefix-closed）的，即<script type="math/tex">L(G)=pr(L(G))</script>，其中<script type="math/tex">pr(L(G))=\{u|\exists v\in\Sigma^*, uv\in L(G)\}</script>是一个由所有<script type="math/tex">L(G)</script>中的串的前缀组成的集合。用<script type="math/tex">\Sigma_o\subseteq\Sigma</script>表示系统的可观事件集，<script type="math/tex">\Sigma_{uo}=\Sigma - \Sigma_o</script>表示不可观事件集，<script type="math/tex">M:\Sigma\to \Sigma_o\cup \{\varepsilon\}</script>表示一个观察映射函数，<script type="math/tex">F={F_i,i=1,2,...,m}</script>表示错误类型的集合，<script type="math/tex">\psi:\Sigma\to F\cup\{\emptyset\}</script>表示一个为<script type="math/tex">\Sigma</script>中每个事件错误分配的函数（failure assignment function）。$M$的定义通常从$\Sigma$扩展到<script type="math/tex">\Sigma^*</script>，如下所示：$M(\varepsilon)=\varepsilon$，并且对于每一个串<script type="math/tex">s\in \Sigma^*, \sigma\in\Sigma:M(s\sigma)=M(s)M(\sigma)</script>。</p>
-<p>对于本文研究的系统，和<sup><a href="#fn_4" id="reffn_4">4</a></sup>一样，我们作出以下假设：</p>
-<ul>
-<li>A1) 系统$G$的生成语言是活语言（live language）。这意味着系统中的每一个状态均定义相应的状态转移。</li>
-<li>A2) 系统$G$中不存在不可观事件的环。</li>
-<li>A3) 所有错误事件均是不可观的，即$(\forall\sigma\in\Sigma,\psi(\sigma)\neq\emptyset)\Rightarrow M(\sigma)=\varepsilon$。</li>
-</ul>
-<h3 id="B-Diagnosability"><a href="#B-Diagnosability" class="headerlink" title="B. Diagnosability"></a>B. Diagnosability</h3><p>离散事件系统的可诊断性<sup><a href="#fn_4" id="reffn_4">4</a></sup>定义描述如下：</p>
-<p><strong>Definition 1:</strong> 一个前缀封闭语言$L$关于观察映射$M$和错误分配函数$\psi$是可诊断的当：</p>
+<p>你可对单个域名多查询几次，以挑选稳定且速度较快的ip。</p></div>
+<h4 id="快速地访问github"><a href="#快速地访问github" class="headerlink" title="快速地访问github"></a>快速地访问github</h4><p>再次刷新dns缓存后，你已经可以快速地访问github了。</p>
+<p><img src="github_test.gif" alt></p>
+<div class="note primary"><p>参考：<a href="https://github.com/chenxuhua/issues-blog/issues/3" target="_blank" rel="noopener">https://github.com/chenxuhua/issues-blog/issues/3</a></p></div>
+]]></content>
+      <categories>
+        <category>tips</category>
+      </categories>
+      <tags>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>The Notion of the Diagnosability</title>
+    <url>/posts/57ea30e/</url>
+    <content><![CDATA[<blockquote>
+<p>文献内容翻译：可诊断性概念<br>authors: Meera Sampath, Raja Sengupta, StCphane Lafortune, Member, IEEE, Kasim Sinnamohideen, Member, IEEE, and Demosthenis Teneketzis, Member, IEEE<br>原文: <a href="https://ieeexplore.ieee.org/document/412626" target="_blank" rel="noopener">Diagnosability of discrete-event systems</a></p>
+</blockquote>
+<a id="more"></a>
+<h2 id="A-The-System-Model"><a href="#A-The-System-Model" class="headerlink" title="A. The System Model"></a>A. The System Model</h2><p>待诊断系统通常使用一个 FSM 或生成器（generator）来进行建模。</p>
 <script type="math/tex; mode=display">
-(\forall F_i\in F)(\exists n_i\in N)(\forall s\in L, \psi(s_f)=F_i) \\
-(\forall v = st \in L, \lVert t\rVert \ge n_i) \\
-\Rightarrow(\forall w\in L, M(w)=M(v))(\exists u\in pr(\{w\}),\psi(u_f)=F_i)</script><p>其中$s_f$和$u_f$分别表示串$s$和串$u$的最后一个事件，$pr({w})$是$w$所有前缀组成的集合。如果系统$G$的生成语言$L(G)$是可诊断的，则该系统是可诊断的。</p>
-<p>根据上面定义，若$s$是$L$中一个以$F_i$错误事件结尾的串，$v$是$s$的任意一个充分长后缀，则任意一个$L$中与$v$拥有相同观察序列的的串$w$，即$M(w)=M(v)$，串$w$中一定包含错误事件$F_i$。</p>
-<h2 id="III-ALGORITHM"><a href="#III-ALGORITHM" class="headerlink" title="III. ALGORITHM"></a>III. ALGORITHM</h2><p>我们现在展示测试可诊断性的算法。</p>
-<p><strong>Algorithm 1:</strong> 对于给定系统$G=(X,\Sigma, \delta, x_0)$，一个观察映射$M$和一个错误分配函数$\psi$，做以下操作：</p>
-<ul>
-<li>1) 获取一个非确定有限状态自动机（nondeterministic finite-state machine）$G_o = (X_o,\Sigma_o,\delta_o,x^o_0)$，其中语言$L(G_o)=M(L(G))$：<ul>
-<li>$X_o = {(x,f)|x\in X_1\cup{x_0},f\subseteq F}$是自动机的有限状态集，其中$X_1={x\in X|\exists(x’,\sigma,x)\in\delta 且 M(\sigma)\neq\varepsilon}$是$G$能通过可观序列转移到达的状态组成的集合，$f$是一个从$x_0$到$x$的路径的错误类型。</li>
-<li>$\Sigma_o$是可观事件集，$G_o$的事件标签集合。</li>
-<li>$\delta_o\subseteq X_o\times\Sigma_o\times X_o$是状态转移集。$((x,f),\delta,(x’,f’))\in \delta_o$当且仅当对于$\forall i \in {1,2,…,n}, M(\sigma_i)=\varepsilon, M(\sigma)=\sigma$且$f’={\psi(\sigma_i)|\psi(\sigma_i)\neq\emptyset, 1\leq i\leq n}\cup f$，系统$G$中存在这样一个路径$(x,\sigma_1,x_1,…,\sigma_n,x_n,\sigma,x’)(n\geq 0)$。</li>
-<li>$x^o_0=(x_0,\emptyset)\in X_o$是$G_o$的初始状态。</li>
-</ul>
-</li>
-<li>2) 计算$G_d=(G_o||G_o)$，即$G_o$与其自身的严格组合（composition）计算。$G_o=(X_d,\Sigma_o,\delta_d,x^d_0)$，其中<ul>
-<li>$X_d={(x^o_1,x^o_2)|x^o_1,x^o_2\in X_o}$ 是状态集；</li>
-<li>$\Sigma_o$是$G_d$的事件标签集；</li>
-<li>$\delta_d\subseteq X_d\times\Sigma_o\times X_d$是状态转移集。$((x^o_1,x^o_2),\delta,(y^o_1,y^o_2))\in \delta_d$当且仅当$(x^o_1,\sigma, y^o_2)$和$(x^o_2,\sigma,y^o_2)$均包含于$\delta_o$中；</li>
-<li>$x^d_0$是$G_d$的初始状态。</li>
-</ul>
-</li>
-<li>3) 检查$G_d$中是否存在这样一个环$cl = (x_1,\sigma_1,x_2, …, x_n, \sigma_n, x_1), n\geq 1, x_i = ((x^1_i, f^1_i),(x^2_i,f^2_i)), i = 1, 2, …, n$, 使得 $f^1_1\neq f^2_1$。如果存在，则输出该系统是不可诊断的，最后这一步骤可以先标识$G_d$中的状态$((x^1,f^1),(x^2,f^2))$，其中$f^1\neq f^2$，然后删除其他所有状态以及相关的转移，判断剩余的图中是否存在环即可得到结果。</li>
-</ul>
-<p>接下来，我们给出两个定理，展示<strong>Algorithm 1</strong> 中状态机$G_o$和$G_d$的一些属性。这里省略了证明，因为它们可以直接遵循$G_o$和$G_d$的定义得到。</p>
-<p><strong>Lemma 1:</strong> 对于状态机$G_o$：</p>
-<ul>
-<li>1) $L(G_o) = M(L(G))$；</li>
-<li>2) 对于$G_o$中每一个作为环的路径$tr$：<script type="math/tex; mode=display">
-tr = ((x_0,\emptyset), \sigma_0, (x_1,f_1), ..., (x_k,f_k), \\
-\sigma_k, ..., (x_n,f_n), \sigma_n, (x_k,f_k))</script></li>
-</ul>
-<p>我们有</p>
-<ul>
-<li>对于任意$i, j\in {k,k+1,…,n}; f_i=f_j$；</li>
-<li><script type="math/tex; mode=display">\exists uv^*\in L(G) 使得 M(u) = \sigma_0...\sigma_{k-1},M(v)=\sigma_k...\delta_n; \\ \{\psi(\sigma)|\sigma\in u, \psi(\sigma)\neq\emptyset\}=f_k</script></li>
-</ul>
-<p><strong>Lemma 2:</strong> 对于$G_d$中每一个作为环的路径$tr$：<script type="math/tex">tr = (x^d_0, \sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k) \\
-x_i = ((x^1_i,f^1_i),(x^2_i,f^2_i)), i = 1, 2, ..., n</script>有：</p>
-<ul>
-<li>1) $G_o$中存在两个作为环的路径 $tr_1$和$tr_2$：<script type="math/tex; mode=display">
-tr_1 = ((x_0,\emptyset), \sigma_0, (x^1_1,f^1_1),...,(x^1_k,f^1_k),\\
-\sigma_k, ..., (x^1_n,f^1_n),\sigma_n, (x^1_k,f^1_k))\\
-tr_2 = ((x_0,\emptyset), \sigma_0, (x^2_1,f^2_1),...,(x^2_k,f^2_k),\\
-\sigma_k, ..., (x^2_n, f^2_n), \sigma_n, (x^2_k, f^2_k)).</script></li>
-<li>2) 对于任意$i, j \in{k, k+1, …, n}$, 有$(f^1_i=f^1_j) \land (f^2_i=f^2_j)$。</li>
-</ul>
-<p>接着，我们再提供一个定理确保<strong>Algorithm 1</strong>的正确性。</p>
-<p><strong>Theorem 1</strong>: $G$ 是可诊断的当且仅当$G_d$中的每一个环$cl$：</p>
+G = (X, \Sigma, \delta, x_0)</script><p>其中$X$是状态空间，$\Sigma$是事件集，$\delta$是一个部分转移函数，$x_0$是系统的初始状态。系统模型$G$记录系统正常和错误行为。系统的行为使用$G$生成的前缀闭合语言$L(G)$来描述<sup><a href="#fn_1" id="reffn_1">1</a></sup>。此后，我们使用$L$直接表示$L(G)$，$L$是<script type="math/tex">\Sigma^*</script>的子集，其中<script type="math/tex">\Sigma^*</script>是事件集的 Kleene 闭包<sup><a href="#fn_2" id="reffn_2">2</a></sup>。</p>
+<p>$\Sigma$中一些事件是可观的，即它们的发生是被观测到的，其他的是不可观的。因此，事件集可以划分为<script type="math/tex">\Sigma = \Sigma_o\cup\Sigma_{uo}</script>，其中<script type="math/tex">\Sigma_o</script>表示可观事件集，而<script type="math/tex">\Sigma_{uo}</script>表示不可观事件集。系统中可观事件可能是以下情况下之一：控制器发出的指令，在执行上述命令后立即读取的传感器读数以及传感器读数的变化。不可观事件可以是错误事件或导致传感器未记录的系统状态更改（见<sup><a href="#fn_3" id="reffn_3">3</a></sup>）。</p>
+<p>令<script type="math/tex">\Sigma_f\subseteq \Sigma</script>表示待诊断的错误事件集。不失一般性地，我们假设<script type="math/tex">\Sigma_f\subseteq\Sigma_{uo}</script>，因为一个可观的错误事件显然是容易诊断的。我们的目标是根据系统生成的串来诊断是否有错误事件的发生，其中串中包含的事件均是可观的。在这种情况下，我们将错误事件集划分成多个不相交的集（disjoint set），对应表示不同的错误类型。</p>
 <script type="math/tex; mode=display">
-cl = (x_1,\sigma_1,x_2,...,x_n,\sigma_n,x_1),\qquad n\geq 1 \\
-x_i = ((x^1_i,f^1), (x^2_i,f^2)),\qquad i=1,2,...,n</script><p>我们有$f^1=f^2$。</p>
-<p><strong>Proof</strong>: 对于必要性，假设$G$是可诊断的，但<script type="math/tex">G_d</script>中存在一个环$cl$，<script type="math/tex">cl=(x_k,\sigma_k,x_{k+1},...,x_n,\sigma_n,x_K), n\geq k, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = k, k+1,...,x_n</script>使得$f^1\neq f^2$。因为$G_d$是可达的，$G_d$中存在一个以环$cl$结尾的路径$tr$，即$tr = (x^d_0,\sigma_0,x_1,…,x_k,\sigma_k,…,x_n,\sigma_n,x_k)$。据<strong>Lemma 2</strong>，$G_o$中存在两个路径$tr_1$和$tr_2$：</p>
-<script type="math/tex; mode=display">
-tr_1 = ((x_0,\emptyset),\sigma_0,(x^1_1,f^1_1),...,(x^1_k,f^1),\\
-\sigma_k,...,(x^1_n,f^1),\sigma_n,(x^1_k,f^1))\\
-tr_2 = ((x_0,\emptyset),\sigma_0,(x^2_1,f^2_1),...,(x^2_k,f^2),\\
-\sigma_k,...,(x^2_n,f^2),\sigma_n,(x^2_k,f^2))\\</script><p>更多地，根据<strong>Lemma 1</strong>，我们可得<script type="math/tex">\exists u_1v^*_1\in L(G)</script>使得<script type="math/tex">M(u_1)=M(u_2) = \sigma_0...\sigma_{k-1}, M(v_1)=M(v_2)=\sigma_k...\sigma_n</script> 并且<script type="math/tex">\{\psi(\sigma)|\sigma\in u_i, \psi(\sigma)\neq \emptyset\}=\{\psi(\sigma)|\sigma\in u_iv_i,\psi(\sigma)\neq \emptyset\}=f^i, i = 1,2</script>。因为$f^1\neq f^2$，我们假设$F_k\in f^1 - f^2\neq \emptyset$。然后$\exists s\in L(G)$使得 $\psi(s_f)=F_k$ 且对于某些<script type="math/tex">t\in \Sigma^*; u_1\in st</script>。对于任意整数$n_k$，我们可以选择另一个整数$l$，使得$\lVert tv^l_1\rVert &gt;n_k$。<br>则有$M(u_2,v^l_2)=M(stv^l_1)$并且<script type="math/tex">\{\psi(\sigma)|\sigma\in u_2v_2, \psi(\sigma)\neq \emptyset\}=f^2</script>，这意味着$u_2v^l_2$中不包含任何类型为$F_k$对应的错误事件。因此，根据可诊断性的定义，系统$G$是不可诊断的。与假设矛盾，所以必要性成立。</p>
-<p>对于充分性，假设$G_d$中的每一个环$cl$，$cl = (x_1,\sigma_1,x_2,…,x_n,\sigma_n,x_1), n\geq 1, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = 1, 2, …, n$, 我们有$f^1=f^2$。<br>根据<strong>Lemma 2</strong>的第二句，我们知道该假设意味着$\forall x = ((x^1,f^1),(x^2,f^2)) \in X_d, if f^1\neq f^2$，则$x$不包含于一个循环中。更进一步地，对于$x_i=(x^1_i,f^1_i),(x^2_i,f^2), 1 \leq i\geq k$, $G_d$中的任意状态序列$(x_1,x_2,…,x_k)$，如果对于$\forall i\in {1,2,…,k}$有$f^1_i\neq f^2_i$，则状态序列的长度限制在$G_d$状态数之内，即$k\leq |X_d|$。</p>
-<p>现在，令$s$是$L(G)$中以$F_k$类型错误事件结尾的串，即$\psi(s_f)=F_k$，我们称对于$\lVert t\rVert &gt; |X_d|\times(|X|-1), \forall w\in L(G), M(w)=M(v)$， $\forall v=st\in L(G)$, 则$w$中包含$F_k$类型的错误事件。综上，对于任何从$x^d_0$出发通过执行$G_d$中$M(s)$到达的状态$x\in X_d$，有对于$G_d$中任意从$x$开始的状态序列，一个状态$y = ((y^1,f^1),(y^2,f^2))\in X_d, \land f^1=f^2$可以在$|X_d|-1$步之内到达。这意味着$\forall v = st \in L(G) \land \lVert M(t)\rVert &gt; |X_d|, \forall w \in L(G) \land M(w)=M(v)$，$w$中必定包含$F_k$类型的错误事件。进一步假设$G$中不存在不可观环，任何$M(t)$中的可观事件最多可在$|X|-1$个不可观事件之后被跟踪到。因此，对于上面的串$t$，$\lVert t\rVert \leq ((\lVert M(t)\rVert + 1) \times (|X|-1)$，即$\lVert M(t)\rVert \geq \lVert t\rVert / (|X|-1)-1$。所以如果$\lVert t\rVert &gt; |X_d|\times(|X|-1)$，则$\lVert M(t)\rVert\geq \lVert t\rVert/(|X|-1)-1 &gt; (|X_d|\times(|X|-1))/(|X|-1)-1 = |X_d|-1$，确立我们的主张（注意，我们隐式地假设$|X|&gt;1$；否则如果$|X|=1$，根据不存在不可观环的假设，将不存在任何使用错误标签的转移，系统显然是可诊断的）。根据<strong>Lemma 1</strong>，系统$G$是可诊断的，充分性也证明完毕。</p>
-<p><strong>Remark 1</strong>: 根据<strong>Algorithm 1</strong>，我们知道$G_o$中的状态数是$|X|\times 2^{|F|}$，$G_o$中的转移数是$|X|^2\times 2^{2|F|}\times|\Sigma_o|$。因为$G_d = G_o||G_o$，$G_d$中的状态数为$|X|^2\times 2^{2|F|}$，$G_d$中的转移数为$|X|^4\times 2^{4|F|}\times|\Sigma_o|$。</p>
-<p><strong>Algorithm 1</strong>的第一步，构造$G_o$的复杂度为$O(|X|^2\times 2^{2|F|}$， 而<strong>Algorithm 1</strong>的第二步，构造$G_d$的复杂度为$O(|X|^4\times 2^{4|F|}\times|\Sigma_o|)$。执行<strong>Algorithm 1</strong>的第三步，它适当地修剪$G_d$中检测到的“违规”环的的存在，与状态数和转移数是呈线性关系的，即$O(|X|^4\times 2^{4|F|})$。注意当移除所有不符合规则的环后，转移标签将是不相关的。</p>
-<p>所以<strong>Algorithm 1</strong>的复杂度是$O(|X|^4\times 2^{4|F|}\times|\Sigma_o|)$，它是$G$中状态数的多项式级别和$G$中错误类型数的指数级别。</p>
-<p>在<sup><a href="#fn_4" id="reffn_4">4</a></sup>中，提供了另一个可诊断性的充分必要条件。该条件被表示为系统诊断器的一个属性。所以为了测试可诊断性，我们必须先构造目标系统的诊断器，然后检查诊断器的属性。其中构造诊断器和检查诊断器属性的复杂度都是系统状态数的指数级别和错误类型数的双倍指数级别。在<strong>Algorithm 1</strong>中，测试系统的可诊断性不需要构造诊断器。</p>
-<p><strong>Remark 2</strong>: 测试可诊断性的复杂度对于错误类型数量可以是多项式级别的，对于一个拥有错误类型$F = {F_i, i = 1, 2, …, m}$的系统是可诊断的，当且仅当系统的每一个错误类型$F_i, i = 1, 2, …,m$都是可诊断的。换句话说，对于每个单独的错误类型集${F_1}, …, {F_m}$应用<strong>Algorithm 1</strong> $m$ 次。因为每一个错误类型集中只包含一个错误类型，根据<strong>Remark 1</strong>，可知每一次测试的复杂度为$O(|X|^4\times 2^{4|1|}\times|\Sigma_o|) = O(|X|^4\times|\Sigma_o|)$。因此，总的测试复杂度为$O(|X|^4\times|\Sigma_o|\times|F|)$。</p>
+\Sigma_f = \Sigma_{f1}\cup\cdots\cup\Sigma_{fm}.</script><p>用$\Pi_f$表示这个划分。使用$\Pi_f$主要出于以下考虑：</p>
+<ul>
+<li>1) 仪器不足可能会导致无法诊断每个可能的错误；</li>
+<li>2) 我们可能不需要唯一标识每个错误事件的发生。我们可能只是想知道一组错误事件集中是否有一个错误事件发生了，例如，当一组错误事件对系统的影响相同时。</li>
+</ul>
+<p>此后，当我们写到”<script type="math/tex">F_i</script>类型的错误发生了“，意味着”集合<script type="math/tex">\Sigma_{fi}</script>中有错误事件发生了“。</p>
+<p>我们假设研究的系统：</p>
+<ul>
+<li>A1) 系统$G$的生成语言是活语言，即$X$中的每一个状态$x$均有定义转移，即系统不会到达一个没有事件标签的点；</li>
+<li>A2) 系统$G$中不存在任何由不可观事件形成的环，即<script type="math/tex">\exists n_o\in \mathbb{IN}</script>使得<script type="math/tex">\forall ust\in L, s\in \Sigma^*_{uo}\Rightarrow\lVert s\rVert\leq n_o</script>，其中$\lVert s\rVert$表示串$s$的长度。</li>
+</ul>
+<p>针对$L$是活语言的假设主要是为了研究简单。稍作修改，当该假设放松时，本文的所有主要结果均成立。假设2) 确保了系统生成的观察具备某些规律。由于错误的检测是基于系统的可观转移，我们要求$G$不产生任意长度的不可观事件序列。</p>
+<p>在<sup><a href="#fn_2" id="reffn_2">2</a></sup>中，我们详细讨论了用于错误诊断的离散事件系统建模。假设待诊断系统包含许多不同的物理组件以及一组传感器。我们首先为每个独立的组件构建相应的 FSM。这些模型会记录相应组件的正常和错误行为。考虑一个这样的例子，一个由泵、阀门和控制器组成的简单 HVAC 系统。Fig. 1描绘了该系统组件的模型。从组件模型和传感器图开始，然后我们生成了一个复合模型，该模型捕获了组件之间的交互并将传感器图纳入其中。这个复合模型就是我们执行错误诊断的系统$G$。</p>
 <div align="center" style="display: flex; flex-direction:column;">
-    <img src="diagram-of-system-G.png">
-    <span>Fig. 1. Diagram of system G.</span>
+    <img src="component-models-for-a-simple-HVAC-system.png">
+    <span>Fig. 1. Component models for a simple HVAC system.</span>
 </div>
 
-<p><strong>Example 1</strong>: 考虑一个系统 $G = (X, \Sigma, \delta, x_0)$</p>
-<ul>
-<li><script type="math/tex; mode=display">X = \{x_0, x_1, x_2, x_3, x_4\}</script></li>
-<li><script type="math/tex; mode=display">\Sigma = \{\sigma_1, \sigma_2, \sigma_3, \sigma_{uo}, \sigma_{f1},\sigma_{f2},\sigma_{f3}\}</script></li>
-<li><script type="math/tex; mode=display">\{(x_0,\sigma_1,x_1), (x_1,\sigma_{f1},x_2), (x_1, \sigma_{uo}, x_2), (x_2, \sigma_{f2}, x_3), (x_3, \sigma_2, x_3), (x_2, \sigma_{f1}, x_4), (x_4, \sigma_3, x_4)\}</script></li>
-</ul>
-<p>并拥有可观事件集<script type="math/tex">\Sigma_o = \{\sigma_1, \sigma_2, \sigma_3\}</script>。系统见图<em>Fig. 1</em>。令<script type="math/tex">F = \{F_1, F_2\}</script>作为错误类型集，$\psi$是一个错误分配函数， <script type="math/tex">\psi(\sigma_{uo}) = \psi(\sigma_i) = \emptyset, i = 1, 2, 3, \psi(\sigma_{f1}) = F_1, \psi(\sigma_{f2})=F_2</script>。根据<strong>Algorithm 1</strong>的第一步，我们可以从$G$来获取$G_o$，见<em>Fig. 2</em>。<strong>Algorithm 1</strong>的第二步，计算$G_o$和其自身的严格组合，$G_d = G_o||G_o$，见<em>Fig. 3</em>。在<em>Fig. 3</em>中，在$((x_3,{F_2}), (x_3, {F_1,F_2}$上存在一个自环。所以，根据<strong>Algorithm 1</strong>的最后一步，我们知道该系统$G$是不可诊断的。</p>
+<p>我们在本节的系统模型上总结一些符号和生成器$G’$的结构，以便之后使用。</p>
+<p><strong>1) Notation:</strong> 空串用$\varepsilon$表示。用$\overline{s}$表示任意串<script type="math/tex">s\in\Sigma^*</script>的前缀闭包。$L$的$s$后语言用$L/s$表示，即</p>
+<script type="math/tex; mode=display">
+L/s = \{t\in\Sigma^*|st\in L\}</script><p>我们通常定义投影<script type="math/tex">P:\Sigma^*\to \Sigma^*_o</script> <sup><a href="#fn_1" id="reffn_1">1</a></sup></p>
+<script type="math/tex; mode=display">
+\begin{eqnarray}
+P(\varepsilon)& = &\varepsilon \\
+P(\sigma)& = &\sigma &if\quad \sigma\in\Sigma_o \\
+P(\sigma)& =& \varepsilon& if\quad \sigma \in \Sigma_{uo}\\
+P(s\sigma)& = &P(s)P(\sigma) &s\in \Sigma^*, \sigma\in\Sigma.
+\end{eqnarray}</script><p>换句话说，$P$简单地”清除“了串中的不可观事件。逆投影操作$P^{-1}_L$定义如下：</p>
+<script type="math/tex; mode=display">
+P^{-1}_L(y) = \{s\in L:P(s)=y\}</script><p>用$s_f$表示串$s$的最后一个事件，我们定义：</p>
+<script type="math/tex; mode=display">\Psi(\Sigma_{fi} = \{s\sigma_f\in L:\sigma_f\in \Sigma_{fi}\}</script><p>即<script type="math/tex">\Psi(\Sigma_{fi})</script>表示$L$中所有以错误类型为<script type="math/tex">F_i</script>的错误事件结尾的串的集合。考虑<script type="math/tex">\sigma\in\Sigma</script>以及<script type="math/tex">s\in\Sigma^*</script>。我们用<script type="math/tex">\sigma\in s</script>表示串$s$发生了事件<script type="math/tex">\sigma</script>。略微滥用符号，我们用<script type="math/tex">\Sigma_{fi}\in s</script>表示对于<script type="math/tex">\sigma_f\in\Sigma_{fi}</script>有<script type="math/tex">\sigma_f\in s</script>，或正式地，<script type="math/tex">\overline{s}\cap\Psi(\Sigma_{fi})\neq\emptyset</script>。我们定义</p>
+<script type="math/tex; mode=display">
+X_o = \{x_0\}\cup\{x\in X:x中包含一个可观事件\}.</script><p>用$L(G,x)$表示从$G$中状态$x$出发产生的所有串的集合，我们定义</p>
+<script type="math/tex; mode=display">
+L_o(G, x) = \{s\in L(G,x):s=u\sigma, u\in \Sigma^*_{uo}, \sigma\in \Sigma_o\}</script><p>以及</p>
+<script type="math/tex; mode=display">
+L_{\sigma}(G,x) = \{s\in L_o(G,x):s_f=\sigma\}.</script><p>其中，$L<em>o(G,x)$表示从状态$x$开始以第一个可观事件结束的所有串的集合。$$L</em>{\sigma}(G,x)$$表示$L_o(G,x)$中以一个特定可观事件结束的串的集合。</p>
+<p><strong>2) The Generator G’</strong>: 接下来的部分，我们需要特殊构造一个拥有语言$P(L)$的生成器$G’$</p>
+<script type="math/tex; mode=display">
+P(L) = \{t:t=P(s) 对于某些 s\in L\}</script><p>$G’$通常是不确定的（nondeterministic），并且它的结构如下</p>
+<script type="math/tex; mode=display">
+G' = (X_o, \Sigma_o, \delta_{G'}, x_0)</script><p>其中<script type="math/tex">X_o</script>，<script type="math/tex">\Sigma_o</script>和$x<em>0$先前已经定义过了。$G’$的转移关系由$$\delta</em>{G’}\subseteq (X_o\times\Sigma\times X_o)$$，其定义如下</p>
+<script type="math/tex; mode=display">
+(x,\sigma,x')\in \delta_{G'} \\
+如果 \delta(x,s) = x' 对于某些 s\in L_{\sigma}(G,x)</script><p>可以很轻易地验证$L(G’) = P(L)$. Figs. 4-6 展示了如果为$G$三个不同系统构造$G’$。</p>
 <div align="center" style="display: flex; flex-direction:column;">
-    <img src="diagram-of-system-G_o.png">
-    <span>Fig. 2. Diagram of system Go.</span>
+    <img src="Example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser-Gd.png">
+    <span>Fig. 4. Example of system with F1 indeterminate cycle in its diagnoser Gd.</span>
+</div>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="Example-of-a-system-with-a-cycle-of-F1-uncertain-states-in-its-diagnoser-Gd.png">
+    <span>Fig. 5. Example of system with a cycle of F1-uncertain states in its diagnoser Gd.</span>
+</div>
+<div align="center" style="display: flex; flex-direction:column;">
+    <img src="Another-example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser.png">
+    <span>Fig. 6. Another example of system with F1 indeterminate cycle in its diagnoser.</span>
 </div>
 
+<h2 id="B-Approaches-to-Defining-Diagnosability"><a href="#B-Approaches-to-Defining-Diagnosability" class="headerlink" title="B. Approaches to Defining Diagnosability"></a>B. Approaches to Defining Diagnosability</h2><p>我们现在准备定义可诊断性的概念。一般而言，一个语言$L$是可诊断的若它能够在有限确切延迟内，使用记录的可观事件串诊断出任意错误类型的发生。我们将给出可诊断性的两种定义方式，其中第一个定义要比第二个定义严格。我们之后将参考的概念是可诊断性和I-可诊断性。</p>
+<p><strong>Diagnosability</strong>: 通常，我们定义可诊断性如下。<br><strong>Definition 1:</strong> 一个前缀闭合语言$L$对于投影$P$和$\Sigma_f$上的错误划分$\Pi_f$是可诊断的当</p>
+<script type="math/tex; mode=display">
+(\forall i\in \Pi_f)(\exists n_i\in \mathbb{IN})[\forall s\in \Psi(\Sigma_{fi})](\forall t\in L/s) \\
+[\lVert t\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D</p>
+<script type="math/tex; mode=display">
+w \in P^{-1}_L[P(st)]\Rightarrow\Sigma_{fi}\in w</script><p>上面可诊断性的定义意味着，$s$是一个以错误事件集<script type="math/tex">\Sigma_{fi}</script>中一个错误事件结尾的串，$t$是$s$的充分长后缀。诊断条件D表示系统语言中任何一个与串$st$产生相同投影序列的串必定包含错误事件集<script type="math/tex">\Sigma_{fi}</script>中的一个错误事件。这意味着，$s$的每一个连续的$t$都可以用于在有限延迟之内，在具体最多$n$个系统状态转移之后，来诊断错误类型<script type="math/tex">F_i</script>对应错误事件的发生。换句话说，可诊断性要求系统每一个错误事件发生后，再记录更多的可观事件，以便系统诊断该错误事件的发生。</p>
+<p>来自同一个错误划分的多错误情况需要特别注意。当一个串$s$中发生同一个错误类型$F<em>i$的多个错误事件，上面的可诊断性定义不要求每一个错误事件的发生都被检测到。能够在发生第一个错误后的有限多个事件中得出串$s$中发生了错误事件集$\Sigma</em>{fi}$中的错误事件。在后面的部分中， 我们将看到这一特性是如何区分可能的多个错误发生的情况与任何划分集合中没有多个错误发生的情况。</p>
+<p>我们展示上面可诊断性概念的一个简单例子。考虑Fig. 2中表示的系统。这里$\alpha, \beta, \gamma$和$\delta$是可观事件，<script type="math/tex">\sigma_{uo}</script>是不可观事件，而<script type="math/tex">\sigma_{f1},\sigma_{f2},\sigma_{f3}</script>是错误事件，<script type="math/tex">x_0</script>是系统的初始状态<script type="math/tex">1</script>。如果选择错误划分<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1},\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f2}=\{\sigma_{f3}\}</script>，即它不需要区分错误事件<script type="math/tex">\sigma_{f1}</script>和<script type="math/tex">\sigma_{f2}</script>，对于<script type="math/tex">n_1=2</script>和<script type="math/tex">n_2=1</script>，上面的系统是可诊断的。另一方面，如果错误划分是<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}</script>，<script type="math/tex">\Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>，则系统是不可诊断的，因为它无法推断出错误事件<script type="math/tex">\sigma_{f2}</script>是否发生。</p>
+<p><strong>2) I-Diagnosability</strong>: 上面的可诊断性定义要求$L$中的所有串满足诊断条件D。我们现在提出一个宽松的可诊断性定义（术语表示为I-可诊断性），它不需要$L$的所有的串都满足诊断条件D，但适用于那些错误事件后跟与每种错误类型相关的某些指示可观事件形成的串。这种修改是出于对下面实际情况的考虑。例如，考虑一个拥有控制单元的 HVAC 系统。正常模式操作下，每当控制器检测到系统上的热负荷时，它都会发出”open value“（打开阀门）来作出响应，同样，当负载消失时，它会发出”close value“（关闭阀门）指令。假设控制器发生了错误，它无法检测到系统是否出现负荷，因此不会发出任何指令控制。假设在运行期间控制器确实发生了错误，并且进一步假设系统有可能执行任意长度的事件序列，而这不涉及任何指令。在这种情况下，很明显无法诊断任何错误的发生。根据之前的定义，这样的系统是不可诊断的。在修改后的可诊断性定义情况中，我们将”open value“和”close value“分别与指示器事件（“stuck-closed“和”stuck-open”）相关联作为指示事件，并要求系统在确定其可诊断性之前，执行”open value”事件或”close value”事件。在执行对应指示事件之后能够探测到错误事件，则系统是可诊断的，反之，若在执行指示事件之后，仍无法探测到错误事件，则系统是不可诊断的。总结一下，I-可诊断性仅需要在错误事件相关的指示事件发生后，诊断出该错误的发生。</p>
+<p>我们首先将$\Sigma_f$中的每一个错误事件与一个或多个可观指示事件相关联。令$\Sigma_I\subseteq \Sigma_o$表示指示事件集，$I_f:\Sigma_f\to 2^{\Sigma_f}$表示指示映射函数（indicator map）。接着，我们选择一个$\Sigma_f$的一个错误划分，使得</p>
+<script type="math/tex; mode=display">
+\bigcup_{i\in \Pi_f}\Sigma_{fi} = \Sigma_f</script><p>额外的限制，对于每一个 $i = 1,\cdots,m$</p>
+<script type="math/tex; mode=display">
+\sigma_{f1},\sigma_{f2}\in\Sigma_{fi}\Rightarrow I_f(\sigma_{f1}) = I_f(\sigma_{f2})</script><p>然后定义</p>
+<script type="math/tex; mode=display">
+I(\Sigma_{fi}) = I_f(\sigma_f) 对于任一 \sigma_f\in \Sigma_{fi}.</script><p>我们现在有一个与每个错误类型<script type="math/tex">F_i</script>相关联的可观指示事件集<script type="math/tex">I(\Sigma_{fi})</script>（更多关于实际系统指示事件选择的内容见<sup><a href="#fn_2" id="reffn_2">2</a></sup>）。</p>
+<p>我们现在给出I-可诊断性的定义。<br><strong>Definition 2</strong>: 一个前缀闭合活语言$L$对于投影$P$，$\Sigma_f$上的错误划分$\Psi_f$和指示映射$I$是I-可诊断的当</p>
+<script type="math/tex; mode=display">
+(\forall i\in\Pi_f)(\exists n_i\in IN)(\forall s\in \Psi(\Sigma_{fi}))\\
+(\forall t_1t_2\in L/s:st_1\in \Psi[I(\Sigma_{fi})])\quad[\lVert t_2\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D为</p>
+<script type="math/tex; mode=display">
+w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script type="math/tex">\Psi(I(\Sigma_{fi}))</script>表示$L$中所有以<script type="math/tex">I(\Sigma_{fi})</script>集合中的一个可观事件结尾的串的集合。因此，对于I-可诊断性，它要求在<script type="math/tex">I(\Sigma_f)</script>中指示事件发生后，最多进行<script type="math/tex">n_i</script>次系统状态转移推断出<script type="math/tex">F_i</script>错误类型的错误事件的发生。</p>
 <div align="center" style="display: flex; flex-direction:column;">
-    <img src="diagram-of-system-G_d.png">
-    <span>Fig. 3. Diagram of system Gd.</span>
+    <img src="Example-of-a-system-with-multiple-failures.png">
+    <span>Fig. 2. Example of system with multiple failures.</span>
 </div>
 
-<p>现在，我们假设不区分错误类型$F_1$和$F_2$，即令<strong>Fig. 3</strong>中$F_2 = F_1$并删除一些冗余的状态，我们计算修改后系统对应的$G_d$，这里忽略了该结果。在修改后的$G_d$中，不存在任何违反<strong>Algorithm 1</strong>中第三步规则的环。因此，修改后的系统是可诊断的。</p>
-<h2 id="IV-CONCLUSION"><a href="#IV-CONCLUSION" class="headerlink" title="IV. CONCLUSION"></a>IV. CONCLUSION</h2><p>在本文中，我们提供了一个测试离散事件系统可诊断性的算法。与<sup><a href="#fn_4" id="reffn_4">4</a></sup>中的测试方法相比，我们的算法无需为待诊断系统构造诊断器。我们算法的复杂度是系统状态数的四阶和错误类型数的线性阶。而<sup><a href="#fn_4" id="reffn_4">4</a></sup>中测试方法的复杂度是系统状态数的指数阶和错误类型数的双倍指数阶。</p>
-<blockquote id="fn_1">
-<sup>1</sup>. Chen, Yi-Liang, and Gregory Provan. “Modeling and diagnosis of timed discrete event systems-a factory automation example.” Proceedings of the 1997 American Control Conference (Cat. No. 97CH36041). Vol. 1. IEEE, 1997.<a href="#reffn_1" title="Jump back to footnote [1] in the text."> &#8617;</a>
-</blockquote>
-<blockquote id="fn_2">
-<sup>2</sup>. L. Holloway and S. Chand, “Time templates for discrete event fault monitoring in manufacturing systems,” in Proc. 1994 Amer. Control Conf.,1994, pp. 701–706.<a href="#reffn_2" title="Jump back to footnote [2] in the text."> &#8617;</a>
-</blockquote>
-<blockquote id="fn_3">
-<sup>3</sup>. F. Lin, “Diagnosability of discrete-event systems and its applications,” J. Discrete Event Dyn. Syst.: Theory Appl., vol. 4, no. 2, pp. 197–212, May 1994.<a href="#reffn_3" title="Jump back to footnote [3] in the text."> &#8617;</a>
-</blockquote>
-<blockquote id="fn_4">
-<sup>4</sup>. M. Sampath, R. Sengupta, S. Lafortune, K. Sinnamohideen, and D. Teneketzis, “Diagnosability of discrete-event systems,” IEEE Trans. Automat. Contr., vol. 40, pp. 1555–1575, Sept. 1995.<a href="#reffn_4" title="Jump back to footnote [4] in the text."> &#8617;</a>
-</blockquote>
-<blockquote id="fn_5">
-<sup>5</sup>. S. H. Zad, R. H. Kwong, and W. M. Wonham, “Fault diagnosis in timed discrete-event systems,” in Proc. 38th IEEE Conf. Decision Control, Phoenix, AZ, Dec. 1999, pp. 1756–1761.<a href="#reffn_5" title="Jump back to footnote [5] in the text."> &#8617;</a>
-</blockquote>
-<blockquote id="fn_6">
-<sup>6</sup>. G. Westerman, R. Kumar, C. Stroud, and J. R. Heath, “Discrete-event systems approach for delay fault analysis in digital circuits,” in Proc. 1998 Amer. Control Conf., Philadelphia, PA, 1998.<a href="#reffn_6" title="Jump back to footnote [6] in the text."> &#8617;</a>
-</blockquote>
+<p>考虑如 Fig. 2图中的系统。假设其选择的指示事件集如下：<script type="math/tex">I(\Sigma_{f1})=\{\gamma\}, I(\Sigma_{f2})=\{\delta\}</script>和<script type="math/tex">I(\Sigma_{f3})=\{\delta\}</script>。系统的错误划分为：<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}, \Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>。对于<script type="math/tex">n_1=0,n_3=0</script>，系统是I-可诊断的。应该注意的是，尽管不可能推断指示事件对应错误事件<script type="math/tex">\sigma_{f2}</script>的发生，即$\delta$没有跟踪该错误事件，但这并不违反I-可诊断性的诊断条件。</p>
+<p><sup><a href="#fn_1" id="reffn_1">1</a></sup>:P. J. Ramadge and W. M. Wonham, “The control of discrete-event systems,” Proc. ZEEE, vol. 77, no. 1, pp. 81-98, 1989.<br><sup><a href="#fn_2" id="reffn_2">2</a></sup>:J. Hopcroft and J. Ullman, Introduction to Automata Theory, Languages, and Computation. Reading, MA: Addison Wesley, 1979.<br><sup><a href="#fn_3" id="reffn_3">3</a></sup>:__, “Failure diagnosis using discrete-event models,” Dept. EECS, Umv. of Michigan, MI 48109, 1994, Tech. Rep. CGR 94-3. (Accepted for publication% IEEE Trans. Conrr. Syst. Tech..)</p>
 ]]></content>
       <categories>
         <category>dissertation</category>
       </categories>
       <tags>
         <tag>paper translation</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CentOS7通过yum(yellow dog update modifier) 安装mysql5.7</title>
-    <url>/posts/86d29d2c/</url>
-    <content><![CDATA[<a id="more"></a>
-<h3 id="配置yum源"><a href="#配置yum源" class="headerlink" title="配置yum源"></a>配置yum源</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 下载mysql安装源包</span></span><br><span class="line">root @~&gt; wget http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm</span><br><span class="line"><span class="comment"># 安装mysql源</span></span><br><span class="line">root @~&gt; yum localinstall mysql57-community-release-el7-8.noarch.rpm</span><br></pre></td></tr></table></figure></div>
-<p>检查mysql源是否安装成功:</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root @~&gt; yum repolist enabled | grep <span class="string">"mysql.*-community.*"</span></span><br></pre></td></tr></table></figure></div>
-<p>如下图则安装成功:</p>
-<p><img src="repo-resource.png" alt="mysql_source"></p>
-<h3 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; yum install -y mysql-community-server</span><br></pre></td></tr></table></figure></div>
-<h3 id="启动MySQL服务并设置开机自动启动"><a href="#启动MySQL服务并设置开机自动启动" class="headerlink" title="启动MySQL服务并设置开机自动启动"></a>启动MySQL服务并设置开机自动启动</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; systemctl start mysqld</span><br></pre></td></tr></table></figure></div>
-<p>查看MySQL启动状态</p>
-<p><img src="mysql-status.png" alt="mysqld进程状态"></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line">root@ ~&gt; systemctl daemon-reload</span><br></pre></td></tr></table></figure></div>
-<h3 id="修改默认密码"><a href="#修改默认密码" class="headerlink" title="修改默认密码"></a>修改默认密码</h3><p>刚安装完的mysql会自动给root用户分配一个临时密码，而且必须重新设置密码(从5.5版本开始)</p>
-<ul>
-<li>先查看root用户的临时密码</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">root@ ~&gt; grep <span class="string">"temporary password"</span> /var/<span class="built_in">log</span>/mysqld.log</span><br></pre></td></tr></table></figure></div>
-<ul>
-<li>使用临时的密码登录进mysql来设置新的密码</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">set</span> PASSWORD = PASSWORD(<span class="string">'[YOUR_NEW_PASSWORD]'</span>)</span><br></pre></td></tr></table></figure></div>
-<p><img src="temporary-password.png" alt="查看临时密码"></p>
-<ul>
-<li>可能遇到的问题：设置的密码过于简单mysql报错:</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Your password does not satisfy the current policy requirements.</span><br></pre></td></tr></table></figure></div>
-<p>解决方法：由于刚安装的mysql的密码默认强度是最高的，若想要设置简单的密码就要修改<strong>validate_password_policy</strong>的值，</p>
-<h4 id="validate-password-policy有以下取值："><a href="#validate-password-policy有以下取值：" class="headerlink" title="validate_password_policy有以下取值："></a>validate_password_policy有以下取值：</h4><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Policy</th>
-<th style="text-align:center">Tests Performed</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0 or LOW</td>
-<td style="text-align:center">Length</td>
-</tr>
-<tr>
-<td style="text-align:center">1 or MEDIUM</td>
-<td style="text-align:center">Length;numeric,lowercase/uppercase,and special characters</td>
-</tr>
-<tr>
-<td style="text-align:center">2 or STRONG</td>
-<td style="text-align:center">Length;numeric,lowercase/uppercase,and special characters; dictionary file</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>操作：</p>
-<ul>
-<li>设置安全级别</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">set</span> global validate_password_policy=0;</span><br></pre></td></tr></table></figure></div>
-<ul>
-<li>设置密码长度为8，可以设置为其他值，最小为4位</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">set</span> global validate_password_length=4;</span><br></pre></td></tr></table></figure></div>
-<p>之后就可以设置简单的密码了。</p>
-<h3 id="允许root远程登录"><a href="#允许root远程登录" class="headerlink" title="允许root远程登录"></a>允许root远程登录</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO <span class="string">'root'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'[YOUR_PASSWORD]'</span> WITH GRANT OPTION;</span><br><span class="line">mysql&gt; flush privileges;</span><br></pre></td></tr></table></figure></div>
-<h3 id="修改字符集编码为UTF-8"><a href="#修改字符集编码为UTF-8" class="headerlink" title="修改字符集编码为UTF-8"></a>修改字符集编码为UTF-8</h3><ul>
-<li>查看当前字符编码</li>
-</ul>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">"char%';</span></span><br></pre></td></tr></table></figure></div>
-<p>检测是否都是utf-8(filesystem除外)，如果不是就需要修改。 <strong>character_set_server</strong>一般是lantin1。</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 停止mysqld服务</span></span><br><span class="line">systemctl stop mysqld</span><br><span class="line"><span class="comment"># 进入my.cnf文件，一般是/etc/路径下</span></span><br><span class="line">vim /etc/my.cnf</span><br><span class="line"><span class="comment"># 在[mysqld]下追加character-set-server=utf-8</span></span><br><span class="line"><span class="comment"># 在[mysql]下追加default-character-set=utf-8</span></span><br><span class="line"><span class="comment"># 启动mysqld</span></span><br><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure></div>
-]]></content>
-      <categories>
-        <category>mysql</category>
-      </categories>
-      <tags>
-        <tag>mysql5.7安装</tag>
       </tags>
   </entry>
   <entry>
@@ -1871,157 +2025,65 @@ h(y) = max_{x=1}^k g(y\cdot d -x +c)</script><p>其中 $c=k-d+1$ 是一个偏置
       </tags>
   </entry>
   <entry>
-    <title>The Notion of the Diagnosability</title>
-    <url>/posts/57ea30e/</url>
-    <content><![CDATA[<blockquote>
-<p>文献内容翻译：可诊断性概念<br>authors: Meera Sampath, Raja Sengupta, StCphane Lafortune, Member, IEEE, Kasim Sinnamohideen, Member, IEEE, and Demosthenis Teneketzis, Member, IEEE<br>原文: <a href="https://ieeexplore.ieee.org/document/412626" target="_blank" rel="noopener">Diagnosability of discrete-event systems</a></p>
+    <title>使用 Docker 运行 Oracle 数据库</title>
+    <url>/posts/c5182a98/</url>
+    <content><![CDATA[<p>虽然之前上过 oracle 数据库相关的课程，但学得比较浅，上完课后也没怎么使用到 oracle 数据库，一般都使用 mysql、mariadb 等。</p>
+<p>最近因为工作需要，不得不重新认真学学 Oracle 数据库了「重复学习真的很浪费时间😓」，而首先需要考虑的就是如何安装一个 oracle 数据库了，之前已有在 windows 系统下直接安装 oracle 数据库的经验。</p>
+<p>理论上，再在 win10 上安装一个 oracle 数据库很简单，但我平时主要使用笔记本电脑上的 manjaro 系统，其他的系统只是备用而已。</p>
+<a id="more"></a>
+<h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>自从用了 Docker 之后，平时自己在学习或开发，遇到需要在本机上搭建相关环境时，就会很自然地想到能不能使用 Docker 容器来处理呢！</p>
+<p>主要是想让搭建的开发环境与系统环境隔离，我们只在需要使用时才启动相关的容器。当我们不需要使用到该已搭建的环境时，也方便清理！</p>
+<p>既然已经决定要使用 Docker 来安装并运行 oracle 数据库，那么我们应该首先看看官方有没有提供相应的镜像，如果有的话，我们便可以直接 <code>pull</code> 下来，然后运行即可。没有，我们也可从基础镜像开始配置，如从 <code>oracle-linux</code> 开始，一层一层去配置我们需要的镜像。</p>
+<h2 id="1-资源下载及准备"><a href="#1-资源下载及准备" class="headerlink" title="1. 资源下载及准备"></a>1. 资源下载及准备</h2><p>好在通过 google 直接搜 「run oracle database using docker」，便有了相关的资源。</p>
+<p>我选择了 oracle 在 github 上提供的 <a href="https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance" target="_blank" rel="noopener">docker-image</a> 库。他们也提供了相应的 README.md，给出了如何构建及运行 oracle 镜像的说明。</p>
+<p>接下来，我将以 Oracle Database 12c Release 1 (12.1.0.2) Enterprise Edition and Standard Edition 2 为例，简单介绍该镜像的构建及运行使用。</p>
+<h3 id="1-1-镜像构建"><a href="#1-1-镜像构建" class="headerlink" title="1.1 镜像构建"></a>1.1 镜像构建</h3><p>将 docker-image 库下 <code>OracleDatabase</code> 目录下的所有文件下载下来后，在构建相应版本数据库之前，我们还需要从 <a href="http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html" target="_blank" rel="noopener">Oracle Technology Network</a> 上下载需要构建数据库版本相应的 linux x86 二进制安装包，放到 <code>OracleDatabase/SingleInstance/dockerfiles/&lt;version&gt;</code>  目录中。</p>
+<p>接着，只需要执行 <code>buildDockerImage.sh</code> 即可。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">[oracle@localhost dockerfiles]$ ./buildDockerImage.sh -h</span><br><span class="line"></span><br><span class="line">Usage: buildDockerImage.sh -v [version] [-e | -s | -x] [-i] [-o] [Docker build option]</span><br><span class="line">Builds a Docker Image for Oracle Database.</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">   -v: version to build</span><br><span class="line">       Choose one of: 11.2.0.2  12.1.0.2  12.2.0.1  18.3.0  18.4.0  19.3.0</span><br><span class="line">   -e: creates image based on &apos;Enterprise Edition&apos;</span><br><span class="line">   -s: creates image based on &apos;Standard Edition 2&apos;</span><br><span class="line">   -x: creates image based on &apos;Express Edition&apos;</span><br><span class="line">   -i: ignores the MD5 checksums</span><br><span class="line">   -o: passes on Docker build option</span><br><span class="line"></span><br><span class="line">* select one edition only: -e, -s, or -x</span><br><span class="line"></span><br><span class="line">LICENSE UPL 1.0</span><br><span class="line"></span><br><span class="line">Copyright (c) 2014-2019 Oracle and/or its affiliates. All rights reserved.</span><br></pre></td></tr></table></figure></div>
+<p>因为我们要构建 12.1.0.2 企业版数据库，因此执行 <code>./buildDockerImage.sh -v 12.1.0.2 -e</code>。<br><div class="note info"><p>需要注意的，完成该构建镜像过程后，只是生成安装了 Oracle 二进制文件的镜像。在容器第一次启动时，才会创建一个新的数据库实例，当数据库准备好可以使用时，会打印以下几行提示：<br>undefined</p></div></p>
+<p>以上是我们使用官方提供的 Dockerfile 来构建的镜像的例子，当然我们也可以使用我们编写的 Dockerfile 来扩展镜像，如创建用户和表空间等。</p>
+<blockquote>
+<p>官方提供的 Dockerfile 使用 oracle-linux 作为镜像基础层。</p>
 </blockquote>
-<a id="more"></a>
-<h2 id="A-The-System-Model"><a href="#A-The-System-Model" class="headerlink" title="A. The System Model"></a>A. The System Model</h2><p>待诊断系统通常使用一个 FSM 或生成器（generator）来进行建模。</p>
-<script type="math/tex; mode=display">
-G = (X, \Sigma, \delta, x_0)</script><p>其中$X$是状态空间，$\Sigma$是事件集，$\delta$是一个部分转移函数，$x_0$是系统的初始状态。系统模型$G$记录系统正常和错误行为。系统的行为使用$G$生成的前缀闭合语言$L(G)$来描述<sup><a href="#fn_1" id="reffn_1">1</a></sup>。此后，我们使用$L$直接表示$L(G)$，$L$是<script type="math/tex">\Sigma^*</script>的子集，其中<script type="math/tex">\Sigma^*</script>是事件集的 Kleene 闭包<sup><a href="#fn_2" id="reffn_2">2</a></sup>。</p>
-<p>$\Sigma$中一些事件是可观的，即它们的发生是被观测到的，其他的是不可观的。因此，事件集可以划分为<script type="math/tex">\Sigma = \Sigma_o\cup\Sigma_{uo}</script>，其中<script type="math/tex">\Sigma_o</script>表示可观事件集，而<script type="math/tex">\Sigma_{uo}</script>表示不可观事件集。系统中可观事件可能是以下情况下之一：控制器发出的指令，在执行上述命令后立即读取的传感器读数以及传感器读数的变化。不可观事件可以是错误事件或导致传感器未记录的系统状态更改（见<sup><a href="#fn_3" id="reffn_3">3</a></sup>）。</p>
-<p>令<script type="math/tex">\Sigma_f\subseteq \Sigma</script>表示待诊断的错误事件集。不失一般性地，我们假设<script type="math/tex">\Sigma_f\subseteq\Sigma_{uo}</script>，因为一个可观的错误事件显然是容易诊断的。我们的目标是根据系统生成的串来诊断是否有错误事件的发生，其中串中包含的事件均是可观的。在这种情况下，我们将错误事件集划分成多个不相交的集（disjoint set），对应表示不同的错误类型。</p>
-<script type="math/tex; mode=display">
-\Sigma_f = \Sigma_{f1}\cup\cdots\cup\Sigma_{fm}.</script><p>用$\Pi_f$表示这个划分。使用$\Pi_f$主要出于以下考虑：</p>
-<ul>
-<li>1) 仪器不足可能会导致无法诊断每个可能的错误；</li>
-<li>2) 我们可能不需要唯一标识每个错误事件的发生。我们可能只是想知道一组错误事件集中是否有一个错误事件发生了，例如，当一组错误事件对系统的影响相同时。</li>
-</ul>
-<p>此后，当我们写到”<script type="math/tex">F_i</script>类型的错误发生了“，意味着”集合<script type="math/tex">\Sigma_{fi}</script>中有错误事件发生了“。</p>
-<p>我们假设研究的系统：</p>
-<ul>
-<li>A1) 系统$G$的生成语言是活语言，即$X$中的每一个状态$x$均有定义转移，即系统不会到达一个没有事件标签的点；</li>
-<li>A2) 系统$G$中不存在任何由不可观事件形成的环，即<script type="math/tex">\exists n_o\in \mathbb{IN}</script>使得<script type="math/tex">\forall ust\in L, s\in \Sigma^*_{uo}\Rightarrow\lVert s\rVert\leq n_o</script>，其中$\lVert s\rVert$表示串$s$的长度。</li>
-</ul>
-<p>针对$L$是活语言的假设主要是为了研究简单。稍作修改，当该假设放松时，本文的所有主要结果均成立。假设2) 确保了系统生成的观察具备某些规律。由于错误的检测是基于系统的可观转移，我们要求$G$不产生任意长度的不可观事件序列。</p>
-<p>在<sup><a href="#fn_2" id="reffn_2">2</a></sup>中，我们详细讨论了用于错误诊断的离散事件系统建模。假设待诊断系统包含许多不同的物理组件以及一组传感器。我们首先为每个独立的组件构建相应的 FSM。这些模型会记录相应组件的正常和错误行为。考虑一个这样的例子，一个由泵、阀门和控制器组成的简单 HVAC 系统。Fig. 1描绘了该系统组件的模型。从组件模型和传感器图开始，然后我们生成了一个复合模型，该模型捕获了组件之间的交互并将传感器图纳入其中。这个复合模型就是我们执行错误诊断的系统$G$。</p>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="component-models-for-a-simple-HVAC-system.png">
-    <span>Fig. 1. Component models for a simple HVAC system.</span>
-</div>
-
-<p>我们在本节的系统模型上总结一些符号和生成器$G’$的结构，以便之后使用。</p>
-<p><strong>1) Notation:</strong> 空串用$\varepsilon$表示。用$\overline{s}$表示任意串<script type="math/tex">s\in\Sigma^*</script>的前缀闭包。$L$的$s$后语言用$L/s$表示，即</p>
-<script type="math/tex; mode=display">
-L/s = \{t\in\Sigma^*|st\in L\}</script><p>我们通常定义投影<script type="math/tex">P:\Sigma^*\to \Sigma^*_o</script> <sup><a href="#fn_1" id="reffn_1">1</a></sup></p>
-<script type="math/tex; mode=display">
-\begin{eqnarray}
-P(\varepsilon)& = &\varepsilon \\
-P(\sigma)& = &\sigma &if\quad \sigma\in\Sigma_o \\
-P(\sigma)& =& \varepsilon& if\quad \sigma \in \Sigma_{uo}\\
-P(s\sigma)& = &P(s)P(\sigma) &s\in \Sigma^*, \sigma\in\Sigma.
-\end{eqnarray}</script><p>换句话说，$P$简单地”清除“了串中的不可观事件。逆投影操作$P^{-1}_L$定义如下：</p>
-<script type="math/tex; mode=display">
-P^{-1}_L(y) = \{s\in L:P(s)=y\}</script><p>用$s_f$表示串$s$的最后一个事件，我们定义：</p>
-<script type="math/tex; mode=display">\Psi(\Sigma_{fi} = \{s\sigma_f\in L:\sigma_f\in \Sigma_{fi}\}</script><p>即<script type="math/tex">\Psi(\Sigma_{fi})</script>表示$L$中所有以错误类型为<script type="math/tex">F_i</script>的错误事件结尾的串的集合。考虑<script type="math/tex">\sigma\in\Sigma</script>以及<script type="math/tex">s\in\Sigma^*</script>。我们用<script type="math/tex">\sigma\in s</script>表示串$s$发生了事件<script type="math/tex">\sigma</script>。略微滥用符号，我们用<script type="math/tex">\Sigma_{fi}\in s</script>表示对于<script type="math/tex">\sigma_f\in\Sigma_{fi}</script>有<script type="math/tex">\sigma_f\in s</script>，或正式地，<script type="math/tex">\overline{s}\cap\Psi(\Sigma_{fi})\neq\emptyset</script>。我们定义</p>
-<script type="math/tex; mode=display">
-X_o = \{x_0\}\cup\{x\in X:x中包含一个可观事件\}.</script><p>用$L(G,x)$表示从$G$中状态$x$出发产生的所有串的集合，我们定义</p>
-<script type="math/tex; mode=display">
-L_o(G, x) = \{s\in L(G,x):s=u\sigma, u\in \Sigma^*_{uo}, \sigma\in \Sigma_o\}</script><p>以及</p>
-<script type="math/tex; mode=display">
-L_{\sigma}(G,x) = \{s\in L_o(G,x):s_f=\sigma\}.</script><p>其中，$L<em>o(G,x)$表示从状态$x$开始以第一个可观事件结束的所有串的集合。$$L</em>{\sigma}(G,x)$$表示$L_o(G,x)$中以一个特定可观事件结束的串的集合。</p>
-<p><strong>2) The Generator G’</strong>: 接下来的部分，我们需要特殊构造一个拥有语言$P(L)$的生成器$G’$</p>
-<script type="math/tex; mode=display">
-P(L) = \{t:t=P(s) 对于某些 s\in L\}</script><p>$G’$通常是不确定的（nondeterministic），并且它的结构如下</p>
-<script type="math/tex; mode=display">
-G' = (X_o, \Sigma_o, \delta_{G'}, x_0)</script><p>其中<script type="math/tex">X_o</script>，<script type="math/tex">\Sigma_o</script>和$x<em>0$先前已经定义过了。$G’$的转移关系由$$\delta</em>{G’}\subseteq (X_o\times\Sigma\times X_o)$$，其定义如下</p>
-<script type="math/tex; mode=display">
-(x,\sigma,x')\in \delta_{G'} \\
-如果 \delta(x,s) = x' 对于某些 s\in L_{\sigma}(G,x)</script><p>可以很轻易地验证$L(G’) = P(L)$. Figs. 4-6 展示了如果为$G$三个不同系统构造$G’$。</p>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser-Gd.png">
-    <span>Fig. 4. Example of system with F1 indeterminate cycle in its diagnoser Gd.</span>
-</div>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Example-of-a-system-with-a-cycle-of-F1-uncertain-states-in-its-diagnoser-Gd.png">
-    <span>Fig. 5. Example of system with a cycle of F1-uncertain states in its diagnoser Gd.</span>
-</div>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Another-example-of-a-system-with-an-F1-indeterminate-cycle-in-its-diagnoser.png">
-    <span>Fig. 6. Another example of system with F1 indeterminate cycle in its diagnoser.</span>
-</div>
-
-<h2 id="B-Approaches-to-Defining-Diagnosability"><a href="#B-Approaches-to-Defining-Diagnosability" class="headerlink" title="B. Approaches to Defining Diagnosability"></a>B. Approaches to Defining Diagnosability</h2><p>我们现在准备定义可诊断性的概念。一般而言，一个语言$L$是可诊断的若它能够在有限确切延迟内，使用记录的可观事件串诊断出任意错误类型的发生。我们将给出可诊断性的两种定义方式，其中第一个定义要比第二个定义严格。我们之后将参考的概念是可诊断性和I-可诊断性。</p>
-<p><strong>Diagnosability</strong>: 通常，我们定义可诊断性如下。<br><strong>Definition 1:</strong> 一个前缀闭合语言$L$对于投影$P$和$\Sigma_f$上的错误划分$\Pi_f$是可诊断的当</p>
-<script type="math/tex; mode=display">
-(\forall i\in \Pi_f)(\exists n_i\in \mathbb{IN})[\forall s\in \Psi(\Sigma_{fi})](\forall t\in L/s) \\
-[\lVert t\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D</p>
-<script type="math/tex; mode=display">
-w \in P^{-1}_L[P(st)]\Rightarrow\Sigma_{fi}\in w</script><p>上面可诊断性的定义意味着，$s$是一个以错误事件集<script type="math/tex">\Sigma_{fi}</script>中一个错误事件结尾的串，$t$是$s$的充分长后缀。诊断条件D表示系统语言中任何一个与串$st$产生相同投影序列的串必定包含错误事件集<script type="math/tex">\Sigma_{fi}</script>中的一个错误事件。这意味着，$s$的每一个连续的$t$都可以用于在有限延迟之内，在具体最多$n$个系统状态转移之后，来诊断错误类型<script type="math/tex">F_i</script>对应错误事件的发生。换句话说，可诊断性要求系统每一个错误事件发生后，再记录更多的可观事件，以便系统诊断该错误事件的发生。</p>
-<p>来自同一个错误划分的多错误情况需要特别注意。当一个串$s$中发生同一个错误类型$F<em>i$的多个错误事件，上面的可诊断性定义不要求每一个错误事件的发生都被检测到。能够在发生第一个错误后的有限多个事件中得出串$s$中发生了错误事件集$\Sigma</em>{fi}$中的错误事件。在后面的部分中， 我们将看到这一特性是如何区分可能的多个错误发生的情况与任何划分集合中没有多个错误发生的情况。</p>
-<p>我们展示上面可诊断性概念的一个简单例子。考虑Fig. 2中表示的系统。这里$\alpha, \beta, \gamma$和$\delta$是可观事件，<script type="math/tex">\sigma_{uo}</script>是不可观事件，而<script type="math/tex">\sigma_{f1},\sigma_{f2},\sigma_{f3}</script>是错误事件，<script type="math/tex">x_0</script>是系统的初始状态<script type="math/tex">1</script>。如果选择错误划分<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1},\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f2}=\{\sigma_{f3}\}</script>，即它不需要区分错误事件<script type="math/tex">\sigma_{f1}</script>和<script type="math/tex">\sigma_{f2}</script>，对于<script type="math/tex">n_1=2</script>和<script type="math/tex">n_2=1</script>，上面的系统是可诊断的。另一方面，如果错误划分是<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}</script>，<script type="math/tex">\Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>，则系统是不可诊断的，因为它无法推断出错误事件<script type="math/tex">\sigma_{f2}</script>是否发生。</p>
-<p><strong>2) I-Diagnosability</strong>: 上面的可诊断性定义要求$L$中的所有串满足诊断条件D。我们现在提出一个宽松的可诊断性定义（术语表示为I-可诊断性），它不需要$L$的所有的串都满足诊断条件D，但适用于那些错误事件后跟与每种错误类型相关的某些指示可观事件形成的串。这种修改是出于对下面实际情况的考虑。例如，考虑一个拥有控制单元的 HVAC 系统。正常模式操作下，每当控制器检测到系统上的热负荷时，它都会发出”open value“（打开阀门）来作出响应，同样，当负载消失时，它会发出”close value“（关闭阀门）指令。假设控制器发生了错误，它无法检测到系统是否出现负荷，因此不会发出任何指令控制。假设在运行期间控制器确实发生了错误，并且进一步假设系统有可能执行任意长度的事件序列，而这不涉及任何指令。在这种情况下，很明显无法诊断任何错误的发生。根据之前的定义，这样的系统是不可诊断的。在修改后的可诊断性定义情况中，我们将”open value“和”close value“分别与指示器事件（“stuck-closed“和”stuck-open”）相关联作为指示事件，并要求系统在确定其可诊断性之前，执行”open value”事件或”close value”事件。在执行对应指示事件之后能够探测到错误事件，则系统是可诊断的，反之，若在执行指示事件之后，仍无法探测到错误事件，则系统是不可诊断的。总结一下，I-可诊断性仅需要在错误事件相关的指示事件发生后，诊断出该错误的发生。</p>
-<p>我们首先将$\Sigma_f$中的每一个错误事件与一个或多个可观指示事件相关联。令$\Sigma_I\subseteq \Sigma_o$表示指示事件集，$I_f:\Sigma_f\to 2^{\Sigma_f}$表示指示映射函数（indicator map）。接着，我们选择一个$\Sigma_f$的一个错误划分，使得</p>
-<script type="math/tex; mode=display">
-\bigcup_{i\in \Pi_f}\Sigma_{fi} = \Sigma_f</script><p>额外的限制，对于每一个 $i = 1,\cdots,m$</p>
-<script type="math/tex; mode=display">
-\sigma_{f1},\sigma_{f2}\in\Sigma_{fi}\Rightarrow I_f(\sigma_{f1}) = I_f(\sigma_{f2})</script><p>然后定义</p>
-<script type="math/tex; mode=display">
-I(\Sigma_{fi}) = I_f(\sigma_f) 对于任一 \sigma_f\in \Sigma_{fi}.</script><p>我们现在有一个与每个错误类型<script type="math/tex">F_i</script>相关联的可观指示事件集<script type="math/tex">I(\Sigma_{fi})</script>（更多关于实际系统指示事件选择的内容见<sup><a href="#fn_2" id="reffn_2">2</a></sup>）。</p>
-<p>我们现在给出I-可诊断性的定义。<br><strong>Definition 2</strong>: 一个前缀闭合活语言$L$对于投影$P$，$\Sigma_f$上的错误划分$\Psi_f$和指示映射$I$是I-可诊断的当</p>
-<script type="math/tex; mode=display">
-(\forall i\in\Pi_f)(\exists n_i\in IN)(\forall s\in \Psi(\Sigma_{fi}))\\
-(\forall t_1t_2\in L/s:st_1\in \Psi[I(\Sigma_{fi})])\quad[\lVert t_2\rVert\geq n_i\Rightarrow D]</script><p>其中诊断条件D为</p>
-<script type="math/tex; mode=display">
-w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script type="math/tex">\Psi(I(\Sigma_{fi}))</script>表示$L$中所有以<script type="math/tex">I(\Sigma_{fi})</script>集合中的一个可观事件结尾的串的集合。因此，对于I-可诊断性，它要求在<script type="math/tex">I(\Sigma_f)</script>中指示事件发生后，最多进行<script type="math/tex">n_i</script>次系统状态转移推断出<script type="math/tex">F_i</script>错误类型的错误事件的发生。</p>
-<div align="center" style="display: flex; flex-direction:column;">
-    <img src="Example-of-a-system-with-multiple-failures.png">
-    <span>Fig. 2. Example of system with multiple failures.</span>
-</div>
-
-<p>考虑如 Fig. 2图中的系统。假设其选择的指示事件集如下：<script type="math/tex">I(\Sigma_{f1})=\{\gamma\}, I(\Sigma_{f2})=\{\delta\}</script>和<script type="math/tex">I(\Sigma_{f3})=\{\delta\}</script>。系统的错误划分为：<script type="math/tex">\Sigma_{f1}=\{\sigma_{f1}\}, \Sigma_{f2}=\{\sigma_{f2}\}</script>和<script type="math/tex">\Sigma_{f3}=\{\sigma_{f3}\}</script>。对于<script type="math/tex">n_1=0,n_3=0</script>，系统是I-可诊断的。应该注意的是，尽管不可能推断指示事件对应错误事件<script type="math/tex">\sigma_{f2}</script>的发生，即$\delta$没有跟踪该错误事件，但这并不违反I-可诊断性的诊断条件。</p>
-<p><sup><a href="#fn_1" id="reffn_1">1</a></sup>:P. J. Ramadge and W. M. Wonham, “The control of discrete-event systems,” Proc. ZEEE, vol. 77, no. 1, pp. 81-98, 1989.<br><sup><a href="#fn_2" id="reffn_2">2</a></sup>:J. Hopcroft and J. Ullman, Introduction to Automata Theory, Languages, and Computation. Reading, MA: Addison Wesley, 1979.<br><sup><a href="#fn_3" id="reffn_3">3</a></sup>:__, “Failure diagnosis using discrete-event models,” Dept. EECS, Umv. of Michigan, MI 48109, 1994, Tech. Rep. CGR 94-3. (Accepted for publication% IEEE Trans. Conrr. Syst. Tech..)</p>
+<p>数据库的字符集编码会在镜像构建过程中进行配置。11g Express Edition 仅支持 UTF-8，标准版 2 和企业版可以在我们第一次运行容器时进行配置，可为不同表空间配置不同的字符集。</p>
+<div class="note warning"><p>我们知道，docker 在构建镜像时，会将所有需要使用到的文件打包传送到构建上下文 (build context) 中，交由 dockerd 服务器来执行构建。</p>
+<p>因此，我们应该尽量让构建上下文只包含我们需要的文件，必要时请使用 <code>.dokerignore</code> 文件，来忽略构建镜像时不需要用到的文件。</p></div>
+<p>镜像的构建过程可能需要花费点时间。以我为例，我选择的数据库版本下载下来的安装包大概 4G 左右，然后构建镜像需要 22 步（22 层），花了将近一个小时吧。</p>
+<p>镜像的构建过程大概如下（仅列出关键步）：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">Building image &apos;oracle/database:12.2.0.1-ee&apos; ...</span><br><span class="line">Sending build context to Docker daemon  3.454GB</span><br><span class="line">Step 1/22 : FROM oraclelinux:7-slim as base</span><br><span class="line">...</span><br><span class="line">Step 2/22 : LABEL &quot;provider&quot;=&quot;Oracle&quot;                                                     &quot;issues&quot;=&quot;https://github.com/oracle/docker-images/issues&quot;               &quot;volume.data&quot;=&quot;/opt/oracle/oradata&quot;                                     &quot;volume.setup.location1&quot;=&quot;/opt/oracle/scripts/setup&quot;                    &quot;volume.setup.location2&quot;=&quot;/docker-entrypoint-initdb.d/setup&quot;            &quot;volume.startup.location1&quot;=&quot;/opt/oracle/scripts/startup&quot;                &quot;volume.startup.location2&quot;=&quot;/docker-entrypoint-initdb.d/startup&quot;        &quot;port.listener&quot;=&quot;1521&quot;                                                  &quot;port.oemexpress&quot;=&quot;5500&quot;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Step 3/22 : ENV ORACLE_BASE=/opt/oracle     ORACLE_HOME=/opt/oracle/product/12.2.0.1/dbhome_1     INSTALL_DIR=/opt/install     INSTALL_FILE_1=&quot;linuxx64_12201_database.zip&quot;     INSTALL_RSP=&quot;db_inst.rsp&quot;     CONFIG_RSP=&quot;dbca.rsp.tmpl&quot;     PWD_FILE=&quot;setPassword.sh&quot;     RUN_FILE=&quot;runOracle.sh&quot;     START_FILE=&quot;startDB.sh&quot;     CREATE_DB_FILE=&quot;createDB.sh&quot;     SETUP_LINUX_FILE=&quot;setupLinuxEnv.sh&quot;     CHECK_SPACE_FILE=&quot;checkSpace.sh&quot;     CHECK_DB_FILE=&quot;checkDBStatus.sh&quot;     USER_SCRIPTS_FILE=&quot;runUserScripts.sh&quot;     INSTALL_DB_BINARIES_FILE=&quot;installDBBinaries.sh&quot;</span><br><span class="line">...</span><br><span class="line">Step 4/22 : ENV PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch/:/usr/sbin:$PATH     LD_LIBRARY_PATH=$ORACLE_HOME/lib:/usr/lib     CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib</span><br><span class="line">...</span><br><span class="line">Step 5/22 : COPY $SETUP_LINUX_FILE $CHECK_SPACE_FILE $INSTALL_DIR/</span><br><span class="line">...</span><br><span class="line">Step 6/22 : COPY $RUN_FILE $START_FILE $CREATE_DB_FILE $CONFIG_RSP $PWD_FILE $CHECK_DB_FILE $USER_SCRIPTS_FILE $ORACLE_BASE/</span><br><span class="line">...</span><br><span class="line">Step 7/22 : RUN chmod ug+x $INSTALL_DIR/*.sh &amp;&amp;     sync &amp;&amp;     $INSTALL_DIR/$CHECK_SPACE_FILE &amp;&amp;     $INSTALL_DIR/$SETUP_LINUX_FILE &amp;&amp;     rm -rf $INSTALL_DIR</span><br><span class="line">...</span><br><span class="line">Step 8/22 : FROM base AS builder</span><br><span class="line">...</span><br><span class="line">Step 9/22 : ARG DB_EDITION</span><br><span class="line">...</span><br><span class="line">Step 10/22 : RUN yum -y install unzip</span><br><span class="line">...</span><br><span class="line">Step 11/22 : COPY --chown=oracle:dba $INSTALL_FILE_1 $INSTALL_RSP $INSTALL_DB_BINARIES_FILE $INSTALL_DIR/</span><br><span class="line">...</span><br><span class="line">Step 12/22 : USER oracle</span><br><span class="line">...</span><br><span class="line">Step 13/22 : RUN chmod ug+x $INSTALL_DIR/*.sh &amp;&amp;     sync &amp;&amp;     $INSTALL_DIR/$INSTALL_DB_BINARIES_FILE $DB_EDITION</span><br><span class="line">...</span><br><span class="line">Step 14/22 : FROM base</span><br><span class="line">...</span><br><span class="line">Step 15/22 : USER oracle</span><br><span class="line">...</span><br><span class="line">Step 16/22 : COPY --chown=oracle:dba --from=builder $ORACLE_BASE $ORACLE_BASE</span><br><span class="line">...</span><br><span class="line">Step 17/22 : USER root</span><br><span class="line">...</span><br><span class="line">Step 18/22 : RUN $ORACLE_BASE/oraInventory/orainstRoot.sh &amp;&amp;     $ORACLE_HOME/root.sh</span><br><span class="line">...</span><br><span class="line">Step 19/22 : USER oracle</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+<p>构建完成后，我们使用 <code>docker images</code> 来查看相关的镜像。</p>
+<p><img src="docker-built-oracle-images.png" alt></p>
+<h2 id="2-运行及使用"><a href="#2-运行及使用" class="headerlink" title="2. 运行及使用"></a>2. 运行及使用</h2><p>由于我们构建的 oracle 数据库是企业版 2，因此容器运行主要参考如下：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">docker run --name &lt;container name&gt; \</span><br><span class="line">-p &lt;host port&gt;:1521 -p &lt;host port&gt;:5500 \</span><br><span class="line">-e ORACLE_SID=&lt;your SID&gt; \</span><br><span class="line">-e ORACLE_PDB=&lt;your PDB name&gt; \</span><br><span class="line">-e ORACLE_PWD=&lt;your database passwords&gt; \</span><br><span class="line">-e ORACLE_CHARACTERSET=&lt;your character set&gt; \</span><br><span class="line">-v [&lt;host mount point&gt;:]/opt/oracle/oradata \</span><br><span class="line">oracle/database:19.3.0-ee</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">   --name:        The name of the container (default: auto generated)</span><br><span class="line">   -p:            The port mapping of the host port to the container port. </span><br><span class="line">                  Two ports are exposed: 1521 (Oracle Listener), 5500 (OEM Express)</span><br><span class="line">   -e ORACLE_SID: The Oracle Database SID that should be used (default: ORCLCDB)</span><br><span class="line">   -e ORACLE_PDB: The Oracle Database PDB name that should be used (default: ORCLPDB1)</span><br><span class="line">   -e ORACLE_PWD: The Oracle Database SYS, SYSTEM and PDB_ADMIN password (default: auto generated)</span><br><span class="line">   -e ORACLE_CHARACTERSET:</span><br><span class="line">                  The character set to use when creating the database (default: AL32UTF8)</span><br><span class="line">   -v /opt/oracle/oradata</span><br><span class="line">                  The data volume to use for the database.</span><br><span class="line">                  Has to be writable by the Unix &quot;oracle&quot; (uid: 54321) user inside the container!</span><br><span class="line">                  If omitted the database will not be persisted over container recreation.</span><br><span class="line">   -v /opt/oracle/scripts/startup | /docker-entrypoint-initdb.d/startup</span><br><span class="line">                  Optional: A volume with custom scripts to be run after database startup.</span><br><span class="line">                  For further details see the &quot;Running scripts after setup and on startup&quot; section below.</span><br><span class="line">   -v /opt/oracle/scripts/setup | /docker-entrypoint-initdb.d/setup</span><br><span class="line">                  Optional: A volume with custom scripts to be run after database setup.</span><br><span class="line">                  For further details see the &quot;Running scripts after setup and on startup&quot; section below.</span><br></pre></td></tr></table></figure></div>
+<p>例如:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SH"><figure class="iseeu highlight /sh"><table><tr><td class="code"><pre><span class="line">docker run --name dev-oracle-database \</span><br><span class="line">-p 1521:1521 -p 5500:5500 \</span><br><span class="line">-e ORACLE_SID=ORCLCDB \</span><br><span class="line">-e ORACLE_PDB=ORCLPDB1 \</span><br><span class="line">-e ORACLE_PWD=&lt;your password&gt; \</span><br><span class="line">-e ORACLE_CHARACTERSET=UTF-8 \</span><br><span class="line">-v ./docker-volumes/dev-oracle-database/oradata:/opt/oracle/oradata \</span><br><span class="line">-d oracle/database:12.2.0.1-ee</span><br></pre></td></tr></table></figure></div>
+<p>在容器启动后及数据库创建完成后，我们可以通过以下方式连接数据库：</p>
+<div class="note info"><p>如果本机系统上没有 oracle 数据库的客户端，我们可以直接 <code>docker exec -it &lt;container_id&gt; or &lt;container_name&gt; bash</code> 进入容器，之后再使用容器中提供的 <code>sqlplus</code> 去连接数据库。</p>
+<p>oracle-linux 系统中肯定是有相应的工具的。</p>
+<p>当然啦，当本机上有 Oracle 数据库客户端后，就可以用我们熟悉的方式去连接数据库了。</p></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SH"><figure class="iseeu highlight /sh"><table><tr><td class="code"><pre><span class="line">sqlplus sys/&lt;your password&gt;@//localhost:1521/&lt;your SID&gt; as sysdba</span><br><span class="line">sqlplus system/&lt;your password&gt;@//localhost:1521/&lt;your SID&gt;</span><br><span class="line">sqlplus pdbadmin/&lt;your password&gt;@//localhost:1521/&lt;Your PDB name&gt;</span><br></pre></td></tr></table></figure></div>
+<p>该 oracle 数据库容器还配置了 OEM (Oracle Enterprise Manager) Express ,我们可以通过浏览器打开以下 URL 来访问:<br><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">https://localhost:5500/em/</span><br></pre></td></tr></table></figure></div></p>
+<div class="note info"><p>Oracle 数据库容器可以通过使用 <code>O_DIRECT</code> 标志来绕过一些文件的文件系统缓存。但不建议在不支持 <code>O_DIRECT</code> 标志的文件系统上运行容器。</p></div>
+<p><strong>修改 admin 账号的密码</strong></p>
+<p>如果第一次启动容器时没有指定密码的话，则会生成随机密码。我们可以在输出日志中的以下行，找到这些账号的密码：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN:</span><br></pre></td></tr></table></figure></div>
+<p>要修改这些账号的密码，我们可以通过 <code>docker exec</code> 去执行容器中的 <code>setPassword.sh</code> 脚本：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="SH"><figure class="iseeu highlight /sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> &lt;container name&gt; ./setPassword.sh &lt;your password&gt;</span><br></pre></td></tr></table></figure></div>
+<div class="note warning"><p>其他版本的数据库的容器的运行与上面提到的企业版和标准版 2 有点不一样，具体可以参考<br>Oracle 在 docker-image 库中给出相关 README.md 文件。</p></div>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>本文主要简单介绍了，如何使用 oracle 提供的 docker-image 库构建自己想要的 oracle 数据库镜像，然后运行并使用已构建的镜像。</p>
+<p>实际上，除了使用 oracle 提供的 docker-image 库自己构建相应的镜像外（能使用提供的 Dockerfile 进行自定义），我们也能直接通过类似 <code>docker pull store/oracle/database-enterprise:12.2.0.1-slim</code> 命令直接从官方库上下相应的镜像。</p>
+<p><strong>References</strong></p>
+<ol>
+<li><a href="https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance" target="_blank" rel="noopener">https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance</a></li>
+<li><a href="https://dzone.com/articles/oracle-12c-image-installation-in-docker" target="_blank" rel="noopener">https://dzone.com/articles/oracle-12c-image-installation-in-docker</a></li>
+</ol>
 ]]></content>
       <categories>
-        <category>dissertation</category>
+        <category>Database</category>
       </categories>
       <tags>
-        <tag>paper translation</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解决Github国内访问出现的问题</title>
-    <url>/posts/7e3029b3/</url>
-    <content><![CDATA[<p>主要通过修改hosts文件解决Github在国内访问不了、访问慢和页面加载异常的问题(没钱买vpn~)。</p>
-<p>简单了解一下github, github是目前全球最大的男性同性交友网站(~滑稽~), 使用示例如下：</p>
-<p><img src="/images/解决Github访问问题/communication.jpg" alt></p>
-<a id="more"></a>
-<p>开个玩笑，回归正题。</p>
-<h3 id="为什么访问不了以及访问速度会很慢？"><a href="#为什么访问不了以及访问速度会很慢？" class="headerlink" title="为什么访问不了以及访问速度会很慢？"></a>为什么访问不了以及访问速度会很慢？</h3><p>GitHub在中国大陆访问速度慢的问题原因有很多，但最直接和最主要的原因是GitHub的分发加速网络的域名遭到DNS污染。</p>
-<p>由于GitHub的加速分发CDN域名assets-cdn.github.com遭到DNS污染，导致无法连接使用GitHub的加速分发服务器，才使得中国大陆访问速度很慢。</p>
-<p><img src="github_problem.png" alt="problem"></p>
-<h3 id="如何解决DNS污染？"><a href="#如何解决DNS污染？" class="headerlink" title="如何解决DNS污染？"></a>如何解决DNS污染？</h3><p>一般的DNS问题都可以通过修改Hosts文件来解决，GitHub的CDN域名被污染问题也不例外，同样可以通过修改Hosts文件解决。</p>
-<p>将域名解析直接指向IP地址来绕过DNS的解析，以此解决污染问题。</p>
-<h4 id="获取被污染域名的实际IP地址"><a href="#获取被污染域名的实际IP地址" class="headerlink" title="获取被污染域名的实际IP地址"></a>获取被污染域名的实际IP地址</h4><p>访问<a href="https://www.ipaddress.com" target="_blank" rel="noopener">ipaddress.com</a>,使用ip lookup 工具获得相关域名的ip地址。</p>
-<p>例如： github.com</p>
-<p><img src="github_ipaddress.png" alt="ip address"></p>
-<p>可以看到，我查出的域名ip地址为： <code>192.30.253.112</code> 和 <code>192.30.253.113</code> (任取一个即可)</p>
-<h4 id="修改host文件，在文件中添加一行："><a href="#修改host文件，在文件中添加一行：" class="headerlink" title="修改host文件，在文件中添加一行："></a>修改host文件，在文件中添加一行：</h4><p><strong>[注] ： windows的hosts文件位置为： </strong><br><code>C:/windows/system32/drivers/etc/hosts</code></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">192.30.253.112 github.com</span><br></pre></td></tr></table></figure></div>
-<h4 id="刷新dns缓存"><a href="#刷新dns缓存" class="headerlink" title="刷新dns缓存"></a>刷新dns缓存</h4><p>打开命令行cmd,输入如下命令：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ipconfig /flushdns</span><br></pre></td></tr></table></figure></div>
-<p>此时再刷新页面即可。此时可以正常访问github，但是访问速度还是很慢，我们接着做优化。</p>
-<h4 id="Github-访问提速"><a href="#Github-访问提速" class="headerlink" title="Github 访问提速"></a>Github 访问提速</h4><p>在hosts文件中继续加入，如下代码：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># GitHub Start</span><br><span class="line">192.30.253.112 github.com</span><br><span class="line">192.30.253.119 gist.github.com</span><br><span class="line">151.101.228.133 assets-cdn.github.com</span><br><span class="line">151.101.228.133 raw.githubusercontent.com</span><br><span class="line">151.101.228.133 gist.githubusercontent.com</span><br><span class="line">151.101.228.133 cloud.githubusercontent.com</span><br><span class="line">151.101.228.133 camo.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars0.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars1.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars2.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars3.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars4.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars5.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars6.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars7.githubusercontent.com</span><br><span class="line">151.101.228.133 avatars8.githubusercontent.com</span><br><span class="line">192.30.253.116  api.github.com</span><br><span class="line"># GitHub End</span><br></pre></td></tr></table></figure></div>
-<div class="note warning"><p><strong>注意</strong> : 这里域名对应的ip是通过dns查询工具查询得到的，你应当选择的是延时相对较小且比较稳定的ip。</p></div>
-<p>例如，上面的<code>151.101.228.133</code>是对我来说较好的ip:</p>
-<p><img src="ping_test.png" alt="dns 查询检测"></p>
-<div class="note info"><p>推荐的dns查询检测工具：</p>
-<ul>
-<li><a href="https://tool.lu/dns/" target="_blank" rel="noopener">DNS查询 - 在线工具</a></li>
-<li><a href="http://tool.chinaz.com/dns/" target="_blank" rel="noopener">DNS检测|DNS查询-站长工具</a></li>
-</ul>
-<p>你可对单个域名多查询几次，以挑选稳定且速度较快的ip。</p></div>
-<h4 id="快速地访问github"><a href="#快速地访问github" class="headerlink" title="快速地访问github"></a>快速地访问github</h4><p>再次刷新dns缓存后，你已经可以快速地访问github了。</p>
-<p><img src="github_test.gif" alt></p>
-<div class="note primary"><p>参考：<a href="https://github.com/chenxuhua/issues-blog/issues/3" target="_blank" rel="noopener">https://github.com/chenxuhua/issues-blog/issues/3</a></p></div>
-]]></content>
-      <categories>
-        <category>tips</category>
-      </categories>
-      <tags>
-        <tag>github</tag>
+        <tag>Oracle</tag>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -2102,8 +2164,8 @@ w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script 
         <category>Practices</category>
       </categories>
       <tags>
-        <tag>SpringBoot</tag>
         <tag>Docker</tag>
+        <tag>SpringBoot</tag>
         <tag>Nginx</tag>
       </tags>
   </entry>
@@ -2664,6 +2726,42 @@ w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script 
       </tags>
   </entry>
   <entry>
+    <title>Advantrue 1 - Leetcode 11 - Container With Most Water</title>
+    <url>/posts/dac7fdaa/</url>
+    <content><![CDATA[<blockquote>
+<p>给定 n 个非负整数 <code>a1，a2，...，an</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 <code>n</code> 条垂直线，垂直线 <code>i</code> 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 <code>x</code> 轴共同构成的容器可以容纳最多的水。<br><br></p>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/container-with-most-water/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode.com/problems/container-with-most-water/</a>(en)<br><br><br>说明：你不能倾斜容器，且 n 的值至少为 2。<br>示例:<br>输入: [1,8,6,2,5,4,8,3,7]<br>输出: 49</li>
+</ul>
+</blockquote>
+<a id="more"></a>
+<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>对于这样的题目，很明显可以快速的使用<code>brute-force</code>方式得到解法:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; height; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; height; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> temp = (j-i) * (height[i]&gt;height[j]?height[j]:height[i]);</span><br><span class="line">                <span class="keyword">if</span> (temp &gt; maxArea)</span><br><span class="line">                    maxArea = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): $O(n^2)$</li>
+<li>空间复杂度(Space complexity): $O(1)$</li>
+</ul>
+<div class="note primary"><p>显然使用<code>brute-force</code>解法设计的算法是正确的，但是时间复杂度是$O(n^2)$级别，因此我们需要考虑优化。<br>代码提交状况:<br>运行时间(Runtime): 269 ms<br>beats rate: 20.1%</p></div>
+<div class="note warning"><p>其实仔细看的话，要使围成的矩形面积最大，无非就是让长和宽尽量的大，因此我们可以使用<code>Two-pointers</code>双指针的思想:<br>使用两个指针<code>i,j</code>分别指向<code>0</code>和<code>height.length-1</code>，让一开始的<code>x</code>坐标距离最大化，然后判断它们所对应的高度谁低，<br>依据较低的高度值计算面积，再将对应索引指针增<code>1</code>(对于低索引指针)或减<code>1</code>(高索引指针)。</p></div>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VAlUE;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> j = height.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="comment">// int x = j - i;</span></span><br><span class="line">            <span class="comment">// maxArea = Math.max(maxArea,Math.min(heigth[i], height[j])*x);</span></span><br><span class="line">            <span class="comment">// if (height[i] &lt; height[j]) &#123;</span></span><br><span class="line">            <span class="comment">//     i++;</span></span><br><span class="line">            <span class="comment">// &#125; else &#123;</span></span><br><span class="line">            <span class="comment">//     j--;</span></span><br><span class="line">            <span class="comment">// &#125;</span></span><br><span class="line">            <span class="comment">// 对代码进行缩减</span></span><br><span class="line">            maxArea = Math.max(maxArea, height[j]&lt;height[i]?(j-i)*height[j--]:(j-i))*height[i++]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): $O(n)$</li>
+<li>空间复杂度(Space complexity): $O(1)$</li>
+</ul>
+<div class="note primary"><p>使用<strong>双指针</strong>，只需要一次遍历就能得到结果。可以见得双指针是非常有效的工具，也是数组类问题中常见的解题思路: 例如，对于已经排好序的两数之和(Two sum - sorted)问题,就可以使用双指针进行解决。</p>
+<p>代码提交状况:<br>运行时间(Runtime): 6 ms<br>beat rate: 65.95%</p></div>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-array-medium</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Advantrue 1 - Leetcode 189 - Rotate Array</title>
     <url>/posts/885fe7d0/</url>
     <content><![CDATA[<blockquote>
@@ -3016,66 +3114,6 @@ w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script 
       </tags>
   </entry>
   <entry>
-    <title>快速排序 - quickSort</title>
-    <url>/posts/d9de8e4c/</url>
-    <content><![CDATA[<a id="more"></a>
-<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>快速排序的主要特点是：</p>
-<ol>
-<li>原地排序 (in-place);</li>
-<li>将长度为 N 的数组排序所需的时间和NlgN成正比；</li>
-<li>排序内循环比大多数排序算法都要短小，意味着无论是在理论上还是实际中都要更快。</li>
-</ol>
-<p>缺点：<br>    快速排序非常的脆弱，在实现时要非常小心才能避免低劣的性能。</p>
-<h3 id="基本算法"><a href="#基本算法" class="headerlink" title="基本算法"></a>基本算法</h3><p>快速排序是一种<strong>分治</strong>排序算法，它将一个数组分成两个子数组，将两部分独立地排序。不同于归并排序，快速排序的递归调用发生在处理子数之前。</p>
-<p>快速排序方法抽象实现如下：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Quick</span> </span>&#123;</span><br><span class="line">	<span class="comment">// quick sort java implement.</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">    	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">        <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">if</span> (hi &lt;= lo)	<span class="keyword">return</span>;</span><br><span class="line">		<span class="keyword">int</span> j = partition(a, lo, hi);</span><br><span class="line">        sort(a, lo, j-<span class="number">1</span>);</span><br><span class="line">        sort(a, j+<span class="number">1</span>, hi);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">partition</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">int</span> i = lo;</span><br><span class="line">        <span class="keyword">int</span> j = hi + <span class="number">1</span>;</span><br><span class="line">        Comparable v = a[lo];</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        	<span class="keyword">while</span> (less(a[++i], v)) &#123;</span><br><span class="line">            	<span class="keyword">if</span> (lo == hi) <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (less(v, a[--j])) &#123;</span><br><span class="line">            	<span class="keyword">if</span> (j == lo) <span class="keyword">break</span>; <span class="comment">// redundant since a[lo] is sentinel.</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Check if pointers cross.</span></span><br><span class="line">            <span class="keyword">if</span> (j &lt;= i)	<span class="keyword">break</span>;</span><br><span class="line">            exch(a, i, j);</span><br><span class="line">        &#125;</span><br><span class="line">        exch(a, lo, j);</span><br><span class="line">        <span class="keyword">return</span> j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>上述切分方法示意图: [from algs4]</p>
-<p><img src="quickSort_partition_1.png" alt="切分示意图"></p>
-<p>切分轨迹图: [from algs4]</p>
-<p><img src="quickSort_partition_2.png" alt="切分轨迹图"></p>
-<blockquote>
-<p><strong>命题 K</strong>： 将长度为N的无重复的数组排序，快速排序平均需要 ~ $2NlnN$ 次比较(以及$1/6$的交换)</p>
-</blockquote>
-<p><strong>[notice]</strong>: 尽管快速排序有很多优点，它的基本实现仍有一个潜在的缺点：</p>
-<p>在切分不平衡时该算法可能及其低效。例如： 如果第一个次从最小的元素切分，第二次从第二小的元素切分，则这样每次只会移除一个元素。<br>[solution] : <strong>在快速排序之前将数组随机排序可以避免这种情况的发生</strong>。</p>
-<h3 id="算法改进"><a href="#算法改进" class="headerlink" title="算法改进"></a>算法改进</h3><h4 id="1-切换到插入排序"><a href="#1-切换到插入排序" class="headerlink" title="1.切换到插入排序"></a>1.切换到插入排序</h4><p>和大多数递归排序算法一样(如归并)，改进快速排序的简单方法基于以下两点：</p>
-<ul>
-<li>对于小数组，快速排序比插入排序慢；</li>
-<li>以为递归，快速排序的sort()方法在小数组中也会调用自己。</li>
-</ul>
-<p>改进 ： 将<strong>sort()方法</strong>中的</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (hi &lt;= lo) <span class="keyword">return</span>;</span><br></pre></td></tr></table></figure></div>
-<p>改为：</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (hi &lt;= lo + M) &#123;</span><br><span class="line">	insertion.sort(a, lo, hi);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>[<strong>notice</strong>] : 这里的切换参数 M 的最佳值是和系统相关的，但是5 ~ 15 之间的任意值在大多数情况下都能令人满意。</p>
-<h4 id="2-三取样切分"><a href="#2-三取样切分" class="headerlink" title="2. 三取样切分"></a>2. 三取样切分</h4><p>改进快速排序性能的第二个方法是<strong>使用子数组的一小部分的中位数来切分数组</strong>。这样的切分的效果更好，但代价是需要计算中位数。</p>
-<ul>
-<li>人们发现将取样设为 3 并用大小居中的元素切分效果<strong>最好</strong>； 我们还可以将取样元素放在数组末尾作为哨兵(sentinel)。</li>
-</ul>
-<p>三取样切分抽象实现 : <a href="https://github.com/rovo98/ds-and-algs/blob/master/ds/sorting/exercises/QuickSortImprovedTwo.java" target="_blank" rel="noopener">详细查看</a></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSortImproved</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> staic <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	dealPivot(a, lo, hi);</span><br><span class="line">    <span class="keyword">int</span> i = lo;</span><br><span class="line">    <span class="keyword">int</span> j = hi - <span class="number">1</span>;</span><br><span class="line">    Comparable v = a[hi - <span class="number">1</span>]; <span class="comment">// set the  pivot at hi -1 as a sentinel.</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">    	<span class="keyword">while</span> (less(a[++i], v)) &#123;</span><br><span class="line">        	<span class="keyword">if</span> (i == hi-<span class="number">1</span>) <span class="keyword">break</span>; <span class="comment">// redundant since a[hi - 1] is sentinel.</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (j &gt; lo &amp;&amp; less(v, a[--j])) &#123;  &#125;</span><br><span class="line">        </span><br><span class="line">       	<span class="comment">// check if pointers cross.</span></span><br><span class="line">        <span class="keyword">if</span> (j &lt;= i) <span class="keyword">break</span>;</span><br><span class="line">        exch(a, i, j);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> (i &lt; hi-<span class="number">1</span>) &#123;</span><br><span class="line">   	exch(a, i, hi - <span class="number">1</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   sort(a, lo, i - <span class="number">1</span>);</span><br><span class="line">   sort(a, i + <span class="number">1</span>, hi);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 三取样并将切分元素放在数组末尾</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealPivot</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span> (less(a[mid], a[lo]))</span><br><span class="line">    	exch(a, lo, mid);</span><br><span class="line">    <span class="keyword">if</span> (less(a[hi], a[lo]))</span><br><span class="line">    	exch(a, lo, hi);</span><br><span class="line">    <span class="keyword">if</span> (less(a[hi], a[mid]))</span><br><span class="line">    	exch(a, mid, hi);</span><br><span class="line">    <span class="comment">// put the pivot to hi - 1 as a sentinel.</span></span><br><span class="line">    exch(a, mid, hi - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<h4 id="熵最优的排序"><a href="#熵最优的排序" class="headerlink" title="熵最优的排序"></a>熵最优的排序</h4><p>实际应用中经常会出现含有大量重复元素的数组，我们实现的快速排序性能尚可，但是<strong>还有巨大的改进空间</strong>。例如：一个元素全部重复的子数组就不需要继续排序了，但我们的快速排序还是会继续将它切分为更小的数组。</p>
-<p>[solution] : <strong>一个简单想法是将数组切分为三个部分，分别为小于、等于和大于切分元素的数组元素</strong>。</p>
-<p>DIjkstra 解法 ： 从左到右遍历数组一次，维护一个指针 lt 使得 a[lo .. lt-1]中的元素都小于v, 一个 gt 使得a[gt+1 .. hi]中的元素都大于v, 一个指针 i 使得a[lt .. i-1]中的元素都等于v, a[i .. gt]中的元素都未确定。</p>
-<ul>
-<li>a[i] 小于 v, 将a[lt]和a[i]交换，将lt 和 i加一；</li>
-<li>a[i] 大于 v, 将a[gt]和a[i]交换， 将gt减一；</li>
-<li>a[i] 等于 v, i++.</li>
-</ul>
-<p>熵最优排序抽象实现： <a href="https://github.com/rovo98/ds-and-algs/blob/master/ds/sorting/exercises/Quick3Ways.java" target="_blank" rel="noopener">详细查看</a></p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo) <span class="keyword">return</span>;</span><br><span class="line">    Comparable v = a[lo];</span><br><span class="line">    <span class="keyword">int</span> lt = lo;</span><br><span class="line">    <span class="keyword">int</span> i = lo + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> gt = hi;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (i &lt;= gt) &#123;</span><br><span class="line">    	<span class="keyword">if</span> (less(a[i], v)) 	exch(a, i++,  lt++);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(v, a[i]))	exch(a, gt--, i);</span><br><span class="line">        <span class="keyword">else</span> 		i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// since a[lt .. i-1] is sorted.</span></span><br><span class="line">    <span class="comment">// sort the other subarrays recursively.</span></span><br><span class="line">    sort(a, lo, lt-<span class="number">1</span>);</span><br><span class="line">    sort(a, gt+<span class="number">1</span>, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>[notice] : <strong>三向切分的最坏情况是所有主键均不相同。</strong>对于标准的快速排序，随着数组规模的增大其运行时间会趋于平均时间，大幅偏离的情况是非常罕见的，因此可以肯定<strong>三向切分的快速排序运行时间和输入的信息量的N倍是成正比的。</strong> ———— 因为对于包含大量重复元素的数组，它将排序时间从线性对数级降到了线性级别。</p>
-<h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
-]]></content>
-      <categories>
-        <category>Algorithms</category>
-        <category>sorting algs</category>
-      </categories>
-      <tags>
-        <tag>sorting algs</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>基本排序算法 - basial sorting algorithms with java implementation</title>
     <url>/posts/57d02cec/</url>
     <content><![CDATA[<blockquote>
@@ -3142,6 +3180,123 @@ w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script 
 <h3 id="附加-——-冒泡排序"><a href="#附加-——-冒泡排序" class="headerlink" title="附加 —— 冒泡排序"></a>附加 —— 冒泡排序</h3><p>冒泡排序相对比较简单，这里直接给出它的实现:</p>
 <div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bubble</span> </span>&#123;</span><br><span class="line">	<span class="comment">/*其他排序算法方法同排序算法模板*/</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	 	<span class="keyword">int</span> n = a.length;</span><br><span class="line">	 	<span class="keyword">boolean</span> flag = <span class="keyword">true</span>;</span><br><span class="line">	 	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n&amp;&amp;flag == <span class="keyword">true</span>; i++) &#123;</span><br><span class="line"> 			flag = <span class="keyword">false</span>;</span><br><span class="line"> 			<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n-i; j++) &#123;</span><br><span class="line">  		  		<span class="keyword">if</span> (less(a[j+<span class="number">1</span>], a[j]) &#123;</span><br><span class="line">     		   		exch(a, j+<span class="number">1</span>, j);</span><br><span class="line">           			flag = <span class="keyword">true</span>;</span><br><span class="line">        		&#125;</span><br><span class="line">    		&#125;</span><br><span class="line"> 		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div>
 <p><strong>算法分析</strong>: 对于冒泡排序，最坏情况下，算法需要进行N-1趟排序，总的数组元素比较的次数为$(N-1)+(N-2)+…+1$ ~ $N^2/2$， 总的交换次数为数组中<strong>倒置</strong>的数量。</p>
+<h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
+]]></content>
+      <categories>
+        <category>Algorithms</category>
+        <category>sorting algs</category>
+      </categories>
+      <tags>
+        <tag>sorting algs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>归并排序 - mergeSort</title>
+    <url>/posts/1368334/</url>
+    <content><![CDATA[<a id="more"></a>
+<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>归并排序属于<strong>分治算法(Divide and Conquer)</strong>。通过递归不断把待排序数组分成两个部分，将有序的两部分再重新归并一起来实现对数组的排序。</p>
+<p><strong>[pseudo code for 2-way merge sort]</strong>:</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">MergeSort(arr[], aux[], lo, hi)</span><br><span class="line">If hi &gt; lo</span><br><span class="line">	1. Find the middle point to divide the array into two halves;</span><br><span class="line">		int mid = lo + (hi - lo) / 2;</span><br><span class="line">	2. Call MergeSort for first half;</span><br><span class="line">		MergeSort(arr, aux, lo, mid);</span><br><span class="line">	3. Call MergeSort for second half;</span><br><span class="line">		MergeSort(arr, aux, mid+1, hi);</span><br><span class="line">	4. Merge the two halves sorted in step 2 and 3;</span><br><span class="line">		Call merge(arr, aux, lo, mid, hi);</span><br></pre></td></tr></table></figure></div>
+<h3 id="原地归并的抽象方法"><a href="#原地归并的抽象方法" class="headerlink" title="原地归并的抽象方法"></a>原地归并的抽象方法</h3><p>要实现上述的归并方法 — <strong>merge()</strong>很简单，创建一个数组将需要归并的<strong>原数组的两个部分</strong>中的元素放到这个数组中，然后再归并按大小顺序放回原数组。</p>
+<blockquote>
+<p>但是，这里我们要考虑一个问题，当我们用归并排序对一个比较大的数组进行排序时，我们需要进行很多次归并，因此在每一次归并时都创建一个新的数组来存储排序结果会带来问题。我们可以考虑只创建一个<strong>辅助数组<code>aux[]</code></strong>, 在每一个归并时，将原数组需要归并的两个部分复制到<code>aux[]</code>中，再把归并结果放回原数组。</p>
+</blockquote>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">merge</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> mid, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// precondition: a[lo .. mid] and a[mid+1 .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, mid)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, mid+<span class="number">1</span>, hi)</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// copy a[lo .. hi] to aux[lo .. hi].</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	aux[k] = a[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> i = lo;</span><br><span class="line">    <span class="keyword">int</span> j = mid+<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	<span class="keyword">if</span>      (i &gt; mid)               a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (j &gt; hi)                a[k] = aux[i++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(aux[j], aux[i]))  a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> 			               a[k] = aux[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// postcondition: a[lo .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, hi)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>[说明] : 该方法先将原数组两个需要归并的部分复制到aux[]中，然后<strong>从两个部分的起始位置开始取元素，一直选择两个部分中较小的元素放回原数组中，当有一部分元素取完了，则将另一部分剩余的元素全部放回原数组</strong>。</p>
+<p>原地归并抽象方法轨迹： [from algs4]</p>
+<p><img src="mergeSort_merge.png" alt="原地归并抽象方法轨迹"></p>
+<h3 id="自顶向下的归并排序"><a href="#自顶向下的归并排序" class="headerlink" title="自顶向下的归并排序"></a>自顶向下的归并排序</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mergeSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    sort(a, aux, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// If array size is 1 then return.</span></span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo)    <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// Find the middle point to divide array into two halves.</span></span><br><span class="line">    <span class="keyword">int</span> mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// Call the mergeSort for first half.</span></span><br><span class="line">    sort(a, aux, lo, mid);</span><br><span class="line">    <span class="comment">// Call the mergeSort for second half.</span></span><br><span class="line">    sort(a, aux, mid+<span class="number">1</span>, hi);</span><br><span class="line">    <span class="comment">// Merge two halves sorted.</span></span><br><span class="line">    merge(a, aux, lo, mid, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>自顶向下归并结果轨迹 : [from algs4]</p>
+<p><img src="mergeSort_ubSort_1.png" alt="自顶向下归并结果轨迹"></p>
+<p>自顶向下归并排序调用轨迹 : [from algs4]</p>
+<p><img src="mergeSort_ubSort_2.png" alt="自顶向下归并排序调用轨迹"></p>
+<blockquote>
+<p><strong>命题 F: 对于长度为 $N$ 的任意数组， 自顶向下归并排序需要 $1/2NlgN$ 至 $NlgN$ 次比较。</strong></p>
+<p>自顶向下的所需时间表达式为 : $T(N) = 2T(N/2) + O(n)$使用解决递归式的 <code>Master method</code> 解得 $T(N) = \Theta(n log n)$</p>
+</blockquote>
+<p>我们可以通过下图来理解命题F, 每个节点都表示一个<code>sort()</code>方法通过<code>merge()</code>方法归并而成的子数组。<strong>这棵树正好有 $n$ 层。对于$0 ~ n-1$ 之间的任意 $k$, 自顶向下的第 $k$ 层有 $2^k$个子数组，每个数组长度为 $2^{n-k}$, 归并最多需要 $2^{n-k}$ 次比较。</strong>因此每层的比较次数为$2^k X 2^{n-k} = 2^n$, n 层总共为 $n2^n = NlgN$。</p>
+<p>子数组树状图 : [from algs4]</p>
+<p><img src="mergeSort_ubSort_3.png" alt="子数组树状图"></p>
+<blockquote>
+<p><strong>命题 G : 对于长度为 $N$ 的任意数组，自顶向下的归并排序最多需要访问数组 $6NlgN$ 次。</strong></p>
+<p>证明： 每次归并最多需要访问数组 $6N$ 次（$2N$ 次用来复制， $2N$次用来将排好序的元素移动回去，另外最多比较$2N$次），根据<strong>命题F</strong>即可得到这个命题的结果。</p>
+</blockquote>
+<p><strong>[小结]</strong>: 归并排序排序算法的缺点是辅助数组所使用的额外空间和N的大小成正比。一些能够大幅度缩短归并排序的运行时间的想法：</p>
+<ul>
+<li>对小规模子数组进行插入排序；</li>
+<li>测试数组是否已经有序；</li>
+<li>不将元素复制到辅助数组中。</li>
+</ul>
+<h3 id="自底向上的归并排序"><a href="#自底向上的归并排序" class="headerlink" title="自底向上的归并排序"></a>自底向上的归并排序</h3><p>实现归并排序另外一种方法是<strong>先归并那些微型数组， 然后再成对归并得到的子数组，直到将整个数组归并在一起</strong>。</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MergeBU</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> sz = <span class="number">1</span>; sz &lt; n; sz += sz) &#123;</span><br><span class="line">    	<span class="keyword">for</span> (<span class="keyword">int</span> lo = sz; lo &lt; n-sz; lo += sz+sz) &#123;</span><br><span class="line">        	merge(a, aux, lo, lo+sz-<span class="number">1</span>, Math.min(lo+sz+sz-<span class="number">1</span>, n-<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure></div>
+<p>[注] : 自底向上的归并排序会多次遍历整个数组，根据子数组大小进行两两归并。子数组的大小 sz 的初始值为 1， 每次加倍。最后一个子数组的大小只有在数组大小是 sz 的偶数倍的时候才会等于 sz(否则它会比sz小)。</p>
+<p>自底向上归并排序结果轨迹 ： [from algs4]</p>
+<p><img src="mergeSort_buSort_1.png" alt="自底向上归并排序结果轨迹"></p>
+<blockquote>
+<p><strong>命题 H : 对于长度为 $N$ 的任意数组， 自底向上的归并排序需要 $1/2NlgN$ 至 $NlgN$次比较，最多访问数组 $6NlgN$ 次。</strong></p>
+<p>证明 ： 处理一个数组的遍数正好是 $lgN$(即 $2^n &lt;= N &lt;2^n+1$ 中的 $n$)。每一遍会访问数组6N次。比较次数在 $N/2$ 和 $N$ 之间。</p>
+</blockquote>
+<p>【补充】： 当数组长度为 2 的幂时，自顶向下和自底向上的归并排序所用的比较次数和数组访问次数正好相同，只是顺序不同。其他时候，两种方法的比较和数组访问的次序会有所不同。</p>
+<h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
+]]></content>
+      <categories>
+        <category>Algorithms</category>
+        <category>sorting algs</category>
+      </categories>
+      <tags>
+        <tag>sorting algs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>快速排序 - quickSort</title>
+    <url>/posts/d9de8e4c/</url>
+    <content><![CDATA[<a id="more"></a>
+<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>快速排序的主要特点是：</p>
+<ol>
+<li>原地排序 (in-place);</li>
+<li>将长度为 N 的数组排序所需的时间和NlgN成正比；</li>
+<li>排序内循环比大多数排序算法都要短小，意味着无论是在理论上还是实际中都要更快。</li>
+</ol>
+<p>缺点：<br>    快速排序非常的脆弱，在实现时要非常小心才能避免低劣的性能。</p>
+<h3 id="基本算法"><a href="#基本算法" class="headerlink" title="基本算法"></a>基本算法</h3><p>快速排序是一种<strong>分治</strong>排序算法，它将一个数组分成两个子数组，将两部分独立地排序。不同于归并排序，快速排序的递归调用发生在处理子数之前。</p>
+<p>快速排序方法抽象实现如下：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Quick</span> </span>&#123;</span><br><span class="line">	<span class="comment">// quick sort java implement.</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">    	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">        <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">if</span> (hi &lt;= lo)	<span class="keyword">return</span>;</span><br><span class="line">		<span class="keyword">int</span> j = partition(a, lo, hi);</span><br><span class="line">        sort(a, lo, j-<span class="number">1</span>);</span><br><span class="line">        sort(a, j+<span class="number">1</span>, hi);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">partition</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">int</span> i = lo;</span><br><span class="line">        <span class="keyword">int</span> j = hi + <span class="number">1</span>;</span><br><span class="line">        Comparable v = a[lo];</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        	<span class="keyword">while</span> (less(a[++i], v)) &#123;</span><br><span class="line">            	<span class="keyword">if</span> (lo == hi) <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">while</span> (less(v, a[--j])) &#123;</span><br><span class="line">            	<span class="keyword">if</span> (j == lo) <span class="keyword">break</span>; <span class="comment">// redundant since a[lo] is sentinel.</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Check if pointers cross.</span></span><br><span class="line">            <span class="keyword">if</span> (j &lt;= i)	<span class="keyword">break</span>;</span><br><span class="line">            exch(a, i, j);</span><br><span class="line">        &#125;</span><br><span class="line">        exch(a, lo, j);</span><br><span class="line">        <span class="keyword">return</span> j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>上述切分方法示意图: [from algs4]</p>
+<p><img src="quickSort_partition_1.png" alt="切分示意图"></p>
+<p>切分轨迹图: [from algs4]</p>
+<p><img src="quickSort_partition_2.png" alt="切分轨迹图"></p>
+<blockquote>
+<p><strong>命题 K</strong>： 将长度为N的无重复的数组排序，快速排序平均需要 ~ $2NlnN$ 次比较(以及$1/6$的交换)</p>
+</blockquote>
+<p><strong>[notice]</strong>: 尽管快速排序有很多优点，它的基本实现仍有一个潜在的缺点：</p>
+<p>在切分不平衡时该算法可能及其低效。例如： 如果第一个次从最小的元素切分，第二次从第二小的元素切分，则这样每次只会移除一个元素。<br>[solution] : <strong>在快速排序之前将数组随机排序可以避免这种情况的发生</strong>。</p>
+<h3 id="算法改进"><a href="#算法改进" class="headerlink" title="算法改进"></a>算法改进</h3><h4 id="1-切换到插入排序"><a href="#1-切换到插入排序" class="headerlink" title="1.切换到插入排序"></a>1.切换到插入排序</h4><p>和大多数递归排序算法一样(如归并)，改进快速排序的简单方法基于以下两点：</p>
+<ul>
+<li>对于小数组，快速排序比插入排序慢；</li>
+<li>以为递归，快速排序的sort()方法在小数组中也会调用自己。</li>
+</ul>
+<p>改进 ： 将<strong>sort()方法</strong>中的</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (hi &lt;= lo) <span class="keyword">return</span>;</span><br></pre></td></tr></table></figure></div>
+<p>改为：</p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (hi &lt;= lo + M) &#123;</span><br><span class="line">	insertion.sort(a, lo, hi);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>[<strong>notice</strong>] : 这里的切换参数 M 的最佳值是和系统相关的，但是5 ~ 15 之间的任意值在大多数情况下都能令人满意。</p>
+<h4 id="2-三取样切分"><a href="#2-三取样切分" class="headerlink" title="2. 三取样切分"></a>2. 三取样切分</h4><p>改进快速排序性能的第二个方法是<strong>使用子数组的一小部分的中位数来切分数组</strong>。这样的切分的效果更好，但代价是需要计算中位数。</p>
+<ul>
+<li>人们发现将取样设为 3 并用大小居中的元素切分效果<strong>最好</strong>； 我们还可以将取样元素放在数组末尾作为哨兵(sentinel)。</li>
+</ul>
+<p>三取样切分抽象实现 : <a href="https://github.com/rovo98/ds-and-algs/blob/master/ds/sorting/exercises/QuickSortImprovedTwo.java" target="_blank" rel="noopener">详细查看</a></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSortImproved</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> staic <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	dealPivot(a, lo, hi);</span><br><span class="line">    <span class="keyword">int</span> i = lo;</span><br><span class="line">    <span class="keyword">int</span> j = hi - <span class="number">1</span>;</span><br><span class="line">    Comparable v = a[hi - <span class="number">1</span>]; <span class="comment">// set the  pivot at hi -1 as a sentinel.</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">    	<span class="keyword">while</span> (less(a[++i], v)) &#123;</span><br><span class="line">        	<span class="keyword">if</span> (i == hi-<span class="number">1</span>) <span class="keyword">break</span>; <span class="comment">// redundant since a[hi - 1] is sentinel.</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (j &gt; lo &amp;&amp; less(v, a[--j])) &#123;  &#125;</span><br><span class="line">        </span><br><span class="line">       	<span class="comment">// check if pointers cross.</span></span><br><span class="line">        <span class="keyword">if</span> (j &lt;= i) <span class="keyword">break</span>;</span><br><span class="line">        exch(a, i, j);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> (i &lt; hi-<span class="number">1</span>) &#123;</span><br><span class="line">   	exch(a, i, hi - <span class="number">1</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   sort(a, lo, i - <span class="number">1</span>);</span><br><span class="line">   sort(a, i + <span class="number">1</span>, hi);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 三取样并将切分元素放在数组末尾</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealPivot</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span> (less(a[mid], a[lo]))</span><br><span class="line">    	exch(a, lo, mid);</span><br><span class="line">    <span class="keyword">if</span> (less(a[hi], a[lo]))</span><br><span class="line">    	exch(a, lo, hi);</span><br><span class="line">    <span class="keyword">if</span> (less(a[hi], a[mid]))</span><br><span class="line">    	exch(a, mid, hi);</span><br><span class="line">    <span class="comment">// put the pivot to hi - 1 as a sentinel.</span></span><br><span class="line">    exch(a, mid, hi - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h4 id="熵最优的排序"><a href="#熵最优的排序" class="headerlink" title="熵最优的排序"></a>熵最优的排序</h4><p>实际应用中经常会出现含有大量重复元素的数组，我们实现的快速排序性能尚可，但是<strong>还有巨大的改进空间</strong>。例如：一个元素全部重复的子数组就不需要继续排序了，但我们的快速排序还是会继续将它切分为更小的数组。</p>
+<p>[solution] : <strong>一个简单想法是将数组切分为三个部分，分别为小于、等于和大于切分元素的数组元素</strong>。</p>
+<p>DIjkstra 解法 ： 从左到右遍历数组一次，维护一个指针 lt 使得 a[lo .. lt-1]中的元素都小于v, 一个 gt 使得a[gt+1 .. hi]中的元素都大于v, 一个指针 i 使得a[lt .. i-1]中的元素都等于v, a[i .. gt]中的元素都未确定。</p>
+<ul>
+<li>a[i] 小于 v, 将a[lt]和a[i]交换，将lt 和 i加一；</li>
+<li>a[i] 大于 v, 将a[gt]和a[i]交换， 将gt减一；</li>
+<li>a[i] 等于 v, i++.</li>
+</ul>
+<p>熵最优排序抽象实现： <a href="https://github.com/rovo98/ds-and-algs/blob/master/ds/sorting/exercises/Quick3Ways.java" target="_blank" rel="noopener">详细查看</a></p>
+<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	sort(a, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo) <span class="keyword">return</span>;</span><br><span class="line">    Comparable v = a[lo];</span><br><span class="line">    <span class="keyword">int</span> lt = lo;</span><br><span class="line">    <span class="keyword">int</span> i = lo + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> gt = hi;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (i &lt;= gt) &#123;</span><br><span class="line">    	<span class="keyword">if</span> (less(a[i], v)) 	exch(a, i++,  lt++);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(v, a[i]))	exch(a, gt--, i);</span><br><span class="line">        <span class="keyword">else</span> 		i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// since a[lt .. i-1] is sorted.</span></span><br><span class="line">    <span class="comment">// sort the other subarrays recursively.</span></span><br><span class="line">    sort(a, lo, lt-<span class="number">1</span>);</span><br><span class="line">    sort(a, gt+<span class="number">1</span>, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>[notice] : <strong>三向切分的最坏情况是所有主键均不相同。</strong>对于标准的快速排序，随着数组规模的增大其运行时间会趋于平均时间，大幅偏离的情况是非常罕见的，因此可以肯定<strong>三向切分的快速排序运行时间和输入的信息量的N倍是成正比的。</strong> ———— 因为对于包含大量重复元素的数组，它将排序时间从线性对数级降到了线性级别。</p>
 <h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
 ]]></content>
       <categories>
@@ -3236,99 +3391,6 @@ w\in P^{-1}_L[P(st_1t_2)]\Rightarrow \Sigma_{fi}\in w.</script><p>注意<script 
       </categories>
       <tags>
         <tag>union-find</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>归并排序 - mergeSort</title>
-    <url>/posts/1368334/</url>
-    <content><![CDATA[<a id="more"></a>
-<h3 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h3><p>归并排序属于<strong>分治算法(Divide and Conquer)</strong>。通过递归不断把待排序数组分成两个部分，将有序的两部分再重新归并一起来实现对数组的排序。</p>
-<p><strong>[pseudo code for 2-way merge sort]</strong>:</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">MergeSort(arr[], aux[], lo, hi)</span><br><span class="line">If hi &gt; lo</span><br><span class="line">	1. Find the middle point to divide the array into two halves;</span><br><span class="line">		int mid = lo + (hi - lo) / 2;</span><br><span class="line">	2. Call MergeSort for first half;</span><br><span class="line">		MergeSort(arr, aux, lo, mid);</span><br><span class="line">	3. Call MergeSort for second half;</span><br><span class="line">		MergeSort(arr, aux, mid+1, hi);</span><br><span class="line">	4. Merge the two halves sorted in step 2 and 3;</span><br><span class="line">		Call merge(arr, aux, lo, mid, hi);</span><br></pre></td></tr></table></figure></div>
-<h3 id="原地归并的抽象方法"><a href="#原地归并的抽象方法" class="headerlink" title="原地归并的抽象方法"></a>原地归并的抽象方法</h3><p>要实现上述的归并方法 — <strong>merge()</strong>很简单，创建一个数组将需要归并的<strong>原数组的两个部分</strong>中的元素放到这个数组中，然后再归并按大小顺序放回原数组。</p>
-<blockquote>
-<p>但是，这里我们要考虑一个问题，当我们用归并排序对一个比较大的数组进行排序时，我们需要进行很多次归并，因此在每一次归并时都创建一个新的数组来存储排序结果会带来问题。我们可以考虑只创建一个<strong>辅助数组<code>aux[]</code></strong>, 在每一个归并时，将原数组需要归并的两个部分复制到<code>aux[]</code>中，再把归并结果放回原数组。</p>
-</blockquote>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">merge</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> mid, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// precondition: a[lo .. mid] and a[mid+1 .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, mid)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, mid+<span class="number">1</span>, hi)</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// copy a[lo .. hi] to aux[lo .. hi].</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	aux[k] = a[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> i = lo;</span><br><span class="line">    <span class="keyword">int</span> j = mid+<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = lo; k &lt;= hi; k++) &#123;</span><br><span class="line">    	<span class="keyword">if</span>      (i &gt; mid)               a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (j &gt; hi)                a[k] = aux[i++];</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (less(aux[j], aux[i]))  a[k] = aux[j++];</span><br><span class="line">        <span class="keyword">else</span> 			               a[k] = aux[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// postcondition: a[lo .. hi] is sorted.</span></span><br><span class="line">    <span class="function"><span class="keyword">assert</span> <span class="title">isSorted</span><span class="params">(a, lo, hi)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>[说明] : 该方法先将原数组两个需要归并的部分复制到aux[]中，然后<strong>从两个部分的起始位置开始取元素，一直选择两个部分中较小的元素放回原数组中，当有一部分元素取完了，则将另一部分剩余的元素全部放回原数组</strong>。</p>
-<p>原地归并抽象方法轨迹： [from algs4]</p>
-<p><img src="mergeSort_merge.png" alt="原地归并抽象方法轨迹"></p>
-<h3 id="自顶向下的归并排序"><a href="#自顶向下的归并排序" class="headerlink" title="自顶向下的归并排序"></a>自顶向下的归并排序</h3><div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">mergeSort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    sort(a, aux, <span class="number">0</span>, a.length-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a, Comparable[] aux, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// If array size is 1 then return.</span></span><br><span class="line">	<span class="keyword">if</span> (hi &lt;= lo)    <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// Find the middle point to divide array into two halves.</span></span><br><span class="line">    <span class="keyword">int</span> mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// Call the mergeSort for first half.</span></span><br><span class="line">    sort(a, aux, lo, mid);</span><br><span class="line">    <span class="comment">// Call the mergeSort for second half.</span></span><br><span class="line">    sort(a, aux, mid+<span class="number">1</span>, hi);</span><br><span class="line">    <span class="comment">// Merge two halves sorted.</span></span><br><span class="line">    merge(a, aux, lo, mid, hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p>自顶向下归并结果轨迹 : [from algs4]</p>
-<p><img src="mergeSort_ubSort_1.png" alt="自顶向下归并结果轨迹"></p>
-<p>自顶向下归并排序调用轨迹 : [from algs4]</p>
-<p><img src="mergeSort_ubSort_2.png" alt="自顶向下归并排序调用轨迹"></p>
-<blockquote>
-<p><strong>命题 F: 对于长度为 $N$ 的任意数组， 自顶向下归并排序需要 $1/2NlgN$ 至 $NlgN$ 次比较。</strong></p>
-<p>自顶向下的所需时间表达式为 : $T(N) = 2T(N/2) + O(n)$使用解决递归式的 <code>Master method</code> 解得 $T(N) = \Theta(n log n)$</p>
-</blockquote>
-<p>我们可以通过下图来理解命题F, 每个节点都表示一个<code>sort()</code>方法通过<code>merge()</code>方法归并而成的子数组。<strong>这棵树正好有 $n$ 层。对于$0 ~ n-1$ 之间的任意 $k$, 自顶向下的第 $k$ 层有 $2^k$个子数组，每个数组长度为 $2^{n-k}$, 归并最多需要 $2^{n-k}$ 次比较。</strong>因此每层的比较次数为$2^k X 2^{n-k} = 2^n$, n 层总共为 $n2^n = NlgN$。</p>
-<p>子数组树状图 : [from algs4]</p>
-<p><img src="mergeSort_ubSort_3.png" alt="子数组树状图"></p>
-<blockquote>
-<p><strong>命题 G : 对于长度为 $N$ 的任意数组，自顶向下的归并排序最多需要访问数组 $6NlgN$ 次。</strong></p>
-<p>证明： 每次归并最多需要访问数组 $6N$ 次（$2N$ 次用来复制， $2N$次用来将排好序的元素移动回去，另外最多比较$2N$次），根据<strong>命题F</strong>即可得到这个命题的结果。</p>
-</blockquote>
-<p><strong>[小结]</strong>: 归并排序排序算法的缺点是辅助数组所使用的额外空间和N的大小成正比。一些能够大幅度缩短归并排序的运行时间的想法：</p>
-<ul>
-<li>对小规模子数组进行插入排序；</li>
-<li>测试数组是否已经有序；</li>
-<li>不将元素复制到辅助数组中。</li>
-</ul>
-<h3 id="自底向上的归并排序"><a href="#自底向上的归并排序" class="headerlink" title="自底向上的归并排序"></a>自底向上的归并排序</h3><p>实现归并排序另外一种方法是<strong>先归并那些微型数组， 然后再成对归并得到的子数组，直到将整个数组归并在一起</strong>。</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MergeBU</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = a.length;</span><br><span class="line">    Comparable[] aux = <span class="keyword">new</span> Comparable[n];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> sz = <span class="number">1</span>; sz &lt; n; sz += sz) &#123;</span><br><span class="line">    	<span class="keyword">for</span> (<span class="keyword">int</span> lo = sz; lo &lt; n-sz; lo += sz+sz) &#123;</span><br><span class="line">        	merge(a, aux, lo, lo+sz-<span class="number">1</span>, Math.min(lo+sz+sz-<span class="number">1</span>, n-<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure></div>
-<p>[注] : 自底向上的归并排序会多次遍历整个数组，根据子数组大小进行两两归并。子数组的大小 sz 的初始值为 1， 每次加倍。最后一个子数组的大小只有在数组大小是 sz 的偶数倍的时候才会等于 sz(否则它会比sz小)。</p>
-<p>自底向上归并排序结果轨迹 ： [from algs4]</p>
-<p><img src="mergeSort_buSort_1.png" alt="自底向上归并排序结果轨迹"></p>
-<blockquote>
-<p><strong>命题 H : 对于长度为 $N$ 的任意数组， 自底向上的归并排序需要 $1/2NlgN$ 至 $NlgN$次比较，最多访问数组 $6NlgN$ 次。</strong></p>
-<p>证明 ： 处理一个数组的遍数正好是 $lgN$(即 $2^n &lt;= N &lt;2^n+1$ 中的 $n$)。每一遍会访问数组6N次。比较次数在 $N/2$ 和 $N$ 之间。</p>
-</blockquote>
-<p>【补充】： 当数组长度为 2 的幂时，自顶向下和自底向上的归并排序所用的比较次数和数组访问次数正好相同，只是顺序不同。其他时候，两种方法的比较和数组访问的次序会有所不同。</p>
-<h3 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h3><p>本文中，涉及的算法详细实现和使用，请移步到github<a href="https://github.com/rovo98/ds-and-algs#sorting-algorithms----go-back-to-top" target="_blank" rel="noopener">查看</a>。</p>
-]]></content>
-      <categories>
-        <category>Algorithms</category>
-        <category>sorting algs</category>
-      </categories>
-      <tags>
-        <tag>sorting algs</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Advantrue 1 - Leetcode 11 - Container With Most Water</title>
-    <url>/posts/dac7fdaa/</url>
-    <content><![CDATA[<blockquote>
-<p>给定 n 个非负整数 <code>a1，a2，...，an</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 <code>n</code> 条垂直线，垂直线 <code>i</code> 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 <code>x</code> 轴共同构成的容器可以容纳最多的水。<br><br></p>
-<ul>
-<li><a href="https://leetcode-cn.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode-cn.com/problems/container-with-most-water/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="noopener">https://leetcode.com/problems/container-with-most-water/</a>(en)<br><br><br>说明：你不能倾斜容器，且 n 的值至少为 2。<br>示例:<br>输入: [1,8,6,2,5,4,8,3,7]<br>输出: 49</li>
-</ul>
-</blockquote>
-<a id="more"></a>
-<h3 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h3><p>对于这样的题目，很明显可以快速的使用<code>brute-force</code>方式得到解法:</p>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; height; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; height; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> temp = (j-i) * (height[i]&gt;height[j]?height[j]:height[i]);</span><br><span class="line">                <span class="keyword">if</span> (temp &gt; maxArea)</span><br><span class="line">                    maxArea = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): $O(n^2)$</li>
-<li>空间复杂度(Space complexity): $O(1)$</li>
-</ul>
-<div class="note primary"><p>显然使用<code>brute-force</code>解法设计的算法是正确的，但是时间复杂度是$O(n^2)$级别，因此我们需要考虑优化。<br>代码提交状况:<br>运行时间(Runtime): 269 ms<br>beats rate: 20.1%</p></div>
-<div class="note warning"><p>其实仔细看的话，要使围成的矩形面积最大，无非就是让长和宽尽量的大，因此我们可以使用<code>Two-pointers</code>双指针的思想:<br>使用两个指针<code>i,j</code>分别指向<code>0</code>和<code>height.length-1</code>，让一开始的<code>x</code>坐标距离最大化，然后判断它们所对应的高度谁低，<br>依据较低的高度值计算面积，再将对应索引指针增<code>1</code>(对于低索引指针)或减<code>1</code>(高索引指针)。</p></div>
-<div class="highlight-wrap"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="false"data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VAlUE;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> j = height.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="comment">// int x = j - i;</span></span><br><span class="line">            <span class="comment">// maxArea = Math.max(maxArea,Math.min(heigth[i], height[j])*x);</span></span><br><span class="line">            <span class="comment">// if (height[i] &lt; height[j]) &#123;</span></span><br><span class="line">            <span class="comment">//     i++;</span></span><br><span class="line">            <span class="comment">// &#125; else &#123;</span></span><br><span class="line">            <span class="comment">//     j--;</span></span><br><span class="line">            <span class="comment">// &#125;</span></span><br><span class="line">            <span class="comment">// 对代码进行缩减</span></span><br><span class="line">            maxArea = Math.max(maxArea, height[j]&lt;height[i]?(j-i)*height[j--]:(j-i))*height[i++]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): $O(n)$</li>
-<li>空间复杂度(Space complexity): $O(1)$</li>
-</ul>
-<div class="note primary"><p>使用<strong>双指针</strong>，只需要一次遍历就能得到结果。可以见得双指针是非常有效的工具，也是数组类问题中常见的解题思路: 例如，对于已经排好序的两数之和(Two sum - sorted)问题,就可以使用双指针进行解决。</p>
-<p>代码提交状况:<br>运行时间(Runtime): 6 ms<br>beat rate: 65.95%</p></div>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>leetcode-array-medium</tag>
       </tags>
   </entry>
   <entry>
