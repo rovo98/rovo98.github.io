@@ -86,7 +86,7 @@ deploy:
   type: git
   repo: 
     github: git@github.com:rovo98/rovo98.github.io.git
-    coding: git@git.coding.net:rovo98/rovo98.coding.me.git
+    # coding: git@git.coding.net:rovo98/rovo98.coding.me.git
   branch: master 
 
 search:
