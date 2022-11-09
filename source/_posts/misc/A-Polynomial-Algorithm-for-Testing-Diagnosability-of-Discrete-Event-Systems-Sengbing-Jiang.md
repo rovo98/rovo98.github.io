@@ -39,8 +39,8 @@ Index Terms: Complexity, diagnosability, discrete event system, failure diagnosi
 - $x_0\in X$                是系统的初始状态
 
 我们假设所有状态自动机是可达的（accessible，所有状态可以从初始状态出发，经若干转移后到达），否则我们只考虑状态自动机中的可达部分。
-我们用$$\Sigma^*$$表示包含所有有限长度事件序列的集合，其中包括空序$$\varepsilon$$。把$$\Sigma^*$$集合中的一个元素称为串（trace），用$$\Sigma^*$$的子集表示语言（language）。
-对于一个串$$s$$和事件$$\sigma$$，我们用$$\sigma\in s$$表示事件$$\sigma$$包含于串$$s$$中，即串$$s$$发生了事件$$\sigma$$。系统$$G$$中的一个路径（path）是一个状态转移序列$$(x_1,\delta_1,x_2,....,\delta_{n-1},x_n)$$，其中对于每个$$i\in \{1,...,n-1\},(x_i,\delta_i,x_{i+1})\in \delta$$，如果$$x_n=x_1$$，则表示该路径是一个环（cycle）。我们用$$L(G)\subseteq\Sigma^*$$来描述系统$$G$$的生成语言，即系统$$G$$从初始状态开始能够执行的串的集合。同时假设$$L(G)$$是前缀闭合（prefix-closed）的，即$$L(G)=pr(L(G))$$，其中$$pr(L(G))=\{u|\exists v\in\Sigma^*, uv\in L(G)\}$$是一个由所有$$L(G)$$中的串的前缀组成的集合。用$$\Sigma_o\subseteq\Sigma$$表示系统的可观事件集，$$\Sigma_{uo}=\Sigma - \Sigma_o$$表示不可观事件集，$$M:\Sigma\to \Sigma_o\cup \{\varepsilon\}$$表示一个观察映射函数，$$F={F_i,i=1,2,...,m}$$表示错误类型的集合，$$\psi:\Sigma\to F\cup\{\emptyset\}$$表示一个为$$\Sigma$$中每个事件错误分配的函数（failure assignment function）。$M$的定义通常从$\Sigma$扩展到$$\Sigma^*$$，如下所示：$M(\varepsilon)=\varepsilon$，并且对于每一个串$$s\in \Sigma^*, \sigma\in\Sigma:M(s\sigma)=M(s)M(\sigma)$$。
+我们用$\Sigma^*$表示包含所有有限长度事件序列的集合，其中包括空序$\varepsilon$。把$\Sigma^*$集合中的一个元素称为串（trace），用$\Sigma^*$的子集表示语言（language）。
+对于一个串$s$和事件$\sigma$，我们用$\sigma\in s$表示事件$\sigma$包含于串$s$中，即串$s$发生了事件$\sigma$。系统$G$中的一个路径（path）是一个状态转移序列$(x_1,\delta_1,x_2,....,\delta_{n-1},x_n)$，其中对于每个$i\in \{1,...,n-1\},(x_i,\delta_i,x_{i+1})\in \delta$，如果$x_n=x_1$，则表示该路径是一个环（cycle）。我们用$L(G)\subseteq\Sigma^*$来描述系统$G$的生成语言，即系统$G$从初始状态开始能够执行的串的集合。同时假设$L(G)$是前缀闭合（prefix-closed）的，即$L(G)=pr(L(G))$，其中$pr(L(G))=\{u|\exists v\in\Sigma^*, uv\in L(G)\}$是一个由所有$L(G)$中的串的前缀组成的集合。用$\Sigma_o\subseteq\Sigma$表示系统的可观事件集，$\Sigma_{uo}=\Sigma - \Sigma_o$表示不可观事件集，$M:\Sigma\to \Sigma_o\cup \{\varepsilon\}$表示一个观察映射函数，$F={F_i,i=1,2,...,m}$表示错误类型的集合，$\psi:\Sigma\to F\cup\{\emptyset\}$表示一个为$\Sigma$中每个事件错误分配的函数（failure assignment function）。$M$的定义通常从$\Sigma$扩展到$\Sigma^*$，如下所示：$M(\varepsilon)=\varepsilon$，并且对于每一个串$s\in \Sigma^*, \sigma\in\Sigma:M(s\sigma)=M(s)M(\sigma)$。
 
 对于本文研究的系统，和[^4]一样，我们作出以下假设：
 - A1) 系统$G$的生成语言是活语言（live language）。这意味着系统中的每一个状态均定义相应的状态转移。
@@ -84,6 +84,7 @@ $$
 **Lemma 1:** 对于状态机$G_o$：
 - 1) $L(G_o) = M(L(G))$；
 - 2) 对于$G_o$中每一个作为环的路径$tr$：
+    
 $$
 tr = ((x_0,\emptyset), \sigma_0, (x_1,f_1), ..., (x_k,f_k), \\
 \sigma_k, ..., (x_n,f_n), \sigma_n, (x_k,f_k))
@@ -91,30 +92,40 @@ $$
 
 我们有
 - 对于任意$i, j\in \{k,k+1,...,n\}; f_i=f_j$；
-- $$\exists uv^*\in L(G) 使得 M(u) = \sigma_0...\sigma_{k-1},M(v)=\sigma_k...\delta_n; \\ \{\psi(\sigma)|\sigma\in u, \psi(\sigma)\neq\emptyset\}=f_k$$
+- $\exists uv^*\in L(G) 使得 M(u) = \sigma_0...\sigma_{k-1},M(v)=\sigma_k...\delta_n; \\ \{\psi(\sigma)|\sigma\in u, \psi(\sigma)\neq\emptyset\}=f_k$
 
-**Lemma 2:** 对于$G_d$中每一个作为环的路径$tr$：$$tr = (x^d_0, \sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k) \\
-x_i = ((x^1_i,f^1_i),(x^2_i,f^2_i)), i = 1, 2, ..., n$$有：
+**Lemma 2:** 对于$G_d$中每一个作为环的路径$tr$：
 
+$$
+tr = (x^d_0, \sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k) \\
+x_i = ((x^1_i,f^1_i),(x^2_i,f^2_i)), i = 1, 2, ..., n
+$$
+
+有：
 - 1) $G_o$中存在两个作为环的路径 $tr_1$和$tr_2$：
+
 $$
 tr_1 = ((x_0,\emptyset), \sigma_0, (x^1_1,f^1_1),...,(x^1_k,f^1_k),\\
 \sigma_k, ..., (x^1_n,f^1_n),\sigma_n, (x^1_k,f^1_k))\\
 tr_2 = ((x_0,\emptyset), \sigma_0, (x^2_1,f^2_1),...,(x^2_k,f^2_k),\\
 \sigma_k, ..., (x^2_n, f^2_n), \sigma_n, (x^2_k, f^2_k)).
 $$
+
 - 2) 对于任意$i, j \in\{k, k+1, ..., n\}$, 有$(f^1_i=f^1_j) \land (f^2_i=f^2_j)$。
 
 接着，我们再提供一个定理确保**Algorithm 1**的正确性。
 
 **Theorem 1**: $G$ 是可诊断的当且仅当$G_d$中的每一个环$cl$：
+
 $$
 cl = (x_1,\sigma_1,x_2,...,x_n,\sigma_n,x_1),\qquad n\geq 1 \\
 x_i = ((x^1_i,f^1), (x^2_i,f^2)),\qquad i=1,2,...,n
 $$
+
 我们有$f^1=f^2$。
 
-**Proof**: 对于必要性，假设$G$是可诊断的，但$$G_d$$中存在一个环$cl$，$$cl=(x_k,\sigma_k,x_{k+1},...,x_n,\sigma_n,x_K), n\geq k, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = k, k+1,...,x_n$$使得$f^1\neq f^2$。因为$G_d$是可达的，$G_d$中存在一个以环$cl$结尾的路径$tr$，即$tr = (x^d_0,\sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k)$。据**Lemma 2**，$G_o$中存在两个路径$tr_1$和$tr_2$：
+**Proof**: 对于必要性，假设$G$是可诊断的，但$G_d$中存在一个环$cl$，$cl=(x_k,\sigma_k,x_{k+1},...,x_n,\sigma_n,x_K), n\geq k, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = k, k+1,...,x_n$使得$f^1\neq f^2$。因为$G_d$是可达的，$G_d$中存在一个以环$cl$结尾的路径$tr$，即$tr = (x^d_0,\sigma_0,x_1,...,x_k,\sigma_k,...,x_n,\sigma_n,x_k)$。据**Lemma 2**，$G_o$中存在两个路径$tr_1$和$tr_2$：
+
 $$
 tr_1 = ((x_0,\emptyset),\sigma_0,(x^1_1,f^1_1),...,(x^1_k,f^1),\\
 \sigma_k,...,(x^1_n,f^1),\sigma_n,(x^1_k,f^1))\\
@@ -122,8 +133,8 @@ tr_2 = ((x_0,\emptyset),\sigma_0,(x^2_1,f^2_1),...,(x^2_k,f^2),\\
 \sigma_k,...,(x^2_n,f^2),\sigma_n,(x^2_k,f^2))\\
 $$
 
-更多地，根据**Lemma 1**，我们可得$$\exists u_1v^*_1\in L(G)$$使得$$M(u_1)=M(u_2) = \sigma_0...\sigma_{k-1}, M(v_1)=M(v_2)=\sigma_k...\sigma_n$$ 并且$$\{\psi(\sigma)|\sigma\in u_i, \psi(\sigma)\neq \emptyset\}=\{\psi(\sigma)|\sigma\in u_iv_i,\psi(\sigma)\neq \emptyset\}=f^i, i = 1,2$$。因为$f^1\neq f^2$，我们假设$F_k\in f^1 - f^2\neq \emptyset$。然后$\exists s\in L(G)$使得 $\psi(s_f)=F_k$ 且对于某些$$t\in \Sigma^*; u_1\in st$$。对于任意整数$n_k$，我们可以选择另一个整数$l$，使得$\lVert tv^l_1\rVert >n_k$。
-则有$M(u_2,v^l_2)=M(stv^l_1)$并且$$\{\psi(\sigma)|\sigma\in u_2v_2, \psi(\sigma)\neq \emptyset\}=f^2$$，这意味着$u_2v^l_2$中不包含任何类型为$F_k$对应的错误事件。因此，根据可诊断性的定义，系统$G$是不可诊断的。与假设矛盾，所以必要性成立。
+更多地，根据**Lemma 1**，我们可得$\exists u_1v^*_1\in L(G)$使得$M(u_1)=M(u_2) = \sigma_0...\sigma_{k-1}, M(v_1)=M(v_2)=\sigma_k...\sigma_n$ 并且$\{\psi(\sigma)|\sigma\in u_i, \psi(\sigma)\neq \emptyset\}=\{\psi(\sigma)|\sigma\in u_iv_i,\psi(\sigma)\neq \emptyset\}=f^i, i = 1,2$。因为$f^1\neq f^2$，我们假设$F_k\in f^1 - f^2\neq \emptyset$。然后$\exists s\in L(G)$使得 $\psi(s_f)=F_k$ 且对于某些$t\in \Sigma^*; u_1\in st$。对于任意整数$n_k$，我们可以选择另一个整数$l$，使得$\lVert tv^l_1\rVert >n_k$。
+则有$M(u_2,v^l_2)=M(stv^l_1)$并且$\{\psi(\sigma)|\sigma\in u_2v_2, \psi(\sigma)\neq \emptyset\}=f^2$，这意味着$u_2v^l_2$中不包含任何类型为$F_k$对应的错误事件。因此，根据可诊断性的定义，系统$G$是不可诊断的。与假设矛盾，所以必要性成立。
 
 对于充分性，假设$G_d$中的每一个环$cl$，$cl = (x_1,\sigma_1,x_2,...,x_n,\sigma_n,x_1), n\geq 1, x_i=((x^1_i,f^1),(x^2_i,f^2)), i = 1, 2, ..., n$, 我们有$f^1=f^2$。
 根据**Lemma 2**的第二句，我们知道该假设意味着$\forall x = ((x^1,f^1),(x^2,f^2)) \in X_d, if f^1\neq f^2$，则$x$不包含于一个循环中。更进一步地，对于$x_i=(x^1_i,f^1_i),(x^2_i,f^2), 1 \leq i\geq k$, $G_d$中的任意状态序列$(x_1,x_2,...,x_k)$，如果对于$\forall i\in \{1,2,...,k\}$有$f^1_i\neq f^2_i$，则状态序列的长度限制在$G_d$状态数之内，即$k\leq |X_d|$。
@@ -146,11 +157,11 @@ $$
 </div>
 
 **Example 1**: 考虑一个系统 $G = (X, \Sigma, \delta, x_0)$
-- $$X = \{x_0, x_1, x_2, x_3, x_4\}$$
-- $$\Sigma = \{\sigma_1, \sigma_2, \sigma_3, \sigma_{uo}, \sigma_{f1},\sigma_{f2},\sigma_{f3}\}$$
-- $$\{(x_0,\sigma_1,x_1), (x_1,\sigma_{f1},x_2), (x_1, \sigma_{uo}, x_2), (x_2, \sigma_{f2}, x_3), (x_3, \sigma_2, x_3), (x_2, \sigma_{f1}, x_4), (x_4, \sigma_3, x_4)\}$$
+- $X = \{x_0, x_1, x_2, x_3, x_4\}$
+- $\Sigma = \{\sigma_1, \sigma_2, \sigma_3, \sigma_{uo}, \sigma_{f1},\sigma_{f2},\sigma_{f3}\}$
+- $\{(x_0,\sigma_1,x_1), (x_1,\sigma_{f1},x_2), (x_1, \sigma_{uo}, x_2), (x_2, \sigma_{f2}, x_3), (x_3, \sigma_2, x_3), (x_2, \sigma_{f1}, x_4), (x_4, \sigma_3, x_4)\}$
 
-并拥有可观事件集$$\Sigma_o = \{\sigma_1, \sigma_2, \sigma_3\}$$。系统见图*Fig. 1*。令$$F = \{F_1, F_2\}$$作为错误类型集，$\psi$是一个错误分配函数， $$\psi(\sigma_{uo}) = \psi(\sigma_i) = \emptyset, i = 1, 2, 3, \psi(\sigma_{f1}) = F_1, \psi(\sigma_{f2})=F_2$$。根据**Algorithm 1**的第一步，我们可以从$G$来获取$G_o$，见*Fig. 2*。**Algorithm 1**的第二步，计算$G_o$和其自身的严格组合，$G_d = G_o||G_o$，见*Fig. 3*。在*Fig. 3*中，在$((x_3,\{F_2\}), (x_3, \{F_1,F_2\}$上存在一个自环。所以，根据**Algorithm 1**的最后一步，我们知道该系统$G$是不可诊断的。
+并拥有可观事件集$\Sigma_o = \{\sigma_1, \sigma_2, \sigma_3\}$。系统见图*Fig. 1*。令$F = \{F_1, F_2\}$作为错误类型集，$\psi$是一个错误分配函数， $\psi(\sigma_{uo}) = \psi(\sigma_i) = \emptyset, i = 1, 2, 3, \psi(\sigma_{f1}) = F_1, \psi(\sigma_{f2})=F_2$。根据**Algorithm 1**的第一步，我们可以从$G$来获取$G_o$，见*Fig. 2*。**Algorithm 1**的第二步，计算$G_o$和其自身的严格组合，$G_d = G_o||G_o$，见*Fig. 3*。在*Fig. 3*中，在$((x_3,\{F_2\}), (x_3, \{F_1,F_2\}$上存在一个自环。所以，根据**Algorithm 1**的最后一步，我们知道该系统$G$是不可诊断的。
 
 <div align="center" style="display: flex; flex-direction:column;">
     <img src="diagram-of-system-G_o.png"/>

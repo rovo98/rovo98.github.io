@@ -5,7 +5,7 @@ date: '2019.7.10 12:34:43'
 categories:
   - Java
 tags:
-  - Basic
+  - basic
   - Collections
 abbrlink: 6a98b274
 ---
