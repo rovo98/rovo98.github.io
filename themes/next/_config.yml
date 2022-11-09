@@ -36,10 +36,10 @@ custom_file_path:
 # ---------------------------------------------------------------
 
 # Schemes
-scheme: Muse
-# scheme: Mist
+#scheme: Muse
+scheme: Mist
 # scheme: Pisces
-# scheme: Gemini
+#scheme: Gemini
 
 # Dark Mode
 darkmode: false
@@ -92,7 +92,7 @@ menu:
   #commonweal: /404/ || fa fa-heartbeat
   home: / || fa fa-home
   archives: /archives/ || fa fa-archive
-  top: /top/ || fa fa-signal
+  # top: /top/ || fa fa-signal
   categories: /categories/ || fa fa-th
   tags: /tags/ || fa fa-tags
   about: /about/ || fa fa-user
@@ -364,20 +364,26 @@ body_scrollbar:
   # Present the scrollbar even if the content is not overflowing.
   stable: false
 
+highlight:
+  enable: true
+
+prism:
+  enable: false
+
 codeblock:
   # Code Highlight theme
   # All available themes: https://theme-next.js.org/highlight/
   theme:
-    light: default
-    dark: tomorrow-night
+    light: stackoverflow-light
+    dark: stackoverflow-dark
   prism:
     light: prism
     dark: prism-dark
   # Add copy button on codeblock
   copy_button:
-    enable: false
+    enable: true
     # Available values: default | flat | mac
-    style:
+    style: flat
 
 back2top:
   enable: true
@@ -388,7 +394,7 @@ back2top:
 
 # Reading progress bar
 reading_progress:
-  enable: false
+  enable: true
   # Available values: left | right
   start_at: left
   # Available values: top | bottom
@@ -514,12 +520,13 @@ math:
   every_page: false
 
   mathjax:
-    enable: true
+    enable: false
     # Available values: none | ams | all
     tags: all
 
   katex:
-    enable: false
+    enable: true
+    cdn: //cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css
     # See: https://github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex
     copy_tex: false
 
@@ -887,3 +894,10 @@ vendors:
 css: css
 js: js
 images: images
+
+# markdown it math
+markdown:
+  plugins:
+    - markdown-it-latex2img
+options:
+  style: 'filter: opacity(90%);transform:scale(0.85);text-align:center;'
