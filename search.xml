@@ -999,46 +999,36 @@ PATCH的好处：节省网络带宽</p>
       </tags>
   </entry>
   <entry>
-    <title>编译自己的Vim8.1</title>
-    <url>/posts/97c4fd12/</url>
-    <content><![CDATA[<p>最近换了<code>Manjaro</code> linux系统，发现通过系统<code>pacman -S vim</code>安装的无图形版本<code>vim</code>不支持<code>clipboard</code>功能。</p>
-<p><img data-src="/images/linux/vim-version-original.jpg" alt="" /></p>
-<p>本想看能不能通过某种方式，来扩展现有安装好的<code>vim</code>,但是通过<code>google</code>了解到：</p>
-<blockquote class="blockquote-center">
-<p>VIM is intended to be a portable editor that “just works” on all systems. By having the default version use the clipboard functionality, it will need to link against X11 libraries, and a separate version of VIM would need to be compiled for desktop versus server (no pre-installed X11/xorg) builds. This is why the vim and vim-gtk packages are provided.</p>
-<p>VIM旨在成为一个可在所有系统上“正常工作”的便携式编辑器。通过使默认版本使用剪贴板功能，它将需要链接到X11库，并且需要针对桌面与服务器（没有预安装的X11 / xorg）构建编译单独版本的VIM。这就是提供vim和vim-gtk软件包的原因。</p>
-
+    <title>Arch linux系列 安装 haroopad markdown 编辑器</title>
+    <url>/posts/63e58ebb/</url>
+    <content><![CDATA[<blockquote>
+<p>Haroopad 是一个优秀的 Markdown 编辑器，是一个用于创建适宜 Web 的文档的处理器。使用 Haroopad 可以创作各种格式的文档，比如博客文章、幻灯片、演示文稿、报告和电子邮件等。Haroopad 在 Windows、Mac OS X 和 Linux 上均可用。它有 Debian/Ubuntu 的软件包，也有 Windows 和 Mac 的二进制文件。该应用程序使用 node-webkit、CodeMirror，marked，以及 Twitter 的 Bootstrap 。</p>
 </blockquote>
+<blockquote>
+<p>Haroo 在韩语中的意思是“一天”。</p>
+</blockquote>
+<p>本文主要介绍通过压缩包<code>**.tar.gz</code>的方式安装 <code>Haroopad</code>.</p>
 <span id="more"></span>
-<p>虽然知道<code>gvim</code>带有支持<code>clipboard</code>的<code>vim</code>，但是我又不想装<code>gvim</code>。自己的系统又有<code>X11</code>库和 <code>Xorg</code>，所以决定自己编译一个<code>vim</code>.</p>
-<div class="note warning"><p><strong>注意</strong>： 对于没有<code>X11</code>和<code>Xorg</code>的需要在编译前配置好，否则编译会出错.</p>
-</div>
-<h3 id="一-从github上获取vim的源码"><a class="markdownIt-Anchor" href="#一-从github上获取vim的源码"></a> 一、从github上获取vim的源码</h3>
-<p>直接使用<code>git</code> clone <code>vim</code>仓库：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/vim/vim.git vim_source</span><br></pre></td></tr></table></figure>
-<h3 id="二-配置-编译并安装"><a class="markdownIt-Anchor" href="#二-配置-编译并安装"></a> 二、配置、编译并安装</h3>
-<p>我的编译配置：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make clean</span><br><span class="line">./configure \</span><br><span class="line">    --enable-cscope \ </span><br><span class="line">    --enable-largefile \ </span><br><span class="line">    --enable-multibyte \ </span><br><span class="line">    --enable-mzschemeinterp \ </span><br><span class="line">    --enable-xim \ </span><br><span class="line">    --enable-tclinterp=dynamic \ </span><br><span class="line">    --enable-perlinterp=dynamic \ </span><br><span class="line">    --enable-python3interp=dynamic\ </span><br><span class="line">    --enable-pythoninterp=dynamic \ </span><br><span class="line">    --enable-rubyinterp=dynamic \ </span><br><span class="line">    --enable-luainterp=dynamic \</span><br><span class="line">    --enable-gui=no \</span><br><span class="line">    --enable-fontset \</span><br><span class="line">    --enable-terminal \</span><br><span class="line">    --with-features=huge \</span><br><span class="line">    --with-x \</span><br><span class="line">    --with-compiledby=&quot;rovo98&quot; \</span><br><span class="line">    --with-python-config-dir=/usr/lib/python2.7/config-$(uname-m)-linux-gnu</span><br><span class="line">    --with-python3-config-dir=/usr/lib/python3.7/config-$(uname -m)-linux-gnu</span><br></pre></td></tr></table></figure>
-<p>编译并安装:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
-<p><strong>编译配置的说明</strong>:</p>
-<p>上面的参数中启用了对tcl、perl、python、ruby、lua的支持。同时为了使用系统的剪切板还启用了对X的支持， 安装位置默认是<code>/usr/local</code>下， 由<code>--perfix=PREFIX</code>参数指定。</p>
-<p>更多详细可以使用<code>./configure --help</code>查看:</p>
-<p><strong>删除编译产生的中间文件</strong> :</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make clean &amp;&amp; make distclean</span><br></pre></td></tr></table></figure>
-<p><strong>成果:</strong></p>
-<p><img data-src="vim_installed.jpg" alt="" /></p>
-<p><strong>为<code>vim</code>创建一个桌面图标</strong>:</p>
-<p><code>vim.desktop</code>:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=Vim[compiled by rovo98]</span><br><span class="line">Version=8.1</span><br><span class="line">Exec=vim %f</span><br><span class="line">Comment=Vim is a highly configurable text editor for efficiently creating and changing any kind of text.</span><br><span class="line">Icon=/usr/share/vim/vim81/src/vim.ico</span><br><span class="line">Type=Application</span><br><span class="line">MimeType=text/plain;</span><br><span class="line">Terminal=true</span><br><span class="line">Encoding=UTF-8</span><br><span class="line">Categories=Utility;</span><br></pre></td></tr></table></figure>
-<p>把<code>vim.desktop</code>放到<code>/usr/share/applications/</code>下就行了。</p>
-<p>现在可以享受你自己编译的vim了。</p>
-<div class="note primary"><p>参考链接:</p>
-<ul>
-<li><a href="https://vi.stackexchange.com/questions/13564/why-is-vim-for-debian-compiled-without-clipboard">https://vi.stackexchange.com/questions/13564/why-is-vim-for-debian-compiled-without-clipboard</a></li>
-<li><a href="https://stackoverflow.com/questions/11416069/compile-vim-with-clipboard-and-xterm">https://stackoverflow.com/questions/11416069/compile-vim-with-clipboard-and-xterm</a></li>
-</ul>
-</div>
+<h3 id="一-下载-haroopad"><a class="markdownIt-Anchor" href="#一-下载-haroopad"></a> 一、下载 Haroopad</h3>
+<p>我们可以从官网直接下载我们需要的压缩包，官网地址: <a href="http://pad.haroopress.com/user.html">Haroopad官网地址</a></p>
+<p><img data-src="haroopad_website.png" alt="" /></p>
+<p>这里我选择的是linux binary 64 位的压缩包。</p>
+<h3 id="二-解压并安装haroopad"><a class="markdownIt-Anchor" href="#二-解压并安装haroopad"></a> 二、解压并安装Haroopad</h3>
+<p>根据下载的压缩包格式进行解压： 例如 **.tar.gz格式</p>
+<p>解压并放到<code>/opt/</code>目录下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf haroopad-v0.13.1.x64.tar.gz -C haroopad</span><br><span class="line">sudo cp -r haroopad /opt/</span><br><span class="line"></span><br><span class="line">tar zxvf data.tar.gz</span><br><span class="line">tar zxvf control.tar.gz</span><br></pre></td></tr></table></figure>
+<p>把解压出来的 usr中的文件放到<code>/usr/</code>下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp -r ./usr /</span><br><span class="line"><span class="comment"># 执行 postinst</span></span><br><span class="line">chmod 755 postinst</span><br><span class="line">sudo ./postinst</span><br></pre></td></tr></table></figure>
+<p><img data-src="haroopad_install.png" alt="" /></p>
+<h3 id="三-修复桌面图标"><a class="markdownIt-Anchor" href="#三-修复桌面图标"></a> 三、修复桌面图标</h3>
+<p>为haroopad 换一个合适的桌面图标:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vim /usr/share/applications/Haroopad.desktop</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=haroopad</span><br><span class="line">Version=0.13.1</span><br><span class="line">Exec=haroopad</span><br><span class="line">Comment=The Next Document processor based on Markdown</span><br><span class="line">#Icon=haroopad</span><br><span class="line">Icon=/usr/share/icons/hicolor/128x128/apps/haroopad.png</span><br><span class="line">Type=Application</span><br><span class="line">Terminal=false</span><br><span class="line">StartupNotify=true</span><br><span class="line">Encoding=UTF-8</span><br><span class="line">Categories=Development;GTK;GNOME;</span><br></pre></td></tr></table></figure>
+<h3 id="四-配置haroopad"><a class="markdownIt-Anchor" href="#四-配置haroopad"></a> 四、配置Haroopad</h3>
+<p>相关的Haroopad设置，可以打开 <code>偏好设置</code>进行配置:</p>
+<p><img data-src="haroopad_settings.png" alt="" /></p>
+<p>到此，Haroopad 安装就完成了。</p>
+<p>参考链接: <a href="https://www.jianshu.com/p/dba9acabf0a7">https://www.jianshu.com/p/dba9acabf0a7</a></p>
 ]]></content>
       <categories>
         <category>Linux</category>
@@ -1046,7 +1036,7 @@ PATCH的好处：节省网络带宽</p>
       </categories>
       <tags>
         <tag>linux</tag>
-        <tag>vim</tag>
+        <tag>markdown</tag>
       </tags>
   </entry>
   <entry>
@@ -1183,47 +1173,6 @@ gpg features: complete key management and all the bells and whistles you would e
       </categories>
       <tags>
         <tag>linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Arch linux系列 安装 haroopad markdown 编辑器</title>
-    <url>/posts/63e58ebb/</url>
-    <content><![CDATA[<blockquote>
-<p>Haroopad 是一个优秀的 Markdown 编辑器，是一个用于创建适宜 Web 的文档的处理器。使用 Haroopad 可以创作各种格式的文档，比如博客文章、幻灯片、演示文稿、报告和电子邮件等。Haroopad 在 Windows、Mac OS X 和 Linux 上均可用。它有 Debian/Ubuntu 的软件包，也有 Windows 和 Mac 的二进制文件。该应用程序使用 node-webkit、CodeMirror，marked，以及 Twitter 的 Bootstrap 。</p>
-</blockquote>
-<blockquote>
-<p>Haroo 在韩语中的意思是“一天”。</p>
-</blockquote>
-<p>本文主要介绍通过压缩包<code>**.tar.gz</code>的方式安装 <code>Haroopad</code>.</p>
-<span id="more"></span>
-<h3 id="一-下载-haroopad"><a class="markdownIt-Anchor" href="#一-下载-haroopad"></a> 一、下载 Haroopad</h3>
-<p>我们可以从官网直接下载我们需要的压缩包，官网地址: <a href="http://pad.haroopress.com/user.html">Haroopad官网地址</a></p>
-<p><img data-src="haroopad_website.png" alt="" /></p>
-<p>这里我选择的是linux binary 64 位的压缩包。</p>
-<h3 id="二-解压并安装haroopad"><a class="markdownIt-Anchor" href="#二-解压并安装haroopad"></a> 二、解压并安装Haroopad</h3>
-<p>根据下载的压缩包格式进行解压： 例如 **.tar.gz格式</p>
-<p>解压并放到<code>/opt/</code>目录下:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tar zxvf haroopad-v0.13.1.x64.tar.gz -C haroopad</span><br><span class="line">sudo cp -r haroopad /opt/</span><br><span class="line"></span><br><span class="line">tar zxvf data.tar.gz</span><br><span class="line">tar zxvf control.tar.gz</span><br></pre></td></tr></table></figure>
-<p>把解压出来的 usr中的文件放到<code>/usr/</code>下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo cp -r ./usr /</span><br><span class="line"><span class="comment"># 执行 postinst</span></span><br><span class="line">chmod 755 postinst</span><br><span class="line">sudo ./postinst</span><br></pre></td></tr></table></figure>
-<p><img data-src="haroopad_install.png" alt="" /></p>
-<h3 id="三-修复桌面图标"><a class="markdownIt-Anchor" href="#三-修复桌面图标"></a> 三、修复桌面图标</h3>
-<p>为haroopad 换一个合适的桌面图标:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo vim /usr/share/applications/Haroopad.desktop</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=haroopad</span><br><span class="line">Version=0.13.1</span><br><span class="line">Exec=haroopad</span><br><span class="line">Comment=The Next Document processor based on Markdown</span><br><span class="line">#Icon=haroopad</span><br><span class="line">Icon=/usr/share/icons/hicolor/128x128/apps/haroopad.png</span><br><span class="line">Type=Application</span><br><span class="line">Terminal=false</span><br><span class="line">StartupNotify=true</span><br><span class="line">Encoding=UTF-8</span><br><span class="line">Categories=Development;GTK;GNOME;</span><br></pre></td></tr></table></figure>
-<h3 id="四-配置haroopad"><a class="markdownIt-Anchor" href="#四-配置haroopad"></a> 四、配置Haroopad</h3>
-<p>相关的Haroopad设置，可以打开 <code>偏好设置</code>进行配置:</p>
-<p><img data-src="haroopad_settings.png" alt="" /></p>
-<p>到此，Haroopad 安装就完成了。</p>
-<p>参考链接: <a href="https://www.jianshu.com/p/dba9acabf0a7">https://www.jianshu.com/p/dba9acabf0a7</a></p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>softwares</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>markdown</tag>
       </tags>
   </entry>
   <entry>
@@ -1440,6 +1389,57 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
       </categories>
       <tags>
         <tag>software</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>编译自己的Vim8.1</title>
+    <url>/posts/97c4fd12/</url>
+    <content><![CDATA[<p>最近换了<code>Manjaro</code> linux系统，发现通过系统<code>pacman -S vim</code>安装的无图形版本<code>vim</code>不支持<code>clipboard</code>功能。</p>
+<p><img data-src="/images/linux/vim-version-original.jpg" alt="" /></p>
+<p>本想看能不能通过某种方式，来扩展现有安装好的<code>vim</code>,但是通过<code>google</code>了解到：</p>
+<blockquote class="blockquote-center">
+<p>VIM is intended to be a portable editor that “just works” on all systems. By having the default version use the clipboard functionality, it will need to link against X11 libraries, and a separate version of VIM would need to be compiled for desktop versus server (no pre-installed X11/xorg) builds. This is why the vim and vim-gtk packages are provided.</p>
+<p>VIM旨在成为一个可在所有系统上“正常工作”的便携式编辑器。通过使默认版本使用剪贴板功能，它将需要链接到X11库，并且需要针对桌面与服务器（没有预安装的X11 / xorg）构建编译单独版本的VIM。这就是提供vim和vim-gtk软件包的原因。</p>
+
+</blockquote>
+<span id="more"></span>
+<p>虽然知道<code>gvim</code>带有支持<code>clipboard</code>的<code>vim</code>，但是我又不想装<code>gvim</code>。自己的系统又有<code>X11</code>库和 <code>Xorg</code>，所以决定自己编译一个<code>vim</code>.</p>
+<div class="note warning"><p><strong>注意</strong>： 对于没有<code>X11</code>和<code>Xorg</code>的需要在编译前配置好，否则编译会出错.</p>
+</div>
+<h3 id="一-从github上获取vim的源码"><a class="markdownIt-Anchor" href="#一-从github上获取vim的源码"></a> 一、从github上获取vim的源码</h3>
+<p>直接使用<code>git</code> clone <code>vim</code>仓库：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/vim/vim.git vim_source</span><br></pre></td></tr></table></figure>
+<h3 id="二-配置-编译并安装"><a class="markdownIt-Anchor" href="#二-配置-编译并安装"></a> 二、配置、编译并安装</h3>
+<p>我的编译配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make clean</span><br><span class="line">./configure \</span><br><span class="line">    --enable-cscope \ </span><br><span class="line">    --enable-largefile \ </span><br><span class="line">    --enable-multibyte \ </span><br><span class="line">    --enable-mzschemeinterp \ </span><br><span class="line">    --enable-xim \ </span><br><span class="line">    --enable-tclinterp=dynamic \ </span><br><span class="line">    --enable-perlinterp=dynamic \ </span><br><span class="line">    --enable-python3interp=dynamic\ </span><br><span class="line">    --enable-pythoninterp=dynamic \ </span><br><span class="line">    --enable-rubyinterp=dynamic \ </span><br><span class="line">    --enable-luainterp=dynamic \</span><br><span class="line">    --enable-gui=no \</span><br><span class="line">    --enable-fontset \</span><br><span class="line">    --enable-terminal \</span><br><span class="line">    --with-features=huge \</span><br><span class="line">    --with-x \</span><br><span class="line">    --with-compiledby=&quot;rovo98&quot; \</span><br><span class="line">    --with-python-config-dir=/usr/lib/python2.7/config-$(uname-m)-linux-gnu</span><br><span class="line">    --with-python3-config-dir=/usr/lib/python3.7/config-$(uname -m)-linux-gnu</span><br></pre></td></tr></table></figure>
+<p>编译并安装:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
+<p><strong>编译配置的说明</strong>:</p>
+<p>上面的参数中启用了对tcl、perl、python、ruby、lua的支持。同时为了使用系统的剪切板还启用了对X的支持， 安装位置默认是<code>/usr/local</code>下， 由<code>--perfix=PREFIX</code>参数指定。</p>
+<p>更多详细可以使用<code>./configure --help</code>查看:</p>
+<p><strong>删除编译产生的中间文件</strong> :</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">make clean &amp;&amp; make distclean</span><br></pre></td></tr></table></figure>
+<p><strong>成果:</strong></p>
+<p><img data-src="vim_installed.jpg" alt="" /></p>
+<p><strong>为<code>vim</code>创建一个桌面图标</strong>:</p>
+<p><code>vim.desktop</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line">Name=Vim[compiled by rovo98]</span><br><span class="line">Version=8.1</span><br><span class="line">Exec=vim %f</span><br><span class="line">Comment=Vim is a highly configurable text editor for efficiently creating and changing any kind of text.</span><br><span class="line">Icon=/usr/share/vim/vim81/src/vim.ico</span><br><span class="line">Type=Application</span><br><span class="line">MimeType=text/plain;</span><br><span class="line">Terminal=true</span><br><span class="line">Encoding=UTF-8</span><br><span class="line">Categories=Utility;</span><br></pre></td></tr></table></figure>
+<p>把<code>vim.desktop</code>放到<code>/usr/share/applications/</code>下就行了。</p>
+<p>现在可以享受你自己编译的vim了。</p>
+<div class="note primary"><p>参考链接:</p>
+<ul>
+<li><a href="https://vi.stackexchange.com/questions/13564/why-is-vim-for-debian-compiled-without-clipboard">https://vi.stackexchange.com/questions/13564/why-is-vim-for-debian-compiled-without-clipboard</a></li>
+<li><a href="https://stackoverflow.com/questions/11416069/compile-vim-with-clipboard-and-xterm">https://stackoverflow.com/questions/11416069/compile-vim-with-clipboard-and-xterm</a></li>
+</ul>
+</div>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>softwares</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>vim</tag>
       </tags>
   </entry>
   <entry>
@@ -2776,6 +2776,328 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </tags>
   </entry>
   <entry>
+    <title>Advantrue 1 - Leetcode 11 - Container With Most Water</title>
+    <url>/posts/dac7fdaa/</url>
+    <content><![CDATA[<blockquote>
+<p>给定 n 个非负整数 <code>a1，a2，...，an</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 <code>n</code> 条垂直线，垂直线 <code>i</code> 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 <code>x</code> 轴共同构成的容器可以容纳最多的水。<br />
+<br /></p>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/container-with-most-water/">https://leetcode-cn.com/problems/container-with-most-water/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/container-with-most-water/">https://leetcode.com/problems/container-with-most-water/</a>(en)<br />
+<br /><br />
+说明：你不能倾斜容器，且 n 的值至少为 2。<br />
+示例:<br />
+输入: [1,8,6,2,5,4,8,3,7]<br />
+输出: 49</li>
+</ul>
+</blockquote>
+<span id="more"></span>
+<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
+<p>对于这样的题目，很明显可以快速的使用<code>brute-force</code>方式得到解法:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; height; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; height; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> temp = (j-i) * (height[i]&gt;height[j]?height[j]:height[i]);</span><br><span class="line">                <span class="keyword">if</span> (temp &gt; maxArea)</span><br><span class="line">                    maxArea = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<div class="note primary"><p>显然使用<code>brute-force</code>解法设计的算法是正确的，但是时间复杂度是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>级别，因此我们需要考虑优化。<br />
+代码提交状况:<br />
+运行时间(Runtime): 269 ms<br />
+beats rate: 20.1%</p>
+</div>
+<div class="note warning"><p>其实仔细看的话，要使围成的矩形面积最大，无非就是让长和宽尽量的大，因此我们可以使用<code>Two-pointers</code>双指针的思想:<br />
+使用两个指针<code>i,j</code>分别指向<code>0</code>和<code>height.length-1</code>，让一开始的<code>x</code>坐标距离最大化，然后判断它们所对应的高度谁低，<br />
+依据较低的高度值计算面积，再将对应索引指针增<code>1</code>(对于低索引指针)或减<code>1</code>(高索引指针)。</p>
+</div>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VAlUE;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> j = height.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="comment">// int x = j - i;</span></span><br><span class="line">            <span class="comment">// maxArea = Math.max(maxArea,Math.min(heigth[i], height[j])*x);</span></span><br><span class="line">            <span class="comment">// if (height[i] &lt; height[j]) &#123;</span></span><br><span class="line">            <span class="comment">//     i++;</span></span><br><span class="line">            <span class="comment">// &#125; else &#123;</span></span><br><span class="line">            <span class="comment">//     j--;</span></span><br><span class="line">            <span class="comment">// &#125;</span></span><br><span class="line">            <span class="comment">// 对代码进行缩减</span></span><br><span class="line">            maxArea = Math.max(maxArea, height[j]&lt;height[i]?(j-i)*height[j--]:(j-i))*height[i++]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<div class="note primary"><p>使用<strong>双指针</strong>，只需要一次遍历就能得到结果。可以见得双指针是非常有效的工具，也是数组类问题中常见的解题思路: 例如，对于已经排好序的两数之和(Two sum - sorted)问题,就可以使用双指针进行解决。</p>
+<p>代码提交状况:<br />
+运行时间(Runtime): 6 ms<br />
+beat rate: 65.95%</p>
+</div>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-array-medium</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Advantrue 1 - Leetcode 189 - Rotate Array</title>
+    <url>/posts/885fe7d0/</url>
+    <content><![CDATA[<blockquote>
+<p>给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。<br />
+链接:</p>
+<ol>
+<li><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/rotate-array/">https://leetcode.com/problems/rotate-array/</a>(en)</li>
+</ol>
+<p>示例 1:</p>
+<p>输入: [1,2,3,4,5,6,7] 和 k = 3<br />
+输出: [5,6,7,1,2,3,4]<br />
+解释:<br />
+向右旋转 1 步: [7,1,2,3,4,5,6]<br />
+向右旋转 2 步: [6,7,1,2,3,4,5]<br />
+向右旋转 3 步: [5,6,7,1,2,3,4]<br />
+示例 2:</p>
+<p>输入: [-1,-100,3,99] 和 k = 2<br />
+输出: [3,99,-1,-100]<br />
+解释:<br />
+向右旋转 1 步: [99,-1,-100,3]<br />
+向右旋转 2 步: [3,99,-1,-100]<br />
+说明:</p>
+<p>尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。<br />
+要求使用空间复杂度为 O(1) 的原地算法。</p>
+</blockquote>
+<span id="more"></span>
+<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
+<p>首先考虑考虑<code>brute-force</code>暴力解法，要使数组中的元素整体右移<code>k</code>位，最直接的方式是循环<code>k</code>次，每次循环让每个元素依次跟最后一个元素进行交换<code>swap</code>即可。</p>
+<blockquote>
+<p>例如: input : [1, 2, 3, 4], k = 1<br />
+loop1: 4, 2, 3, 1 -&gt;<br />
+4, 1, 3, 2 -&gt;<br />
+4, 1, 2, 3</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rotate</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt;= <span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> last = nums[nums.length-<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; nums.length; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> temp = nums[j];</span><br><span class="line">                nums[j] = last;</span><br><span class="line">                last = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>k</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(kn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<p>Submission status:</p>
+<blockquote>
+<p>该解法通过所有测试用例，但是执行时间为<code>109 ms</code>, 击败<code>14.9%</code>的<code>java</code>代码提交。</p>
+</blockquote>
+<div class="note primary"><p>解题思路二:</p>
+<blockquote>
+<p>利用辅助数组，先将需要移动变换的元素放在移动后的位置，再将辅助数组元素移回原数组.</p>
+</blockquote>
+</div>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rotate</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt; <span class="number">2</span>) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span>[] aux = <span class="keyword">new</span> <span class="keyword">int</span>[nums.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            aux[(i+k) % nums.length] = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; aux.length; i++) &#123;</span><br><span class="line">            nums[i] = aux[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<p>Submission status:</p>
+<blockquote>
+<p>代码提交运行时间: <code>1 ms</code> 击败<code>53.8%</code>的<code>java</code>提交代码。</p>
+</blockquote>
+<div class="note primary"><p>解题思路三:</p>
+<p>除了上面给出的第二种方案，还有更好的解题方法，能够做到<code>O(n)</code>运行时间，以及<code>O(1)</code>的空间复杂度.</p>
+</div>
+<blockquote>
+<p>思路: 拿题目给定的例子来说，[1,2,3,4,5,6,7], k = 3.<br />
+首先将数组划分成两个部分: <code>0~nums.length-k-1</code>,即<code>[1,2,3,4]和</code>nums.length-k ~ nums.length-1],即<code>[5,6,7]</code>,把两个部分进行翻转，此时数组变成<code>[4,3,2,1,7,6,5]</code>.<br />
+最后，将整个数组进行翻转即可得到我们想要的结果: <code>[5,6,7,1,2,3,4]</code>.</p>
+</blockquote>
+<div class="note warning"><p>需要注意的是，需要对<code>k</code>进行处理，当<code>k &gt; nums.length</code>情况，会出现越界情况。<br />
+解决方法: 使<code>k</code>进行 <strong>mod</strong> <code>nums.length</code>运算(<code>k = k % nums.length</code>).</p>
+</div>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rotate</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt; <span class="number">2</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        k %= nums.length;</span><br><span class="line">        reverse(nums, <span class="number">0</span>, nums.length-k - <span class="number">1</span>);</span><br><span class="line">        reverse(nums, nums.length-k, nums.length-<span class="number">1</span>);</span><br><span class="line">        reverse(nums, <span class="number">0</span>, nums.length-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reverse</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="keyword">int</span> temp = nums[i];</span><br><span class="line">            nums[i] = nums[j];</span><br><span class="line">            nums[j] = temp;</span><br><span class="line">            i++;</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<p>Submission status:</p>
+<blockquote>
+<p>代码提交运行时间: <code>0 ms</code>, 击败<code>100%</code>的<code>java</code>提交代码。</p>
+</blockquote>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>在处理数组问题时，需要非常小心，时刻注意边界，避免发生数组越界问题。</p>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-array-easy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Advanture 1 - Leetcode 561 - Array Partition I</title>
+    <url>/posts/270f73f9/</url>
+    <content><![CDATA[<blockquote>
+<p>给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), …, (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。<br /><br /><br />
+链接:</p>
+<ol>
+<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode-cn.com/problems/array-partition-i/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode.com/problems/array-partition-i/</a>(en)</li>
+</ol>
+<p>示例 1:</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: [1,4,3,2]</span><br><span class="line"></span><br><span class="line">输出: 4</span><br><span class="line">解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提示:</p>
+<ol>
+<li>n 是正整数,范围在 [1, 10000].</li>
+<li>数组中的元素范围在 [-10000, 10000].</li>
+</ol>
+</blockquote>
+<span id="more"></span>
+<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
+<p>个人解题思路，观察给定的例子，很容易发现，对于一个给定的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi>n</mi></mrow><annotation encoding="application/x-tex">2n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault">n</span></span></span></span>大小的数组，只要在组成数对时每次都从数组选择最小的连两个数来组成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>个数对。所获得的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi mathvariant="normal">到</mi><mi>n</mi><mi mathvariant="normal">的</mi><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>b</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">1到n的min(a_i,b_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord cjk_fallback">到</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>总和最大。</p>
+<p>证明: 可以使用数学归纳法进行证明。</p>
+<blockquote>
+<p>因此，首先考虑将数组进行排序，然后将所有奇数位置的元素加和起来就是结果.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">        <span class="comment">// sort the array first if it is unsorted.</span></span><br><span class="line">        <span class="keyword">if</span> (!isSorted(nums))</span><br><span class="line">            Arrays.sort(nums);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i+=<span class="number">2</span>) &#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// simple tool for sorting a integer array.</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isSorted</span><span class="params">(<span class="keyword">int</span>[] arr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length-<span class="number">1</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[i]&gt;arr[i+<span class="number">1</span>])</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>，主要取决所使用的排序算法</li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<p>Submission status:</p>
+<blockquote>
+<p>以上解法，通过所有测试用例，运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>32</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">32 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">2</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>击败<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>28.65</mn></mrow><annotation encoding="application/x-tex">28.65</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">8</span><span class="mord">.</span><span class="mord">6</span><span class="mord">5</span></span></span></span>%的提交(英文版leetcode)</p>
+</blockquote>
+<blockquote>
+<p>可以清楚的了解到该问题还有更好的解法。<br />
+由于<strong>我的解题思路基于比较的排序算法，因此时间复杂度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>已是最优</strong>,需要考虑另外的解题思路。</p>
+</blockquote>
+<p>如果不排序的情况下，得到结果。？？？ --&gt; emmm… 没想到。。。</p>
+<blockquote>
+<p>额…, 解题思路不变，还是基于排序，但是应用<strong>空间换时间</strong>的思想，因此容易想到利用<strong>桶排序</strong>对给定数组进行排序(毕竟数组元素范围已经给定<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn><mtext> </mtext><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000 ~ 10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bucket = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">20001</span>];</span><br><span class="line">        <span class="keyword">int</span> maxElemt = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">int</span> minElemt = Integer.MAX_VALUE;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            bucket[nums[i]+<span class="number">10000</span>]++;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; maxElemt)</span><br><span class="line">                maxElemt = nums[i];</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &lt; minElemt)</span><br><span class="line">                minElemt = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">        minElemt += <span class="number">10000</span>;  <span class="comment">// offset is 10000</span></span><br><span class="line">        maxElemt += <span class="number">10000</span>;</span><br><span class="line">        <span class="keyword">boolean</span> isOdd = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = minElemt; i &lt;= maxElemt; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bucket[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; bucket[i]; j++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (isOdd)</span><br><span class="line">                        result += (i - <span class="number">10000</span>);</span><br><span class="line">                    isOdd = !isOdd;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="note primary"><p>代码简单解释，由于给定数组元素的范围为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span> ~ <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 因此桶排序所需要的总的容量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>20000</mn></mrow><annotation encoding="application/x-tex">20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 对给定数组出现的元素进行偏移(偏移量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)<br />
+<code>bucket[nums[i]+10000]++</code>，使用两个整型变量<code>minElemt</code>和<code>maxElemt</code>确定元素出现的范围, 使用<em>flag</em>变量<code>isOdd</code>判断当前处理元素是处于奇数位置还是偶数位置。</p>
+</div>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>, 就算是数组所有元素都相同的情况，也是只要遍历<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>次</li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 对于该题目来说，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi mathvariant="normal">为</mi><mn>20000</mn></mrow><annotation encoding="application/x-tex">n为20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">为</span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span></li>
+</ul>
+<p><strong>Submission status</strong>:</p>
+<blockquote>
+<p>代码提交状况: 运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>7</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">7 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">7</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>,超过<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>100</mn></mrow><annotation encoding="application/x-tex">100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span>%的<code>java</code>代码提交。</p>
+</blockquote>
+<p><img data-src="leetcode-561-2.png" alt="" /></p>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>第一种解法是通用解法，可以适用于不同的给定数组元素范围，而第二种解法只适用于此题，当元素范围比较大时，所花费的空间代价高。</p>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-array-easy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Advanture 1 - leetcode 1 - Two Sum</title>
+    <url>/posts/917327d3/</url>
+    <content><![CDATA[<p><code>leetcode</code>解题思路总结:</p>
+<blockquote>
+<p>给定一个整数数组和一个目标值，找出数组中和为目标值的两个数。</p>
+<p>你可以假设每个输入只对应一种答案，且同样的元素不能被重复利用。<br />
+链接:</p>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/two-sum/">https://leetcode-cn.com/problems/two-sum/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/two-sum/">https://leetcode.com/problems/two-sum/</a>(en)</li>
+</ul>
+<p>示例:</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">给定 nums = [2, 7, 11, 15], target = 9</span><br><span class="line"></span><br><span class="line">因为 nums[0] + nums[1] = 2 + 7 = 9</span><br><span class="line">所以返回 [0, 1]</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
+<p>对于这样的题目，最容易想到的是<code>brute-force</code>暴力解法, 直接两重循环进行迭代.</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; nums.length; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (nums[j] == target-nums[i])</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[] &#123;i, j&#125;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Returns null if solution not found.</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Complexity Analysising):</strong></p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<p>暴力解法虽然可行，但是时间复杂度为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>, 考虑进行优化，首先想到是可以以空间换时间:</p>
+<div class="note primary"><p>如果能够把给定数组的数，用某种数据结构将每个数的数值以及对应的索引(index)保存起来，则只需要用一次遍历查找<br />
+<code>target - nums[i]</code>是否存在于该数据结构中，且非<code>nums[i]</code>即可。</p>
+</div>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        Map&lt;Integer, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            map.put(nums[i], i);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> remain = target - map.get(nums[i]);</span><br><span class="line">            <span class="keyword">if</span> (map.containsKey(remain) &amp;&amp; map.get(remain) != i)</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[] &#123;i, map.get(remain)&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// returns null if solution not found.</span></span><br><span class="line">        reutrn <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Complexity Analysising)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<div class="note warning"><p>年轻的我，本以为上面的这种解法已经是最优的了，但是看完讨论区之后，才焕然大悟，它还可以进行优化:<br />
+仔细看的话，上面的<code>HashMap</code>算法访问了<code>nums</code>数组两遍，而接下来，从<code>leetcode</code>上学习到的优化方法就是<strong>将<code>nums</code>数组的访问从两遍降到一遍</strong>.</p>
+</div>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        Map&lt;Integer, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> remain = target - nums[i];</span><br><span class="line">            <span class="keyword">if</span> (map.containsKey(remain))</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[] &#123;map.get(remain), i&#125;;</span><br><span class="line">            map.put(nums[i], i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="note info"><p>由于<code>map</code>中保存的肯定是索引<code>i</code>之前的数，因此不需要判断<code>map.get(remain) != i</code>.</p>
+</div>
+<p><strong>复杂度分析(Complexity Analysising)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): O(n)</li>
+<li>空间复杂度(Space complexity): O(n)</li>
+</ul>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>对于能够快速使用<code>brute-force</code>暴力解法解决的问题，考虑优化时，首先考虑能够减少循环的嵌套，其次是考虑减少数组的访问次数、元素比较次数、元素交换次数等。</p>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-array-easy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Advanture 1 Leetcode - 944 - Delete Columns to Make Sorted</title>
+    <url>/posts/f5b699c8/</url>
+    <content><![CDATA[<blockquote>
+<p>给出由 N 个小写字母串组成的数组 <code>A</code>，所有小写字母串的长度都相同。<br />
+现在，我们可以选择任何一组删除索引，对于每个字符串，我们将删除这些索引中的所有字符。<br />
+举个例子，如果字符串为 <code>&quot;abcdef&quot;</code>，且删除索引是 <code>&#123;0, 2, 3&#125;</code>，那么删除之后的最终字符串为 <code>&quot;bef&quot;</code>。<br />
+假设我们选择了一组删除索引 <code>D</code>，在执行删除操作之后，<code>A</code> 中剩余的每一列都是有序的。<br />
+形式上，第 <code>c</code> 列为 <code>[A[0][c], A[1][c], ..., A[A.length-1][c]]</code><br />
+返回 <code>D.length</code> 的最小可能值。<br />
+<br /></p>
+<ul>
+<li><a href="https://leetcode-cn.com/problems/delete-columns-to-make-sorted/">https://leetcode-cn.com/problems/delete-columns-to-make-sorted/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/delete-columns-to-make-sorted/">https://leetcode.com/problems/delete-columns-to-make-sorted/</a>(en)<br />
+<br /><br />
+示例 1：<br />
+输入：[“cba”,“daf”,“ghi”]<br />
+输出：1<br />
+示例 2：<br />
+输入：[“a”,“b”]<br />
+输出：0<br />
+示例 3：<br />
+输入：[“zyx”,“wvu”,“tsr”]<br />
+输出：3<br />
+提示：<br />
+1 &lt;= A.length &lt;= 100<br />
+1 &lt;= A[i].length &lt;= 1000</li>
+</ul>
+</blockquote>
+<span id="more"></span>
+<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
+<p>对于这种可以快速得出解题思路的题目：</p>
+<div class="note primary"><p>由于每个字符串的长度一样，所以我们只需要依次比较字符串对应的每一列，<strong>判断是否满足非降序</strong>即可得到结果。</p>
+</div>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minDeletionSize</span><span class="params">(String[] A)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = A[<span class="number">0</span>].length(); i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = A.length-<span class="number">1</span>; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (A[j].charAt(i) &gt; A[j+<span class="number">1</span>].charAt(i)) &#123;</span><br><span class="line">                    count++;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<details class="note "><summary><p>waring</p>
+</summary>
+<p>此题目，在<code>leetcode</code>上被归类为<code>greedy</code>，但我觉的解题思路并没怎么体现贪心算法的思想。。。</p>
+
+</details>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-greedy-easy</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JVM知识体系 (一) | 类的装载</title>
     <url>/posts/4661f621/</url>
     <content><![CDATA[<p><img data-src="/images/java/basic/class-loading-subsystem.png" alt="class-loading-subsystem" /></p>
@@ -3882,54 +4204,6 @@ JDK = JRE + tools to develop Java application.</p>
       </tags>
   </entry>
   <entry>
-    <title>Java 封装类内部缓存</title>
-    <url>/posts/1017901c/</url>
-    <content><![CDATA[<p>在 Java 中通过 <code>new</code> 关键字等其他方式在堆（heap）上创建对象是一个比较耗费资源的操作。 Java 在封装类（Wrapper classes）上使用内部缓存来使封装类的某些常用值使用更高效。</p>
-<p>与 <code>String</code> 类一样，Java 中的封装类都是不可变的（immutable）。Java 中的封装类与 String 类一样同样提供了类似的缓存池机制。这其实也是一个普遍的操作，对于较昂贵的资源创建操作，使用缓存来处理在其他地方也非常常见，如数据库连接池、线程池等。</p>
-<span id="more"></span>
-<h2 id="integer-内部缓存"><a class="markdownIt-Anchor" href="#integer-内部缓存"></a> Integer 内部缓存</h2>
-<p>在 <code>Integer</code> 类中存在一个内部类 <code>IntegerCache</code>，使用一个 <code>Integer[]</code> 数组来维持一组 <code>Integer</code> 实例，当我们使用以下语句时：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Integer i = <span class="number">10</span>; <span class="comment">// 或者</span></span><br><span class="line">Integer i = Integer.valueOf(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-<p><code>i</code> 将存储一个指向已经缓存的 <code>Integer</code> 实例的引用。如果使用 <code>new Integer(10)</code>，则会在堆上创建一个新的实例，而不是使用已缓存的实例。实际上，这一机制只有在使用 <code>Integer.valueOf()</code> 才起作用，本质上使用字面量的赋值最终也是通过调用 <code>Integer.valueOf()</code> 来实现的。在 Java 执行自动装箱（autoboxing）也是类似的。</p>
-<p><code>IntegerCache</code> 类非常简单，我们可以看一下（jdk 1.8）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Cache to support the object identity semantics of autoboxing for values between</span></span><br><span class="line"><span class="comment"> * -128 and 127 (inclusive) as required by JLS.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The cache is initialized on first usage.  The size of the cache</span></span><br><span class="line"><span class="comment"> * may be controlled by the &#123;<span class="doctag">@code</span> -XX:AutoBoxCacheMax=&lt;size&gt;&#125; option.</span></span><br><span class="line"><span class="comment"> * During VM initialization, java.lang.Integer.IntegerCache.high property</span></span><br><span class="line"><span class="comment"> * may be set and saved in the private system properties in the</span></span><br><span class="line"><span class="comment"> * sun.misc.VM class.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> low = -<span class="number">128</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> high;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Integer cache[];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// high value may be configured by property</span></span><br><span class="line">        <span class="keyword">int</span> h = <span class="number">127</span>;</span><br><span class="line">        String integerCacheHighPropValue =</span><br><span class="line">            sun.misc.VM.getSavedProperty(<span class="string">&quot;java.lang.Integer.IntegerCache.high&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (integerCacheHighPropValue != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> i = parseInt(integerCacheHighPropValue);</span><br><span class="line">                i = Math.max(i, <span class="number">127</span>);</span><br><span class="line">                <span class="comment">// Maximum array size is Integer.MAX_VALUE</span></span><br><span class="line">                h = Math.min(i, Integer.MAX_VALUE - (-low) -<span class="number">1</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span>( NumberFormatException nfe) &#123;</span><br><span class="line">                <span class="comment">// If the property cannot be parsed into an int, ignore it.</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        high = h;</span><br><span class="line"></span><br><span class="line">        cache = <span class="keyword">new</span> Integer[(high - low) + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> j = low;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; cache.length; k++)</span><br><span class="line">            cache[k] = <span class="keyword">new</span> Integer(j++);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// range [-128, 127] must be interned (JLS7 5.1.7)</span></span><br><span class="line">        <span class="keyword">assert</span> IntegerCache.high &gt;= <span class="number">127</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">IntegerCache</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>Integer.valueOf()</code> 方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns an &#123;<span class="doctag">@code</span> Integer&#125; instance representing the specified</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> int&#125; value.  If a new &#123;<span class="doctag">@code</span> Integer&#125; instance is not</span></span><br><span class="line"><span class="comment"> * required, this method should generally be used in preference to</span></span><br><span class="line"><span class="comment"> * the constructor &#123;<span class="doctag">@link</span> #Integer(int)&#125;, as this method is likely</span></span><br><span class="line"><span class="comment"> * to yield significantly better space and time performance by</span></span><br><span class="line"><span class="comment"> * caching frequently requested values.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This method will always cache values in the range -128 to 127,</span></span><br><span class="line"><span class="comment"> * inclusive, and may cache other values outside of this range.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  i an &#123;<span class="doctag">@code</span> int&#125; value.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> an &#123;<span class="doctag">@code</span> Integer&#125; instance representing &#123;<span class="doctag">@code</span> i&#125;.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>  1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">valueOf</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)</span><br><span class="line">        <span class="keyword">return</span> IntegerCache.cache[i + (-IntegerCache.low)];</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，<code>IntegerCache</code> 是一个静态内部类，因此，只有我们调用 <code>Integer.valueOf()</code> 方法时，该类才会加载，然后创建缓存。以便提高资源重用率。</p>
-<p>下面是使用 <code>Integer</code> 内部缓存的一个简单例子：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCacheDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Integer i1 = <span class="number">100</span>;</span><br><span class="line">        Integer i2 = <span class="number">100</span>;</span><br><span class="line">        Integer i3 = <span class="keyword">new</span> Integer(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(i1 == i2);</span><br><span class="line">        System.out.println(i1 == i3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Output:</span><br><span class="line">true</span><br><span class="line">false</span><br></pre></td></tr></table></figure>
-<p>当程序执行第一条赋值语句时，<code>IntegerCache</code> 会被加载，并创建相应的缓存池。之后 <code>i2</code> 的赋值使用的已缓存的实例。<code>i3</code> 使用 <code>new</code> 关键字来创建实例，因此，它会在堆上创建一个新的实例对象。<code>==</code> 对于作用于对象之间，比较的是对象的地址，因此，<code>i1 == i2</code> 输出  <code>true</code>， 而 <code>i1 == i3</code> 输出 <code>false</code>。</p>
-<h3 id="修改缓存大小"><a class="markdownIt-Anchor" href="#修改缓存大小"></a> 修改缓存大小</h3>
-<p>从上面的 <code>IntegerCache</code> 类的实现来看，我们可以通过需求自己更改实例缓存范围的最大值，修改方式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. --XX:AutoBoxCache= 1000</span><br><span class="line">2. -Djava.lang.Integer.IntegerCache.high = 1000</span><br></pre></td></tr></table></figure>
-<p>通过上面的修改后，<code>Integer</code> 的缓存范围将变成 <code>-128</code> ~ <code>1000</code>。需要注意的是，当前的实现中，并没有指定 <code>IntegerCache.low</code> 的取值。</p>
-<h2 id="其他封装类"><a class="markdownIt-Anchor" href="#其他封装类"></a> 其他封装类</h2>
-<p>通过查看 <code>Integer</code> 类的中 <code>IntegerCache</code> 的相关实现，我们了解的 <code>Integer</code> 的实例缓存方式。更多地，其他的封装类也有提供类似的机制：</p>
-<ol>
-<li><code>java.lang.Boolean</code> 默认存储两个实例 —— <code>TRUE</code> 和 <code>FALSE</code>；</li>
-<li><code>java.lang.Short</code> 默认缓存范围为 <code>-128 ~ 127</code>；</li>
-<li><code>java.lang.Byte</code> 默认缓存范围 <code>-128 ~ 127</code>；</li>
-<li><code>java.lang.Long</code> 默认缓存范围为 <code>-128 ~ 127</code>;</li>
-<li><code>java.lang.Character</code> 默认缓存范围为 <code>0 ~ 127</code>；</li>
-</ol>
-<p>需要说明的是，除了本文提到的 <code>Integer</code> 以外，其他的封装类只能使用默认的缓存范围，无法进行更改。<code>Float</code> 和 <code>Double</code> 并没有提供这样的缓存机制。不同于这些封装类，<code>String</code> 使用的是字符串池（string pool），采用不同的实现的方式。</p>
-<p><code>String</code> 会为 <code>String</code> 字面量（literals）维持一个字符串池，该字符串池初始化为空，由 <code>String</code> 类维护，当字符串调用 <code>intern</code> 方法时，会将该字符串与字符串池中串使用 <code>equals</code> 方法进行比较，若返回 <code>true</code> 则直接使用字符串池中的串，返回该串的引用。若字符串池中不存在 <code>equals</code> 的串，则创建相应的串并添加到字符串池中。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns a canonical representation for the string object.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * A pool of strings, initially empty, is maintained privately by the</span></span><br><span class="line"><span class="comment"> * class &#123;<span class="doctag">@code</span> String&#125;.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * When the intern method is invoked, if the pool already contains a</span></span><br><span class="line"><span class="comment"> * string equal to this &#123;<span class="doctag">@code</span> String&#125; object as determined by</span></span><br><span class="line"><span class="comment"> * the &#123;<span class="doctag">@link</span> #equals(Object)&#125; method, then the string from the pool is</span></span><br><span class="line"><span class="comment"> * returned. Otherwise, this &#123;<span class="doctag">@code</span> String&#125; object is added to the</span></span><br><span class="line"><span class="comment"> * pool and a reference to this &#123;<span class="doctag">@code</span> String&#125; object is returned.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * It follows that for any two strings &#123;<span class="doctag">@code</span> s&#125; and &#123;<span class="doctag">@code</span> t&#125;,</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> s.intern() == t.intern()&#125; is &#123;<span class="doctag">@code</span> true&#125;</span></span><br><span class="line"><span class="comment"> * if and only if &#123;<span class="doctag">@code</span> s.equals(t)&#125; is &#123;<span class="doctag">@code</span> true&#125;.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * All literal strings and string-valued constant expressions are</span></span><br><span class="line"><span class="comment"> * interned. String literals are defined in section 3.10.5 of the</span></span><br><span class="line"><span class="comment"> * &lt;cite&gt;The Java&amp;trade; Language Specification&lt;/cite&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  a string that has the same contents as this string, but is</span></span><br><span class="line"><span class="comment"> *          guaranteed to be from a pool of unique strings.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> String <span class="title">intern</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
-<p>更多详细相关内容见 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.5">String literals</a>。</p>
-<blockquote>
-<p>references:<br />
-<a href="https://docs.oracle.com/javase/specs/jls/se8/html/index.html">https://docs.oracle.com/javase/specs/jls/se8/html/index.html</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>basic</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java 集合框架概览</title>
     <url>/posts/6a98b274/</url>
     <content><![CDATA[<p>集合（Collection），顾名思义，是一组对象。当需要处理任何的一组对象的时候，我们不可避免地要与集合打交道。集合也存在于几乎所有编程语言中，因此 Java 也不例外，为了开发人员能够更高效地处理集合数据，Java 提供了一个集合框架 （Collections framework），它由一系列接口以及实现类组成，提供了不同类型的集合：<strong>List, Set, Map, Queue, Deque</strong> 等。</p>
@@ -3990,325 +4264,51 @@ JDK = JRE + tools to develop Java application.</p>
       </tags>
   </entry>
   <entry>
-    <title>Advantrue 1 - Leetcode 189 - Rotate Array</title>
-    <url>/posts/885fe7d0/</url>
-    <content><![CDATA[<blockquote>
-<p>给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。<br />
-链接:</p>
+    <title>Java 封装类内部缓存</title>
+    <url>/posts/1017901c/</url>
+    <content><![CDATA[<p>在 Java 中通过 <code>new</code> 关键字等其他方式在堆（heap）上创建对象是一个比较耗费资源的操作。 Java 在封装类（Wrapper classes）上使用内部缓存来使封装类的某些常用值使用更高效。</p>
+<p>与 <code>String</code> 类一样，Java 中的封装类都是不可变的（immutable）。Java 中的封装类与 String 类一样同样提供了类似的缓存池机制。这其实也是一个普遍的操作，对于较昂贵的资源创建操作，使用缓存来处理在其他地方也非常常见，如数据库连接池、线程池等。</p>
+<span id="more"></span>
+<h2 id="integer-内部缓存"><a class="markdownIt-Anchor" href="#integer-内部缓存"></a> Integer 内部缓存</h2>
+<p>在 <code>Integer</code> 类中存在一个内部类 <code>IntegerCache</code>，使用一个 <code>Integer[]</code> 数组来维持一组 <code>Integer</code> 实例，当我们使用以下语句时：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Integer i = <span class="number">10</span>; <span class="comment">// 或者</span></span><br><span class="line">Integer i = Integer.valueOf(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+<p><code>i</code> 将存储一个指向已经缓存的 <code>Integer</code> 实例的引用。如果使用 <code>new Integer(10)</code>，则会在堆上创建一个新的实例，而不是使用已缓存的实例。实际上，这一机制只有在使用 <code>Integer.valueOf()</code> 才起作用，本质上使用字面量的赋值最终也是通过调用 <code>Integer.valueOf()</code> 来实现的。在 Java 执行自动装箱（autoboxing）也是类似的。</p>
+<p><code>IntegerCache</code> 类非常简单，我们可以看一下（jdk 1.8）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Cache to support the object identity semantics of autoboxing for values between</span></span><br><span class="line"><span class="comment"> * -128 and 127 (inclusive) as required by JLS.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * The cache is initialized on first usage.  The size of the cache</span></span><br><span class="line"><span class="comment"> * may be controlled by the &#123;<span class="doctag">@code</span> -XX:AutoBoxCacheMax=&lt;size&gt;&#125; option.</span></span><br><span class="line"><span class="comment"> * During VM initialization, java.lang.Integer.IntegerCache.high property</span></span><br><span class="line"><span class="comment"> * may be set and saved in the private system properties in the</span></span><br><span class="line"><span class="comment"> * sun.misc.VM class.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> low = -<span class="number">128</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> high;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Integer cache[];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// high value may be configured by property</span></span><br><span class="line">        <span class="keyword">int</span> h = <span class="number">127</span>;</span><br><span class="line">        String integerCacheHighPropValue =</span><br><span class="line">            sun.misc.VM.getSavedProperty(<span class="string">&quot;java.lang.Integer.IntegerCache.high&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (integerCacheHighPropValue != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">int</span> i = parseInt(integerCacheHighPropValue);</span><br><span class="line">                i = Math.max(i, <span class="number">127</span>);</span><br><span class="line">                <span class="comment">// Maximum array size is Integer.MAX_VALUE</span></span><br><span class="line">                h = Math.min(i, Integer.MAX_VALUE - (-low) -<span class="number">1</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span>( NumberFormatException nfe) &#123;</span><br><span class="line">                <span class="comment">// If the property cannot be parsed into an int, ignore it.</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        high = h;</span><br><span class="line"></span><br><span class="line">        cache = <span class="keyword">new</span> Integer[(high - low) + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> j = low;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; cache.length; k++)</span><br><span class="line">            cache[k] = <span class="keyword">new</span> Integer(j++);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// range [-128, 127] must be interned (JLS7 5.1.7)</span></span><br><span class="line">        <span class="keyword">assert</span> IntegerCache.high &gt;= <span class="number">127</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">IntegerCache</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Integer.valueOf()</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns an &#123;<span class="doctag">@code</span> Integer&#125; instance representing the specified</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> int&#125; value.  If a new &#123;<span class="doctag">@code</span> Integer&#125; instance is not</span></span><br><span class="line"><span class="comment"> * required, this method should generally be used in preference to</span></span><br><span class="line"><span class="comment"> * the constructor &#123;<span class="doctag">@link</span> #Integer(int)&#125;, as this method is likely</span></span><br><span class="line"><span class="comment"> * to yield significantly better space and time performance by</span></span><br><span class="line"><span class="comment"> * caching frequently requested values.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This method will always cache values in the range -128 to 127,</span></span><br><span class="line"><span class="comment"> * inclusive, and may cache other values outside of this range.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  i an &#123;<span class="doctag">@code</span> int&#125; value.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> an &#123;<span class="doctag">@code</span> Integer&#125; instance representing &#123;<span class="doctag">@code</span> i&#125;.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>  1.5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">valueOf</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)</span><br><span class="line">        <span class="keyword">return</span> IntegerCache.cache[i + (-IntegerCache.low)];</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，<code>IntegerCache</code> 是一个静态内部类，因此，只有我们调用 <code>Integer.valueOf()</code> 方法时，该类才会加载，然后创建缓存。以便提高资源重用率。</p>
+<p>下面是使用 <code>Integer</code> 内部缓存的一个简单例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCacheDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Integer i1 = <span class="number">100</span>;</span><br><span class="line">        Integer i2 = <span class="number">100</span>;</span><br><span class="line">        Integer i3 = <span class="keyword">new</span> Integer(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(i1 == i2);</span><br><span class="line">        System.out.println(i1 == i3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Output:</span><br><span class="line">true</span><br><span class="line">false</span><br></pre></td></tr></table></figure>
+<p>当程序执行第一条赋值语句时，<code>IntegerCache</code> 会被加载，并创建相应的缓存池。之后 <code>i2</code> 的赋值使用的已缓存的实例。<code>i3</code> 使用 <code>new</code> 关键字来创建实例，因此，它会在堆上创建一个新的实例对象。<code>==</code> 对于作用于对象之间，比较的是对象的地址，因此，<code>i1 == i2</code> 输出  <code>true</code>， 而 <code>i1 == i3</code> 输出 <code>false</code>。</p>
+<h3 id="修改缓存大小"><a class="markdownIt-Anchor" href="#修改缓存大小"></a> 修改缓存大小</h3>
+<p>从上面的 <code>IntegerCache</code> 类的实现来看，我们可以通过需求自己更改实例缓存范围的最大值，修改方式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. --XX:AutoBoxCache= 1000</span><br><span class="line">2. -Djava.lang.Integer.IntegerCache.high = 1000</span><br></pre></td></tr></table></figure>
+<p>通过上面的修改后，<code>Integer</code> 的缓存范围将变成 <code>-128</code> ~ <code>1000</code>。需要注意的是，当前的实现中，并没有指定 <code>IntegerCache.low</code> 的取值。</p>
+<h2 id="其他封装类"><a class="markdownIt-Anchor" href="#其他封装类"></a> 其他封装类</h2>
+<p>通过查看 <code>Integer</code> 类的中 <code>IntegerCache</code> 的相关实现，我们了解的 <code>Integer</code> 的实例缓存方式。更多地，其他的封装类也有提供类似的机制：</p>
 <ol>
-<li><a href="https://leetcode-cn.com/problems/rotate-array/">https://leetcode-cn.com/problems/rotate-array/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/rotate-array/">https://leetcode.com/problems/rotate-array/</a>(en)</li>
+<li><code>java.lang.Boolean</code> 默认存储两个实例 —— <code>TRUE</code> 和 <code>FALSE</code>；</li>
+<li><code>java.lang.Short</code> 默认缓存范围为 <code>-128 ~ 127</code>；</li>
+<li><code>java.lang.Byte</code> 默认缓存范围 <code>-128 ~ 127</code>；</li>
+<li><code>java.lang.Long</code> 默认缓存范围为 <code>-128 ~ 127</code>;</li>
+<li><code>java.lang.Character</code> 默认缓存范围为 <code>0 ~ 127</code>；</li>
 </ol>
-<p>示例 1:</p>
-<p>输入: [1,2,3,4,5,6,7] 和 k = 3<br />
-输出: [5,6,7,1,2,3,4]<br />
-解释:<br />
-向右旋转 1 步: [7,1,2,3,4,5,6]<br />
-向右旋转 2 步: [6,7,1,2,3,4,5]<br />
-向右旋转 3 步: [5,6,7,1,2,3,4]<br />
-示例 2:</p>
-<p>输入: [-1,-100,3,99] 和 k = 2<br />
-输出: [3,99,-1,-100]<br />
-解释:<br />
-向右旋转 1 步: [99,-1,-100,3]<br />
-向右旋转 2 步: [3,99,-1,-100]<br />
-说明:</p>
-<p>尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。<br />
-要求使用空间复杂度为 O(1) 的原地算法。</p>
-</blockquote>
-<span id="more"></span>
-<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
-<p>首先考虑考虑<code>brute-force</code>暴力解法，要使数组中的元素整体右移<code>k</code>位，最直接的方式是循环<code>k</code>次，每次循环让每个元素依次跟最后一个元素进行交换<code>swap</code>即可。</p>
+<p>需要说明的是，除了本文提到的 <code>Integer</code> 以外，其他的封装类只能使用默认的缓存范围，无法进行更改。<code>Float</code> 和 <code>Double</code> 并没有提供这样的缓存机制。不同于这些封装类，<code>String</code> 使用的是字符串池（string pool），采用不同的实现的方式。</p>
+<p><code>String</code> 会为 <code>String</code> 字面量（literals）维持一个字符串池，该字符串池初始化为空，由 <code>String</code> 类维护，当字符串调用 <code>intern</code> 方法时，会将该字符串与字符串池中串使用 <code>equals</code> 方法进行比较，若返回 <code>true</code> 则直接使用字符串池中的串，返回该串的引用。若字符串池中不存在 <code>equals</code> 的串，则创建相应的串并添加到字符串池中。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns a canonical representation for the string object.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * A pool of strings, initially empty, is maintained privately by the</span></span><br><span class="line"><span class="comment"> * class &#123;<span class="doctag">@code</span> String&#125;.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * When the intern method is invoked, if the pool already contains a</span></span><br><span class="line"><span class="comment"> * string equal to this &#123;<span class="doctag">@code</span> String&#125; object as determined by</span></span><br><span class="line"><span class="comment"> * the &#123;<span class="doctag">@link</span> #equals(Object)&#125; method, then the string from the pool is</span></span><br><span class="line"><span class="comment"> * returned. Otherwise, this &#123;<span class="doctag">@code</span> String&#125; object is added to the</span></span><br><span class="line"><span class="comment"> * pool and a reference to this &#123;<span class="doctag">@code</span> String&#125; object is returned.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * It follows that for any two strings &#123;<span class="doctag">@code</span> s&#125; and &#123;<span class="doctag">@code</span> t&#125;,</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> s.intern() == t.intern()&#125; is &#123;<span class="doctag">@code</span> true&#125;</span></span><br><span class="line"><span class="comment"> * if and only if &#123;<span class="doctag">@code</span> s.equals(t)&#125; is &#123;<span class="doctag">@code</span> true&#125;.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;</span></span><br><span class="line"><span class="comment"> * All literal strings and string-valued constant expressions are</span></span><br><span class="line"><span class="comment"> * interned. String literals are defined in section 3.10.5 of the</span></span><br><span class="line"><span class="comment"> * &lt;cite&gt;The Java&amp;trade; Language Specification&lt;/cite&gt;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  a string that has the same contents as this string, but is</span></span><br><span class="line"><span class="comment"> *          guaranteed to be from a pool of unique strings.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> String <span class="title">intern</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>更多详细相关内容见 <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.5">String literals</a>。</p>
 <blockquote>
-<p>例如: input : [1, 2, 3, 4], k = 1<br />
-loop1: 4, 2, 3, 1 -&gt;<br />
-4, 1, 3, 2 -&gt;<br />
-4, 1, 2, 3</p>
+<p>references:<br />
+<a href="https://docs.oracle.com/javase/specs/jls/se8/html/index.html">https://docs.oracle.com/javase/specs/jls/se8/html/index.html</a></p>
 </blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rotate</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt;= <span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> last = nums[nums.length-<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; nums.length; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> temp = nums[j];</span><br><span class="line">                nums[j] = last;</span><br><span class="line">                last = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>k</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(kn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<p>Submission status:</p>
-<blockquote>
-<p>该解法通过所有测试用例，但是执行时间为<code>109 ms</code>, 击败<code>14.9%</code>的<code>java</code>代码提交。</p>
-</blockquote>
-<div class="note primary"><p>解题思路二:</p>
-<blockquote>
-<p>利用辅助数组，先将需要移动变换的元素放在移动后的位置，再将辅助数组元素移回原数组.</p>
-</blockquote>
-</div>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rotate</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt; <span class="number">2</span>) <span class="keyword">return</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span>[] aux = <span class="keyword">new</span> <span class="keyword">int</span>[nums.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            aux[(i+k) % nums.length] = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; aux.length; i++) &#123;</span><br><span class="line">            nums[i] = aux[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<p>Submission status:</p>
-<blockquote>
-<p>代码提交运行时间: <code>1 ms</code> 击败<code>53.8%</code>的<code>java</code>提交代码。</p>
-</blockquote>
-<div class="note primary"><p>解题思路三:</p>
-<p>除了上面给出的第二种方案，还有更好的解题方法，能够做到<code>O(n)</code>运行时间，以及<code>O(1)</code>的空间复杂度.</p>
-</div>
-<blockquote>
-<p>思路: 拿题目给定的例子来说，[1,2,3,4,5,6,7], k = 3.<br />
-首先将数组划分成两个部分: <code>0~nums.length-k-1</code>,即<code>[1,2,3,4]和</code>nums.length-k ~ nums.length-1],即<code>[5,6,7]</code>,把两个部分进行翻转，此时数组变成<code>[4,3,2,1,7,6,5]</code>.<br />
-最后，将整个数组进行翻转即可得到我们想要的结果: <code>[5,6,7,1,2,3,4]</code>.</p>
-</blockquote>
-<div class="note warning"><p>需要注意的是，需要对<code>k</code>进行处理，当<code>k &gt; nums.length</code>情况，会出现越界情况。<br />
-解决方法: 使<code>k</code>进行 <strong>mod</strong> <code>nums.length</code>运算(<code>k = k % nums.length</code>).</p>
-</div>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rotate</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums == <span class="keyword">null</span> || nums.length &lt; <span class="number">2</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        k %= nums.length;</span><br><span class="line">        reverse(nums, <span class="number">0</span>, nums.length-k - <span class="number">1</span>);</span><br><span class="line">        reverse(nums, nums.length-k, nums.length-<span class="number">1</span>);</span><br><span class="line">        reverse(nums, <span class="number">0</span>, nums.length-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reverse</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="keyword">int</span> temp = nums[i];</span><br><span class="line">            nums[i] = nums[j];</span><br><span class="line">            nums[j] = temp;</span><br><span class="line">            i++;</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<p>Submission status:</p>
-<blockquote>
-<p>代码提交运行时间: <code>0 ms</code>, 击败<code>100%</code>的<code>java</code>提交代码。</p>
-</blockquote>
-<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
-<p>在处理数组问题时，需要非常小心，时刻注意边界，避免发生数组越界问题。</p>
 ]]></content>
       <categories>
-        <category>Leetcode</category>
+        <category>Java</category>
       </categories>
       <tags>
-        <tag>leetcode-array-easy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Advantrue 1 - Leetcode 11 - Container With Most Water</title>
-    <url>/posts/dac7fdaa/</url>
-    <content><![CDATA[<blockquote>
-<p>给定 n 个非负整数 <code>a1，a2，...，an</code>，每个数代表坐标中的一个点 <code>(i, ai)</code> 。在坐标内画 <code>n</code> 条垂直线，垂直线 <code>i</code> 的两个端点分别为 <code>(i, ai)</code> 和 <code>(i, 0)</code>。找出其中的两条线，使得它们与 <code>x</code> 轴共同构成的容器可以容纳最多的水。<br />
-<br /></p>
-<ul>
-<li><a href="https://leetcode-cn.com/problems/container-with-most-water/">https://leetcode-cn.com/problems/container-with-most-water/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/container-with-most-water/">https://leetcode.com/problems/container-with-most-water/</a>(en)<br />
-<br /><br />
-说明：你不能倾斜容器，且 n 的值至少为 2。<br />
-示例:<br />
-输入: [1,8,6,2,5,4,8,3,7]<br />
-输出: 49</li>
-</ul>
-</blockquote>
-<span id="more"></span>
-<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
-<p>对于这样的题目，很明显可以快速的使用<code>brute-force</code>方式得到解法:</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; height; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; height; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> temp = (j-i) * (height[i]&gt;height[j]?height[j]:height[i]);</span><br><span class="line">                <span class="keyword">if</span> (temp &gt; maxArea)</span><br><span class="line">                    maxArea = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<div class="note primary"><p>显然使用<code>brute-force</code>解法设计的算法是正确的，但是时间复杂度是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>级别，因此我们需要考虑优化。<br />
-代码提交状况:<br />
-运行时间(Runtime): 269 ms<br />
-beats rate: 20.1%</p>
-</div>
-<div class="note warning"><p>其实仔细看的话，要使围成的矩形面积最大，无非就是让长和宽尽量的大，因此我们可以使用<code>Two-pointers</code>双指针的思想:<br />
-使用两个指针<code>i,j</code>分别指向<code>0</code>和<code>height.length-1</code>，让一开始的<code>x</code>坐标距离最大化，然后判断它们所对应的高度谁低，<br />
-依据较低的高度值计算面积，再将对应索引指针增<code>1</code>(对于低索引指针)或减<code>1</code>(高索引指针)。</p>
-</div>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxArea</span><span class="params">(<span class="keyword">int</span>[] height)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = Integer.MIN_VAlUE;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> j = height.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; j) &#123;</span><br><span class="line">            <span class="comment">// int x = j - i;</span></span><br><span class="line">            <span class="comment">// maxArea = Math.max(maxArea,Math.min(heigth[i], height[j])*x);</span></span><br><span class="line">            <span class="comment">// if (height[i] &lt; height[j]) &#123;</span></span><br><span class="line">            <span class="comment">//     i++;</span></span><br><span class="line">            <span class="comment">// &#125; else &#123;</span></span><br><span class="line">            <span class="comment">//     j--;</span></span><br><span class="line">            <span class="comment">// &#125;</span></span><br><span class="line">            <span class="comment">// 对代码进行缩减</span></span><br><span class="line">            maxArea = Math.max(maxArea, height[j]&lt;height[i]?(j-i)*height[j--]:(j-i))*height[i++]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<div class="note primary"><p>使用<strong>双指针</strong>，只需要一次遍历就能得到结果。可以见得双指针是非常有效的工具，也是数组类问题中常见的解题思路: 例如，对于已经排好序的两数之和(Two sum - sorted)问题,就可以使用双指针进行解决。</p>
-<p>代码提交状况:<br />
-运行时间(Runtime): 6 ms<br />
-beat rate: 65.95%</p>
-</div>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>leetcode-array-medium</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Advanture 1 - Leetcode 561 - Array Partition I</title>
-    <url>/posts/270f73f9/</url>
-    <content><![CDATA[<blockquote>
-<p>给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), …, (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。<br /><br /><br />
-链接:</p>
-<ol>
-<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode-cn.com/problems/array-partition-i/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode.com/problems/array-partition-i/</a>(en)</li>
-</ol>
-<p>示例 1:</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: [1,4,3,2]</span><br><span class="line"></span><br><span class="line">输出: 4</span><br><span class="line">解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>提示:</p>
-<ol>
-<li>n 是正整数,范围在 [1, 10000].</li>
-<li>数组中的元素范围在 [-10000, 10000].</li>
-</ol>
-</blockquote>
-<span id="more"></span>
-<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
-<p>个人解题思路，观察给定的例子，很容易发现，对于一个给定的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi>n</mi></mrow><annotation encoding="application/x-tex">2n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault">n</span></span></span></span>大小的数组，只要在组成数对时每次都从数组选择最小的连两个数来组成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>个数对。所获得的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi mathvariant="normal">到</mi><mi>n</mi><mi mathvariant="normal">的</mi><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>b</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">1到n的min(a_i,b_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord cjk_fallback">到</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>总和最大。</p>
-<p>证明: 可以使用数学归纳法进行证明。</p>
-<blockquote>
-<p>因此，首先考虑将数组进行排序，然后将所有奇数位置的元素加和起来就是结果.</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">        <span class="comment">// sort the array first if it is unsorted.</span></span><br><span class="line">        <span class="keyword">if</span> (!isSorted(nums))</span><br><span class="line">            Arrays.sort(nums);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i+=<span class="number">2</span>) &#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// simple tool for sorting a integer array.</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isSorted</span><span class="params">(<span class="keyword">int</span>[] arr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length-<span class="number">1</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[i]&gt;arr[i+<span class="number">1</span>])</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>，主要取决所使用的排序算法</li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<p>Submission status:</p>
-<blockquote>
-<p>以上解法，通过所有测试用例，运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>32</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">32 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">2</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>击败<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>28.65</mn></mrow><annotation encoding="application/x-tex">28.65</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">8</span><span class="mord">.</span><span class="mord">6</span><span class="mord">5</span></span></span></span>%的提交(英文版leetcode)</p>
-</blockquote>
-<blockquote>
-<p>可以清楚的了解到该问题还有更好的解法。<br />
-由于<strong>我的解题思路基于比较的排序算法，因此时间复杂度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>已是最优</strong>,需要考虑另外的解题思路。</p>
-</blockquote>
-<p>如果不排序的情况下，得到结果。？？？ --&gt; emmm… 没想到。。。</p>
-<blockquote>
-<p>额…, 解题思路不变，还是基于排序，但是应用<strong>空间换时间</strong>的思想，因此容易想到利用<strong>桶排序</strong>对给定数组进行排序(毕竟数组元素范围已经给定<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn><mtext> </mtext><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000 ~ 10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bucket = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">20001</span>];</span><br><span class="line">        <span class="keyword">int</span> maxElemt = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">int</span> minElemt = Integer.MAX_VALUE;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            bucket[nums[i]+<span class="number">10000</span>]++;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; maxElemt)</span><br><span class="line">                maxElemt = nums[i];</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &lt; minElemt)</span><br><span class="line">                minElemt = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">        minElemt += <span class="number">10000</span>;  <span class="comment">// offset is 10000</span></span><br><span class="line">        maxElemt += <span class="number">10000</span>;</span><br><span class="line">        <span class="keyword">boolean</span> isOdd = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = minElemt; i &lt;= maxElemt; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bucket[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; bucket[i]; j++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (isOdd)</span><br><span class="line">                        result += (i - <span class="number">10000</span>);</span><br><span class="line">                    isOdd = !isOdd;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="note primary"><p>代码简单解释，由于给定数组元素的范围为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span> ~ <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 因此桶排序所需要的总的容量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>20000</mn></mrow><annotation encoding="application/x-tex">20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 对给定数组出现的元素进行偏移(偏移量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)<br />
-<code>bucket[nums[i]+10000]++</code>，使用两个整型变量<code>minElemt</code>和<code>maxElemt</code>确定元素出现的范围, 使用<em>flag</em>变量<code>isOdd</code>判断当前处理元素是处于奇数位置还是偶数位置。</p>
-</div>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>, 就算是数组所有元素都相同的情况，也是只要遍历<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>次</li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 对于该题目来说，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi mathvariant="normal">为</mi><mn>20000</mn></mrow><annotation encoding="application/x-tex">n为20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">为</span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span></li>
-</ul>
-<p><strong>Submission status</strong>:</p>
-<blockquote>
-<p>代码提交状况: 运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>7</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">7 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">7</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>,超过<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>100</mn></mrow><annotation encoding="application/x-tex">100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span>%的<code>java</code>代码提交。</p>
-</blockquote>
-<p><img data-src="leetcode-561-2.png" alt="" /></p>
-<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
-<p>第一种解法是通用解法，可以适用于不同的给定数组元素范围，而第二种解法只适用于此题，当元素范围比较大时，所花费的空间代价高。</p>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>leetcode-array-easy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Advanture 1 - leetcode 1 - Two Sum</title>
-    <url>/posts/917327d3/</url>
-    <content><![CDATA[<p><code>leetcode</code>解题思路总结:</p>
-<blockquote>
-<p>给定一个整数数组和一个目标值，找出数组中和为目标值的两个数。</p>
-<p>你可以假设每个输入只对应一种答案，且同样的元素不能被重复利用。<br />
-链接:</p>
-<ul>
-<li><a href="https://leetcode-cn.com/problems/two-sum/">https://leetcode-cn.com/problems/two-sum/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/two-sum/">https://leetcode.com/problems/two-sum/</a>(en)</li>
-</ul>
-<p>示例:</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">给定 nums = [2, 7, 11, 15], target = 9</span><br><span class="line"></span><br><span class="line">因为 nums[0] + nums[1] = 2 + 7 = 9</span><br><span class="line">所以返回 [0, 1]</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
-<p>对于这样的题目，最容易想到的是<code>brute-force</code>暴力解法, 直接两重循环进行迭代.</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; nums.length; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (nums[j] == target-nums[i])</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[] &#123;i, j&#125;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Returns null if solution not found.</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Complexity Analysising):</strong></p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<p>暴力解法虽然可行，但是时间复杂度为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>, 考虑进行优化，首先想到是可以以空间换时间:</p>
-<div class="note primary"><p>如果能够把给定数组的数，用某种数据结构将每个数的数值以及对应的索引(index)保存起来，则只需要用一次遍历查找<br />
-<code>target - nums[i]</code>是否存在于该数据结构中，且非<code>nums[i]</code>即可。</p>
-</div>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        Map&lt;Integer, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            map.put(nums[i], i);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> remain = target - map.get(nums[i]);</span><br><span class="line">            <span class="keyword">if</span> (map.containsKey(remain) &amp;&amp; map.get(remain) != i)</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[] &#123;i, map.get(remain)&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// returns null if solution not found.</span></span><br><span class="line">        reutrn <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Complexity Analysising)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<div class="note warning"><p>年轻的我，本以为上面的这种解法已经是最优的了，但是看完讨论区之后，才焕然大悟，它还可以进行优化:<br />
-仔细看的话，上面的<code>HashMap</code>算法访问了<code>nums</code>数组两遍，而接下来，从<code>leetcode</code>上学习到的优化方法就是<strong>将<code>nums</code>数组的访问从两遍降到一遍</strong>.</p>
-</div>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        Map&lt;Integer, Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> remain = target - nums[i];</span><br><span class="line">            <span class="keyword">if</span> (map.containsKey(remain))</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[] &#123;map.get(remain), i&#125;;</span><br><span class="line">            map.put(nums[i], i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="note info"><p>由于<code>map</code>中保存的肯定是索引<code>i</code>之前的数，因此不需要判断<code>map.get(remain) != i</code>.</p>
-</div>
-<p><strong>复杂度分析(Complexity Analysising)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): O(n)</li>
-<li>空间复杂度(Space complexity): O(n)</li>
-</ul>
-<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
-<p>对于能够快速使用<code>brute-force</code>暴力解法解决的问题，考虑优化时，首先考虑能够减少循环的嵌套，其次是考虑减少数组的访问次数、元素比较次数、元素交换次数等。</p>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>leetcode-array-easy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Advanture 1 Leetcode - 944 - Delete Columns to Make Sorted</title>
-    <url>/posts/f5b699c8/</url>
-    <content><![CDATA[<blockquote>
-<p>给出由 N 个小写字母串组成的数组 <code>A</code>，所有小写字母串的长度都相同。<br />
-现在，我们可以选择任何一组删除索引，对于每个字符串，我们将删除这些索引中的所有字符。<br />
-举个例子，如果字符串为 <code>&quot;abcdef&quot;</code>，且删除索引是 <code>&#123;0, 2, 3&#125;</code>，那么删除之后的最终字符串为 <code>&quot;bef&quot;</code>。<br />
-假设我们选择了一组删除索引 <code>D</code>，在执行删除操作之后，<code>A</code> 中剩余的每一列都是有序的。<br />
-形式上，第 <code>c</code> 列为 <code>[A[0][c], A[1][c], ..., A[A.length-1][c]]</code><br />
-返回 <code>D.length</code> 的最小可能值。<br />
-<br /></p>
-<ul>
-<li><a href="https://leetcode-cn.com/problems/delete-columns-to-make-sorted/">https://leetcode-cn.com/problems/delete-columns-to-make-sorted/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/delete-columns-to-make-sorted/">https://leetcode.com/problems/delete-columns-to-make-sorted/</a>(en)<br />
-<br /><br />
-示例 1：<br />
-输入：[“cba”,“daf”,“ghi”]<br />
-输出：1<br />
-示例 2：<br />
-输入：[“a”,“b”]<br />
-输出：0<br />
-示例 3：<br />
-输入：[“zyx”,“wvu”,“tsr”]<br />
-输出：3<br />
-提示：<br />
-1 &lt;= A.length &lt;= 100<br />
-1 &lt;= A[i].length &lt;= 1000</li>
-</ul>
-</blockquote>
-<span id="more"></span>
-<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
-<p>对于这种可以快速得出解题思路的题目：</p>
-<div class="note primary"><p>由于每个字符串的长度一样，所以我们只需要依次比较字符串对应的每一列，<strong>判断是否满足非降序</strong>即可得到结果。</p>
-</div>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minDeletionSize</span><span class="params">(String[] A)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = A[<span class="number">0</span>].length(); i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = A.length-<span class="number">1</span>; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (A[j].charAt(i) &gt; A[j+<span class="number">1</span>].charAt(i)) &#123;</span><br><span class="line">                    count++;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span></li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<details class="note "><summary><p>waring</p>
-</summary>
-<p>此题目，在<code>leetcode</code>上被归类为<code>greedy</code>，但我觉的解题思路并没怎么体现贪心算法的思想。。。</p>
-
-</details>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>leetcode-greedy-easy</tag>
+        <tag>basic</tag>
       </tags>
   </entry>
   <entry>
@@ -4403,6 +4403,113 @@ beat rate: 65.95%</p>
         <tag>avro</tag>
         <tag>parquet</tag>
         <tag>orc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何处理 YARN 集群上 Spark 应用的依赖冲突问题？</title>
+    <url>/posts/713a3350/</url>
+    <content><![CDATA[<p>本文主要介绍 Spark 应用提交到 YARN 集群上可能遇到的依赖冲突问题，以及探讨它对应的解决办法，并最终给出建议解决方案。</p>
+<span id="more"></span>
+<h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>近期，我在将本地打包好的 Spark 应用部署到 YARN 集群时，有遇到这样一个问题：</p>
+<p>通过 <code>spark-submit</code> 以 <code>cluster</code> 模式提交应用后，应用报错提示类似这样的信息： <code>** NoSuchMethodError **xx org.yaml.snakeyaml.xx **</code>。</p>
+<p>有一定开发经验的同学可能会立马意识到，这和 <code>** NoClassDefFoundError **</code> 报错信息类似，由于编译时 compile-time 代码无问题，在运行时 runtime 出现这样的报错，则大概率是运行时 <code>classpath</code> 类文件问题，可能是依赖版本不一致。</p>
+<h3 id="问题定位"><a class="markdownIt-Anchor" href="#问题定位"></a> 问题定位</h3>
+<h4 id="1-spark-应用的执行模式-client-vs-cluster"><a class="markdownIt-Anchor" href="#1-spark-应用的执行模式-client-vs-cluster"></a> 1. Spark 应用的执行模式: client vs cluster</h4>
+<p>为定位 YARN 集群上执行 Spark 应用出现的问题，我们需先了解一下 Spark 应用在 YARN 集群上的执行模式，谈论的集群管理器（Cluster Manager）类型为 Hadoop YARN。</p>
+<p>在使用 <code>spark-submit</code> 提交 Spark 应用时，将 <code>--master</code> 指定为 <code>yarn</code> ，连接 YARN 集群，我们需通过 <code>--deploy-mode</code> 配置来指定应用的执行模式，可选项为: <code>client</code> 或 <code>cluster</code>，这两种执行模式的主要区别在于 Driver 程序（<code>SparkContext</code>）所处位置。</p>
+<ol>
+<li>
+<p><code>client</code> 执行模式：Driver 程序位于 Spark YARN client，这种执行模式下，Driver 程序可运行于本地机器，用于监控特定作业的执行状态，但一旦本地机器 Driver 出问题，则相应的整个应用也会失败，且还需要考虑 Driver 与 worker 节点的网络通讯延迟问题。</p>
+</li>
+<li>
+<p><code>cluster</code> 执行模式: Spark YARN client 提交应用后，Driver 会在某一 YARN 容器中启动（可与 Executor 一起），客户端提交应用后便可离线。</p>
+</li>
+</ol>
+<p><img data-src="./cluster-overview.png" alt="" /></p>
+<p>在生产环境中，一般地，为了减少 Driver 和 Executors 之间通讯的网络开销，我们会使用 <code>cluster</code> 模式进行应用部署，此时，Spark 以一组独立进程的形式运行。</p>
+<p>由于集群上本身已经包含了许多 Spark 和 Hadoop 的依赖，因此，在对已开发 Spark 项目应用进行打包时，为了减小 jar 包的大小，可选择 <code>jar</code> 插件的打包方式。而后在通过  <code>spark-submit</code> 提交应用时，通过 <code>--jars</code> 和 <code>--packages</code> 来进行应用的依赖管理。其中：</p>
+<ul>
+<li><code>--jars</code>: 多个依赖项以逗号隔开，每个依赖项由 URL 描述，支持的 URL 模式有 <code>file</code>, <code>hdfs</code>, <code>http</code>, <code>https</code>, <code>ftp</code>, 以及 <code>local</code> 本地模式；指定的依赖项会自动传输到集群上，导入到 driver 和 executors  classpath 中。</li>
+<li><code>--packages</code>: 可指定由逗号隔开的 Maven 坐标，同时会处理相应的所有传递依赖。额外的 Maven 还可通过  <code>--repositories</code> 进行指定。</li>
+</ul>
+<p>e.g.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">./bin/spark-submit \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode cluster \</span><br><span class="line">--driver-memory 3g \</span><br><span class="line">--executor-memory 10g \</span><br><span class="line">--num-executors 6 \</span><br><span class="line">--executor-cores 8 \</span><br><span class="line">--class com.rovo98.example.SparkApplication \</span><br><span class="line">--jars /usr/rovo98/ex/jars/xxxA.jar,\</span><br><span class="line">/usr/rovo98/ex/jars/xxxB.jar \</span><br><span class="line">--files /usr/rovo98/ex/conf/application.yml \</span><br><span class="line">/usr/rovo98/ex/xxx-spark.jar</span><br></pre></td></tr></table></figure>
+<h4 id="2-依赖冲突问题"><a class="markdownIt-Anchor" href="#2-依赖冲突问题"></a> 2. 依赖冲突问题</h4>
+<p>YARN 上 Spark 应用运行，执行模式为 <code>cluster</code> 情况下，集群管理器将根据应用需要启动若干 YARN 容器（由 <code>spark-submit</code> 的参数指定），Driver  和 Executor 进程会运行于这些容器中，且会加载集群中 spark <code>jars</code> 目录（e.g. <code>/usr/hdp/current/spark2-client/jars/</code>）下的依赖到类路径中，后续应用执行使用的依赖项则会<strong>优先</strong>从此加载。因此，如果该路径下包含了不符合应用需要版本的依赖项时，则极大可能出现依赖冲突问题。</p>
+<h3 id="解决方法"><a class="markdownIt-Anchor" href="#解决方法"></a> 解决方法</h3>
+<p>为了解决 YARN 上 Spark 应用的依赖冲突问题，我们可采取这样两种策略：1、将项目打成 uber jar 包，包含项目需要的所有依赖，以使项目运行时优先使用该项目 jar 中包含的依赖项；2、通过 Spark 提供的一些配置项覆盖指定依赖项，使应用运行所在节点优先加载指定版本的依赖。</p>
+<h4 id="1-使用-shade-插件将项目打包成-uber-jar"><a class="markdownIt-Anchor" href="#1-使用-shade-插件将项目打包成-uber-jar"></a> 1. 使用 shade 插件将项目打包成 uber jar</h4>
+<p>Maven 提供了 Shade 插件，可将项目工程打包成 uber jar 包，即 jar 中包含依赖，且能进行一些额外处理，如重命名依赖等。</p>
+<p>Shade 插件只有单个目标 goal，<code>shade:shade</code> 绑定于 <code>package</code> 阶段，用于创建出一个 shaded jar 包。</p>
+<p>配置使用 Shade 插件示例:</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">project</span>&gt;</span></span><br><span class="line">	...</span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        	<span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                	<span class="comment">&lt;!-- put your configurations here --&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                	<span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    	<span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        	<span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>详细的 shade 插件使用见： <a href="https://maven.apache.org/plugins/maven-shade-plugin/index.html">https://maven.apache.org/plugins/maven-shade-plugin/index.html</a>。</p>
+<p>例如，可通过添加 <code>ManifestResourceTransformer</code> 配置，来创建可执行 jar 包，即指定 jar 包的 mainClass。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">transformers</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">transformer</span> <span class="attr">implementation</span>=<span class="string">&quot;org.apache.maven.plugins.shade.resource.ManifestResourceTransformer&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">mainClass</span>&gt;</span>com.rovo98.example.SparkApplication<span class="tag">&lt;/<span class="name">mainClass</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">transformer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">transformers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h4 id="2-使用-spark-submit-提供的配置项对目标依赖进行版本覆盖"><a class="markdownIt-Anchor" href="#2-使用-spark-submit-提供的配置项对目标依赖进行版本覆盖"></a> 2. 使用 spark-submit 提供的配置项对目标依赖进行版本覆盖</h4>
+<p>我们上文已提到，Spark driver 及 executor 启动后，会优化加载集群安装路径 <code>jars/</code> 目录下的依赖，因此，我们需要通过一些配置，让 Spark 优先选择我们指定的版本的依赖。</p>
+<p>从 spark 文档关于运行时环境（Runtime Enviroment）的配置可以找到以下相关内容：</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spark.driver.extraClassPath</td>
+<td>（none)</td>
+<td>用于配置前置（prepend）到 driver  classpath 的额外 classpath 项<br />Note: 在 client 模式下，由于 driver JVM 已启动，该配置不能通过 SparkConf 进行配置，请使用 --driver-class-path 属性配置。</td>
+</tr>
+<tr>
+<td>spark.driver.userClassPathFirst</td>
+<td>false</td>
+<td>(实验性) 决定在 Driver 加载依赖依赖时，是否优先选择用户添加的依赖版本。目前该配置为实验性功能。且只能在 cluster 模式下使用。</td>
+</tr>
+<tr>
+<td>spark.executor.userClassPathFirst</td>
+<td>false</td>
+<td>(实验性) 功能和上述 driver 的类似，只不过应用在 executor 实例上。</td>
+</tr>
+<tr>
+<td>spark.executor.extraClassPath</td>
+<td>(none)</td>
+<td>用于配置前置（prepend）到 executor classpath 的额外 classpath 项。|<br />该配置主要用于兼容旧版本 spark 而存在，用户通常不应该设置该配置。</td>
+</tr>
+</tbody>
+</table>
+<p>假设，我们的 Spark 应用有一依赖项，e.g. <code>snakeyaml</code>，在 Spark 集群 <code>jars/</code> 目录下版本为 1.12，而我们应用需要 <code>1.24</code> 版本，当应用打成 jar 包进行部署时，如不做一定有效配置，则应用在运行时会出现依赖冲突问题。</p>
+<p>根据上述运行时环境配置项，我们可这样解决该依赖冲突问题：</p>
+<ol>
+<li>
+<p>配置 driver 和 executor 的额外 classpath 项</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># e.g.</span></span><br><span class="line">./bin/spark-submit \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode cluster \</span><br><span class="line">--driver-memory 5g \</span><br><span class="line">--executor-memory 10g \</span><br><span class="line">--num-executors 6 \</span><br><span class="line">--executor-cores 8 \</span><br><span class="line">--class com.rovo98.example.SparkApplication \</span><br><span class="line">--jars /usr/rovo98/ex/deps/snakeyaml-1.24.jar \</span><br><span class="line">--files /usr/rovo98/ex/conf/application.yml \</span><br><span class="line">--conf spark.driver.extraClassPath=snakeyaml-1.24.jar \</span><br><span class="line">--conf spark.executor.extraClassPath=snakeyaml-1.24.jar \</span><br><span class="line">/usr/rovo98/ex/xxxx-spark-app.jar</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>配置 driver 和 executor 的用户 classpath 优先项</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># e.g.</span></span><br><span class="line">./bin/spark-submit \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode cluster \</span><br><span class="line">--driver-memory 5g \</span><br><span class="line">--executor-memory 10g \</span><br><span class="line">--num-executors 6 \</span><br><span class="line">--executor-cores 8 \</span><br><span class="line">--class com.rovo98.example.SparkApplication \</span><br><span class="line">--jars /usr/rovo98/ex/deps/snakeyaml-1.24.jar \</span><br><span class="line">--files /usr/rovo98/ex/conf/application.yml \</span><br><span class="line">--conf spark.driver.userClassPathFirst=<span class="literal">true</span> \</span><br><span class="line">--conf spark.executor.userClassPathFirst=<span class="literal">true</span> \</span><br><span class="line">/usr/rovo98/ex/xxxx-spark-app.jar</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>Notice: 由于 <code>userClassPathFirst</code> 属性为实验性配置项，因此，在实践中，我一般选择使用 <code>extraClassPath</code> 配置项。</p>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>实际上，对于这个 YARN 上 Spark 应用依赖冲突问题，如果不需要考虑项目打包后 jar 的大小因素的话，将项目打包成 uber jar，则大抵不会遇到这问题。当然，为了减少 jar 传输的开销，压缩 jar 包的大小是有必要的，毕竟有的项目打包后可能动辄几百兆，也不方便对 jar 包后续的修改（如 class 文件、配置文件的替换等）。</p>
+<h3 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h3>
+<ol>
+<li><a href="https://blog.knoldus.com/cluster-vs-client-execution-modes-for-a-spark-application/">https://blog.knoldus.com/cluster-vs-client-execution-modes-for-a-spark-application/</a></li>
+<li><a href="https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn">https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn</a></li>
+<li><a href="https://hadoopsters.com/2019/05/08/how-to-override-a-spark-dependency-in-client-or-cluster-mode/">https://hadoopsters.com/2019/05/08/how-to-override-a-spark-dependency-in-client-or-cluster-mode/</a></li>
+<li><a href="https://spark.apache.org/docs/latest/configuration.html#runtime-environment">https://spark.apache.org/docs/latest/configuration.html#runtime-environment</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>BigData</category>
+        <category>Spark</category>
+      </categories>
+      <tags>
+        <tag>Spark</tag>
       </tags>
   </entry>
   <entry>
