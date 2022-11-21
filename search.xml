@@ -2544,6 +2544,139 @@ P(s\sigma)&amp; = &amp;P(s)P(\sigma) &amp;s\in \Sigma^*, \sigma\in\Sigma.
       </tags>
   </entry>
   <entry>
+    <title>SQL - 查找并清除重复的数据行</title>
+    <url>/posts/a264c38d/</url>
+    <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
+<p>接下来，我们谈一谈，如果数据库中已有重复的数据行，我们该如何把它们找出来，并将这些数据行删除。</p>
+<span id="more"></span>
+<h2 id="1-准备"><a class="markdownIt-Anchor" href="#1-准备"></a> 1. 准备</h2>
+<p>为了方便后续进行处理展示，我们将创建一个简单的数据库，仅包含一个数据表，且该表包含重复的数据行。下面是创建测试用的数据库相应的 <code>sql</code> 脚本。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing &#x27;find&amp;remove dupicate rows experiment&#x27;.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> schema IF <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> schema IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line">USE testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="type">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    <span class="keyword">primary</span> key (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">&#x27;Stu1&#x27;</span>, <span class="string">&#x27;stu1@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">&#x27;Stu2&#x27;</span>, <span class="string">&#x27;stu2@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">&#x27;Stu3&#x27;</span>, <span class="string">&#x27;stu3@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="2-查找重复的数据行"><a class="markdownIt-Anchor" href="#2-查找重复的数据行"></a> 2. 查找重复的数据行</h2>
+<p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
+<ol>
+<li>使用自连接 self <code>join</code>:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用子查询:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> name</span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>使用双表查询:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>使用 <code>group by</code>:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, mail</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> name, mail</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">2</span>) <span class="operator">&gt;=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="3-删除重复的数据行"><a class="markdownIt-Anchor" href="#3-删除重复的数据行"></a> 3. 删除重复的数据行</h2>
+<p>要删除重复的数据行，与查找重复数据行的方式类似，使用 <code>delete from</code> 语法即可。</p>
+<blockquote>
+<p>删除重复的 <code>id</code> 字段较大的数据行，保留 <code>id</code> 较小的数据行</p>
+</blockquote>
+<ol>
+<li>使用双表进行删除:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用自链接 self join:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s2</span><br><span class="line"><span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>以上就是关于查找和删除数据库中重复数据行的相关方法，需要说明的是，除了上面提到的 sql 以外，相信还有更多的实现方式。从简单易用的角度来考虑的话，双表以及自链接的实现方式都是不错的选择。</p>
+<p>最后，对于已相关 sql 实现方法，我们并未对 sql 执行的性能进行测试。</p>
+<blockquote>
+<p>References</p>
+<ul>
+<li><a href="https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/">https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/</a></li>
+<li><a href="https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/">https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/</a></li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Dev</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 Docker 运行 Oracle 数据库</title>
+    <url>/posts/c5182a98/</url>
+    <content><![CDATA[<p>虽然之前上过 oracle 数据库相关的课程，但学得比较浅，上完课后也没怎么使用到 oracle 数据库，一般都使用 mysql、mariadb 等。</p>
+<p>最近因为工作需要，不得不重新认真学学 Oracle 数据库了「重复学习真的很浪费时间😓」，而首先需要考虑的就是如何安装一个 oracle 数据库了，之前已有在 windows 系统下直接安装 oracle 数据库的经验。</p>
+<p>理论上，再在 win10 上安装一个 oracle 数据库很简单，但我平时主要使用笔记本电脑上的 manjaro 系统，其他的系统只是备用而已。</p>
+<span id="more"></span>
+<h2 id="intro"><a class="markdownIt-Anchor" href="#intro"></a> Intro</h2>
+<p>自从用了 Docker 之后，平时自己在学习或开发，遇到需要在本机上搭建相关环境时，就会很自然地想到能不能使用 Docker 容器来处理呢！</p>
+<p>主要是想让搭建的开发环境与系统环境隔离，我们只在需要使用时才启动相关的容器。当我们不需要使用到该已搭建的环境时，也方便清理！</p>
+<p>既然已经决定要使用 Docker 来安装并运行 oracle 数据库，那么我们应该首先看看官方有没有提供相应的镜像，如果有的话，我们便可以直接 <code>pull</code> 下来，然后运行即可。没有，我们也可从基础镜像开始配置，如从 <code>oracle-linux</code> 开始，一层一层去配置我们需要的镜像。</p>
+<h2 id="1-资源下载及准备"><a class="markdownIt-Anchor" href="#1-资源下载及准备"></a> 1. 资源下载及准备</h2>
+<p>好在通过 google 直接搜 「run oracle database using docker」，便有了相关的资源。</p>
+<p>我选择了 oracle 在 github 上提供的 <a href="https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance">docker-image</a> 库。他们也提供了相应的 <a href="http://README.md">README.md</a>，给出了如何构建及运行 oracle 镜像的说明。</p>
+<p>接下来，我将以 Oracle Database 12c Release 1 (12.1.0.2) Enterprise Edition and Standard Edition 2 为例，简单介绍该镜像的构建及运行使用。</p>
+<h3 id="11-镜像构建"><a class="markdownIt-Anchor" href="#11-镜像构建"></a> 1.1 镜像构建</h3>
+<p>将 docker-image 库下 <code>OracleDatabase</code> 目录下的所有文件下载下来后，在构建相应版本数据库之前，我们还需要从 <a href="http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html">Oracle Technology Network</a> 上下载需要构建数据库版本相应的 linux x86 二进制安装包，放到 <code>OracleDatabase/SingleInstance/dockerfiles/&lt;version&gt;</code>  目录中。</p>
+<p>接着，只需要执行 <code>buildDockerImage.sh</code> 即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[oracle@localhost dockerfiles]$ ./buildDockerImage.sh -h</span><br><span class="line"></span><br><span class="line">Usage: buildDockerImage.sh -v [version] [-e | -s | -x] [-i] [-o] [Docker build option]</span><br><span class="line">Builds a Docker Image for Oracle Database.</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">   -v: version to build</span><br><span class="line">       Choose one of: 11.2.0.2  12.1.0.2  12.2.0.1  18.3.0  18.4.0  19.3.0</span><br><span class="line">   -e: creates image based on &#x27;Enterprise Edition&#x27;</span><br><span class="line">   -s: creates image based on &#x27;Standard Edition 2&#x27;</span><br><span class="line">   -x: creates image based on &#x27;Express Edition&#x27;</span><br><span class="line">   -i: ignores the MD5 checksums</span><br><span class="line">   -o: passes on Docker build option</span><br><span class="line"></span><br><span class="line">* select one edition only: -e, -s, or -x</span><br><span class="line"></span><br><span class="line">LICENSE UPL 1.0</span><br><span class="line"></span><br><span class="line">Copyright (c) 2014-2019 Oracle and/or its affiliates. All rights reserved.</span><br></pre></td></tr></table></figure>
+<p>因为我们要构建 12.1.0.2 企业版数据库，因此执行 <code>./buildDockerImage.sh -v 12.1.0.2 -e</code>。</p>
+<div class="note info"><p>需要注意的，完成该构建镜像过程后，只是生成安装了 Oracle 二进制文件的镜像。在容器第一次启动时，才会创建一个新的数据库实例，当数据库准备好可以使用时，会打印以下几行提示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#########################</span><br><span class="line">DATABASE IS READY TO USE!</span><br><span class="line">#########################</span><br></pre></td></tr></table></figure></div>
+<p>以上是我们使用官方提供的 Dockerfile 来构建的镜像的例子，当然我们也可以使用我们编写的 Dockerfile 来扩展镜像，如创建用户和表空间等。</p>
+<blockquote>
+<p>官方提供的 Dockerfile 使用 oracle-linux 作为镜像基础层。</p>
+</blockquote>
+<p>数据库的字符集编码会在镜像构建过程中进行配置。11g Express Edition 仅支持 UTF-8，标准版 2 和企业版可以在我们第一次运行容器时进行配置，可为不同表空间配置不同的字符集。</p>
+<div class="note warning"><p>我们知道，docker 在构建镜像时，会将所有需要使用到的文件打包传送到构建上下文 (build context) 中，交由 dockerd 服务器来执行构建。</p>
+<p>因此，我们应该尽量让构建上下文只包含我们需要的文件，必要时请使用 <code>.dokerignore</code> 文件，来忽略构建镜像时不需要用到的文件。</p>
+</div>
+<p>镜像的构建过程可能需要花费点时间。以我为例，我选择的数据库版本下载下来的安装包大概 4G 左右，然后构建镜像需要 22 步（22 层），花了将近一个小时吧。</p>
+<p>镜像的构建过程大概如下（仅列出关键步）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">Building image &#x27;oracle/database:12.2.0.1-ee&#x27; ...</span><br><span class="line">Sending build context to Docker daemon  3.454GB</span><br><span class="line">Step 1/22 : FROM oraclelinux:7-slim as base</span><br><span class="line">...</span><br><span class="line">Step 2/22 : LABEL &quot;provider&quot;=&quot;Oracle&quot;                                                     &quot;issues&quot;=&quot;https://github.com/oracle/docker-images/issues&quot;               &quot;volume.data&quot;=&quot;/opt/oracle/oradata&quot;                                     &quot;volume.setup.location1&quot;=&quot;/opt/oracle/scripts/setup&quot;                    &quot;volume.setup.location2&quot;=&quot;/docker-entrypoint-initdb.d/setup&quot;            &quot;volume.startup.location1&quot;=&quot;/opt/oracle/scripts/startup&quot;                &quot;volume.startup.location2&quot;=&quot;/docker-entrypoint-initdb.d/startup&quot;        &quot;port.listener&quot;=&quot;1521&quot;                                                  &quot;port.oemexpress&quot;=&quot;5500&quot;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Step 3/22 : ENV ORACLE_BASE=/opt/oracle     ORACLE_HOME=/opt/oracle/product/12.2.0.1/dbhome_1     INSTALL_DIR=/opt/install     INSTALL_FILE_1=&quot;linuxx64_12201_database.zip&quot;     INSTALL_RSP=&quot;db_inst.rsp&quot;     CONFIG_RSP=&quot;dbca.rsp.tmpl&quot;     PWD_FILE=&quot;setPassword.sh&quot;     RUN_FILE=&quot;runOracle.sh&quot;     START_FILE=&quot;startDB.sh&quot;     CREATE_DB_FILE=&quot;createDB.sh&quot;     SETUP_LINUX_FILE=&quot;setupLinuxEnv.sh&quot;     CHECK_SPACE_FILE=&quot;checkSpace.sh&quot;     CHECK_DB_FILE=&quot;checkDBStatus.sh&quot;     USER_SCRIPTS_FILE=&quot;runUserScripts.sh&quot;     INSTALL_DB_BINARIES_FILE=&quot;installDBBinaries.sh&quot;</span><br><span class="line">...</span><br><span class="line">Step 4/22 : ENV PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch/:/usr/sbin:$PATH     LD_LIBRARY_PATH=$ORACLE_HOME/lib:/usr/lib     CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib</span><br><span class="line">...</span><br><span class="line">Step 5/22 : COPY $SETUP_LINUX_FILE $CHECK_SPACE_FILE $INSTALL_DIR/</span><br><span class="line">...</span><br><span class="line">Step 6/22 : COPY $RUN_FILE $START_FILE $CREATE_DB_FILE $CONFIG_RSP $PWD_FILE $CHECK_DB_FILE $USER_SCRIPTS_FILE $ORACLE_BASE/</span><br><span class="line">...</span><br><span class="line">Step 7/22 : RUN chmod ug+x $INSTALL_DIR/*.sh &amp;&amp;     sync &amp;&amp;     $INSTALL_DIR/$CHECK_SPACE_FILE &amp;&amp;     $INSTALL_DIR/$SETUP_LINUX_FILE &amp;&amp;     rm -rf $INSTALL_DIR</span><br><span class="line">...</span><br><span class="line">Step 8/22 : FROM base AS builder</span><br><span class="line">...</span><br><span class="line">Step 9/22 : ARG DB_EDITION</span><br><span class="line">...</span><br><span class="line">Step 10/22 : RUN yum -y install unzip</span><br><span class="line">...</span><br><span class="line">Step 11/22 : COPY --chown=oracle:dba $INSTALL_FILE_1 $INSTALL_RSP $INSTALL_DB_BINARIES_FILE $INSTALL_DIR/</span><br><span class="line">...</span><br><span class="line">Step 12/22 : USER oracle</span><br><span class="line">...</span><br><span class="line">Step 13/22 : RUN chmod ug+x $INSTALL_DIR/*.sh &amp;&amp;     sync &amp;&amp;     $INSTALL_DIR/$INSTALL_DB_BINARIES_FILE $DB_EDITION</span><br><span class="line">...</span><br><span class="line">Step 14/22 : FROM base</span><br><span class="line">...</span><br><span class="line">Step 15/22 : USER oracle</span><br><span class="line">...</span><br><span class="line">Step 16/22 : COPY --chown=oracle:dba --from=builder $ORACLE_BASE $ORACLE_BASE</span><br><span class="line">...</span><br><span class="line">Step 17/22 : USER root</span><br><span class="line">...</span><br><span class="line">Step 18/22 : RUN $ORACLE_BASE/oraInventory/orainstRoot.sh &amp;&amp;     $ORACLE_HOME/root.sh</span><br><span class="line">...</span><br><span class="line">Step 19/22 : USER oracle</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>构建完成后，我们使用 <code>docker images</code> 来查看相关的镜像。</p>
+<p><img data-src="docker-built-oracle-images.png" alt="" /></p>
+<h2 id="2-运行及使用"><a class="markdownIt-Anchor" href="#2-运行及使用"></a> 2. 运行及使用</h2>
+<p>由于我们构建的 oracle 数据库是企业版 2，因此容器运行主要参考如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --name &lt;container name&gt; \</span><br><span class="line">-p &lt;host port&gt;:1521 -p &lt;host port&gt;:5500 \</span><br><span class="line">-e ORACLE_SID=&lt;your SID&gt; \</span><br><span class="line">-e ORACLE_PDB=&lt;your PDB name&gt; \</span><br><span class="line">-e ORACLE_PWD=&lt;your database passwords&gt; \</span><br><span class="line">-e ORACLE_CHARACTERSET=&lt;your character set&gt; \</span><br><span class="line">-v [&lt;host mount point&gt;:]/opt/oracle/oradata \</span><br><span class="line">oracle/database:19.3.0-ee</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">   --name:        The name of the container (default: auto generated)</span><br><span class="line">   -p:            The port mapping of the host port to the container port. </span><br><span class="line">                  Two ports are exposed: 1521 (Oracle Listener), 5500 (OEM Express)</span><br><span class="line">   -e ORACLE_SID: The Oracle Database SID that should be used (default: ORCLCDB)</span><br><span class="line">   -e ORACLE_PDB: The Oracle Database PDB name that should be used (default: ORCLPDB1)</span><br><span class="line">   -e ORACLE_PWD: The Oracle Database SYS, SYSTEM and PDB_ADMIN password (default: auto generated)</span><br><span class="line">   -e ORACLE_CHARACTERSET:</span><br><span class="line">                  The character set to use when creating the database (default: AL32UTF8)</span><br><span class="line">   -v /opt/oracle/oradata</span><br><span class="line">                  The data volume to use for the database.</span><br><span class="line">                  Has to be writable by the Unix &quot;oracle&quot; (uid: 54321) user inside the container!</span><br><span class="line">                  If omitted the database will not be persisted over container recreation.</span><br><span class="line">   -v /opt/oracle/scripts/startup | /docker-entrypoint-initdb.d/startup</span><br><span class="line">                  Optional: A volume with custom scripts to be run after database startup.</span><br><span class="line">                  For further details see the &quot;Running scripts after setup and on startup&quot; section below.</span><br><span class="line">   -v /opt/oracle/scripts/setup | /docker-entrypoint-initdb.d/setup</span><br><span class="line">                  Optional: A volume with custom scripts to be run after database setup.</span><br><span class="line">                  For further details see the &quot;Running scripts after setup and on startup&quot; section below.</span><br></pre></td></tr></table></figure>
+<p>例如:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run --name dev-oracle-database \</span><br><span class="line">-p 1521:1521 -p 5500:5500 \</span><br><span class="line">-e ORACLE_SID=ORCLCDB \</span><br><span class="line">-e ORACLE_PDB=ORCLPDB1 \</span><br><span class="line">-e ORACLE_PWD=&lt;your password&gt; \</span><br><span class="line">-e ORACLE_CHARACTERSET=UTF-8 \</span><br><span class="line">-v ./docker-volumes/dev-oracle-database/oradata:/opt/oracle/oradata \</span><br><span class="line">-d oracle/database:12.2.0.1-ee</span><br></pre></td></tr></table></figure>
+<p>在容器启动后及数据库创建完成后，我们可以通过以下方式连接数据库：</p>
+<div class="note info"><p>如果本机系统上没有 oracle 数据库的客户端，我们可以直接 <code>docker exec -it &lt;container_id&gt; or &lt;container_name&gt; bash</code> 进入容器，之后再使用容器中提供的 <code>sqlplus</code> 去连接数据库。</p>
+<p>oracle-linux 系统中肯定是有相应的工具的。</p>
+<p>当然啦，当本机上有 Oracle 数据库客户端后，就可以用我们熟悉的方式去连接数据库了。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sqlplus sys/&lt;your password&gt;@//localhost:1521/&lt;your SID&gt; as sysdba</span><br><span class="line">sqlplus system/&lt;your password&gt;@//localhost:1521/&lt;your SID&gt;</span><br><span class="line">sqlplus pdbadmin/&lt;your password&gt;@//localhost:1521/&lt;Your PDB name&gt;</span><br></pre></td></tr></table></figure>
+<p>该 oracle 数据库容器还配置了 OEM (Oracle Enterprise Manager) Express ,我们可以通过浏览器打开以下 URL 来访问:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://localhost:5500/em/</span><br></pre></td></tr></table></figure>
+<div class="note info"><p>Oracle 数据库容器可以通过使用 <code>O_DIRECT</code> 标志来绕过一些文件的文件系统缓存。但不建议在不支持 <code>O_DIRECT</code> 标志的文件系统上运行容器。</p>
+</div>
+<p><strong>修改 admin 账号的密码</strong></p>
+<p>如果第一次启动容器时没有指定密码的话，则会生成随机密码。我们可以在输出日志中的以下行，找到这些账号的密码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN:</span><br></pre></td></tr></table></figure>
+<p>要修改这些账号的密码，我们可以通过 <code>docker exec</code> 去执行容器中的 <code>setPassword.sh</code> 脚本：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> &lt;container name&gt; ./setPassword.sh &lt;your password&gt;</span><br></pre></td></tr></table></figure>
+<div class="note warning"><p>其他版本的数据库的容器的运行与上面提到的企业版和标准版 2 有点不一样，具体可以参考<br />
+Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md</a> 文件。</p>
+</div>
+<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
+<p>本文主要简单介绍了，如何使用 oracle 提供的 docker-image 库构建自己想要的 oracle 数据库镜像，然后运行并使用已构建的镜像。</p>
+<p>实际上，除了使用 oracle 提供的 docker-image 库自己构建相应的镜像外（能使用提供的 Dockerfile 进行自定义），我们也能直接通过类似 <code>docker pull store/oracle/database-enterprise:12.2.0.1-slim</code> 命令直接从官方库上下相应的镜像。</p>
+<p><strong>References</strong></p>
+<ol>
+<li><a href="https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance">https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance</a></li>
+<li><a href="https://dzone.com/articles/oracle-12c-image-installation-in-docker">https://dzone.com/articles/oracle-12c-image-installation-in-docker</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Database</category>
+      </categories>
+      <tags>
+        <tag>Oracle</tag>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot + Docker + Nginx 负载均衡实现</title>
     <url>/posts/39885a36/</url>
     <content><![CDATA[<p>Nginx 是高性能的 http 服务器，反向代理服务器。结合 Tomcat 一起使用可以很容易实现负载均衡。</p>
@@ -2637,67 +2770,9 @@ P(s\sigma)&amp; = &amp;P(s)P(\sigma) &amp;s\in \Sigma^*, \sigma\in\Sigma.
         <category>Practices</category>
       </categories>
       <tags>
-        <tag>SpringBoot</tag>
         <tag>Docker</tag>
+        <tag>SpringBoot</tag>
         <tag>Nginx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SQL - 查找并清除重复的数据行</title>
-    <url>/posts/a264c38d/</url>
-    <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
-<p>接下来，我们谈一谈，如果数据库中已有重复的数据行，我们该如何把它们找出来，并将这些数据行删除。</p>
-<span id="more"></span>
-<h2 id="1-准备"><a class="markdownIt-Anchor" href="#1-准备"></a> 1. 准备</h2>
-<p>为了方便后续进行处理展示，我们将创建一个简单的数据库，仅包含一个数据表，且该表包含重复的数据行。下面是创建测试用的数据库相应的 <code>sql</code> 脚本。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing &#x27;find&amp;remove dupicate rows experiment&#x27;.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> schema IF <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> schema IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line">USE testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="type">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    <span class="keyword">primary</span> key (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">&#x27;Stu1&#x27;</span>, <span class="string">&#x27;stu1@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">&#x27;Stu2&#x27;</span>, <span class="string">&#x27;stu2@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">&#x27;Stu3&#x27;</span>, <span class="string">&#x27;stu3@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
-<h2 id="2-查找重复的数据行"><a class="markdownIt-Anchor" href="#2-查找重复的数据行"></a> 2. 查找重复的数据行</h2>
-<p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
-<ol>
-<li>使用自连接 self <code>join</code>:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>使用子查询:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> name</span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name;</span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>使用双表查询:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="4">
-<li>使用 <code>group by</code>:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, mail</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> name, mail</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">2</span>) <span class="operator">&gt;=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="3-删除重复的数据行"><a class="markdownIt-Anchor" href="#3-删除重复的数据行"></a> 3. 删除重复的数据行</h2>
-<p>要删除重复的数据行，与查找重复数据行的方式类似，使用 <code>delete from</code> 语法即可。</p>
-<blockquote>
-<p>删除重复的 <code>id</code> 字段较大的数据行，保留 <code>id</code> 较小的数据行</p>
-</blockquote>
-<ol>
-<li>使用双表进行删除:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>使用自链接 self join:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s2</span><br><span class="line"><span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>以上就是关于查找和删除数据库中重复数据行的相关方法，需要说明的是，除了上面提到的 sql 以外，相信还有更多的实现方式。从简单易用的角度来考虑的话，双表以及自链接的实现方式都是不错的选择。</p>
-<p>最后，对于已相关 sql 实现方法，我们并未对 sql 执行的性能进行测试。</p>
-<blockquote>
-<p>References</p>
-<ul>
-<li><a href="https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/">https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/</a></li>
-<li><a href="https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/">https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/</a></li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Dev</category>
-      </categories>
-      <tags>
-        <tag>sql</tag>
       </tags>
   </entry>
   <entry>
@@ -4237,6 +4312,171 @@ loop1: 4, 2, 3, 1 -&gt;<br />
       </tags>
   </entry>
   <entry>
+    <title>Dealing with Small Files Problem in Hadoop Distributed File System.</title>
+    <url>/posts/defe18ab/</url>
+    <content><![CDATA[<blockquote>
+<p>处理 Hadoop 分布式文件系统中的小文件问题</p>
+<p>原文→ <a href="https://www.sciencedirect.com/science/article/pii/S1877050916002581">Dealing with small Files Problem in Hadoop Distributed File System</a></p>
+</blockquote>
+<span id="more"></span>
+<h2 id="abstract"><a class="markdownIt-Anchor" href="#abstract"></a> Abstract</h2>
+<p>随着近些年来 Hadoop 的广泛使用，由于 Hadoop 可以很好地处理结构化和非结构化数据，一些知名的大用户如 Yahoo，Facebook，Netflix 以及 Amazon 等都主要使用 Hadoop 来做非结构化数据分析。Hadoop 分布式文件系统（HDFS）意味着它可以存储海量文件，但当需要存储大量小文件时，因为这所有的小文件均由单个服务器节点（Namenode）进行管理，HDFS 将会遇到些许问题。针对该问题，相关研究提出了许多方法，本文主要对比分析这些方法处理 HDFS 小文件问题的表现。</p>
+<h2 id="1-introduction"><a class="markdownIt-Anchor" href="#1-introduction"></a> 1. Introduction</h2>
+<p>开发人员使用 HDFS 的唯一理由便是它提供了无限存储的能力。HDFS 能够处理 GB 或 TB 级别的文件，Hadoop 可在少量大型文件场景下很好地工作，但无法在大量小型文件场景下良好地工作。这是因为大量的小文件会占用 Namenode 大量的内存，且每个小文件会生成一个 map 任务，太多 map 任务会导致数据输入效率低下，在 HDFS 中存储及处理小文件会对 MapReduce 程序产生额外的开销，这极大地影响了 Namenode 的性能。</p>
+<p>HDFS 不能很好处理小文件的原因如下：</p>
+<ul>
+<li>
+<p>对每个小文件的处理，至少对应要处理一个 block，这会导致大量的 block 的大小是小于配置的 block 大小（默认 128MB）的，从 HDFS 配置 block 大小的原因，我们可以知道读取这些大量的小 block 将会非常地耗费时间；</p>
+</li>
+<li>
+<p>Namenode 会为每个文件和 block 维护一条元数据记录并存储于内存中，大量的小文件意味着需要更多的内存空间。</p>
+</li>
+</ul>
+<blockquote>
+<p>Hadoop 将 block size 配置为 128 MB 的原因？</p>
+<p>这样做的目的主要是为了减少文件 block 检索的开销（cost of seeks）- block 足够大的情况下，可使数据传输占用的时间要远多于数据块检索所花费的时间。</p>
+<p>对于 Hadoop block 块该配置多大，通常可以这样快速进行计算：假设磁盘检索时间需要 10ms，传输速率为 100 MB/s，要使检索时间占传输时间的 1%，我们需要将 block 配置为大约 100 MB 左右。虽然 HDFS 默认 block size是 128 MB，但不少 HDFS 用户会使用更多的 block size。</p>
+<p><strong>随着下一代磁盘传输速度的提升，block size 还可以相应地进行提高，但该参数不建议设置太大，毕竟 MapReduce 的 map 任务单次只能处理一个 block，如果 block size 配置过大，可能导致 map 任务数减少（小于集群中的节点数），进而导致作业运行速度慢于它本能跑的速度。</strong></p>
+</blockquote>
+<h2 id="2-literature-review"><a class="markdownIt-Anchor" href="#2-literature-review"></a> 2. Literature Review</h2>
+<p>该文献调查的目的看看现已有哪些研究针对 HDFS 的小文件问题提供了解决方案。</p>
+<h3 id="21-hdfs-and-mapreduce"><a class="markdownIt-Anchor" href="#21-hdfs-and-mapreduce"></a> 2.1 HDFS and MapReduce</h3>
+<p>Apache Hadoop 中有两大主要组件：HDFS 和并行处理框架 MapReduce。</p>
+<ul>
+<li>HDFS 是 Hadoop 的文件系统或存储层，主要设计用于流式数据访问模式下存储非常大型的文件，运行于集群之上；</li>
+<li>MapReduce 是一个编程模型，可用于处理和生成大型数据集。</li>
+</ul>
+<h3 id="22-related-work"><a class="markdownIt-Anchor" href="#22-related-work"></a> 2.2 Related Work</h3>
+<ol>
+<li>Vaibhav Gopal Korat, Kumar Wwamy Pamu 提出了一种 Hadoop 压缩技术(<a href="">HAR</a>)，可减少 Namenode 节点上数据存储的开销，并通过减少 MapReduce 程序中的 map 操作来提升相应的程序性能。</li>
+<li>Jilan Chen, Dan Wang, Lihua Fu, Wenbing Zhao 提供了一种方法（<a href="">Improved HDFS</a>），该方法通过将同目录下的小文件合并成一个大文件，并为每个小文件生成相应的索引，以提高小文件的存储效率和减少 Namenode 的元数据开销。此外，他们还提供了一种缓存策略来提高小文件的读取效率。</li>
+<li>Kashmira P. Jayakar, Y.B.Gurav 提出了一个称为扩展 Hadoop 分布式文件系统（<a href="">EHDFS</a>）的方案。在该方案中，一组相关的小文件将会被合并成单个大文件，以减少文件数量。对于合并成的大文件，将会构建一种索引机制来访问合并文件中的独立文件。更多的，还采用了索引预读取（index prefetching）来提高 I/O 的性能和减少 Namenode 的负载。</li>
+<li>Chatuporn Vorapongkitipun, Natawut Nupairoj 提供了一种基于 Hadoop Archive (HAR) 改进的 New Hadoop Archive (<a href="">NHAR</a>) 方法。该方法最大化了元数据的内存使用，并提升 HDFS 中小文件的访问能力。因为 HAR 不允许向已存在的压缩文件中添加文件，NHAR 做了相应的改进，使得可以向已存在的压缩文件添加额外的文件。</li>
+<li>Priyanka Phakade, Dr. Suhas Raut 设计了一种改进的模型用于处理小文件，该方法通过修改 <code>InputFormat</code> 类来实现性能的提升。<code>InputFormat</code> 将会改为支持将多个文件合并成单个分片，使 map 任务可以处理更多的数据输入。不同于原先的 HDFS 系统，处理大量小文件所需的时间将会被大大地减少，此外，为充分地利用并行度，将会使用多个 reducer。</li>
+</ol>
+<h2 id="3-different-techniques-to-deal-with-small-files-problem"><a class="markdownIt-Anchor" href="#3-different-techniques-to-deal-with-small-files-problem"></a> 3. Different Techniques to deal with small files problem</h2>
+<h3 id="31-hadoop-archive"><a class="markdownIt-Anchor" href="#31-hadoop-archive"></a> 3.1 Hadoop Archive</h3>
+<p>Hadoop Archive (HAR)，一种基于压缩的技术，能够高效地将多个小文件打包压缩成 HDFS block。HAR 中的文件可以直接访问，不需要解压（该过程是在内存中完成）。</p>
+<p><img data-src="dwsfi-har.png" alt="data-model-for-archiving-small-files" /></p>
+<p>创建 HAR 可减少 Namenode 上的数据存储的开销，并减少 MapReduce 程序中的 map 任务数，从而提高性能。</p>
+<p><strong>HAR 文件的创建</strong>：通过 Hadoop archive 命令</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">hadoop archive -archiveNmae -name -p &lt;parent&gt;&lt;src&gt;* &lt;dest&gt;</span><br></pre></td></tr></table></figure>
+<p>该命令将会启动一个 MapReduce 作业将给定文件压缩进少量的 HDFS 文件中。</p>
+<p>示例：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">hadoop archive -archiveName firsttry.har -p /user/hadoop dir1 dir2 /user/rovo98</span><br></pre></td></tr></table></figure>
+<p><strong>HAR文件结构开销</strong>：文件访问需要两次索引文件（index-file）读和一次数据文件（data-file）读操作。要访问相应的文件，需要访问 har 中包含的元数据中的索引。</p>
+<p>相比于 HDFS 中的文件读取，读取 HAR 中的文件效率要更低更慢。升级 HAR 需要 HDFS 的架构也做相应的变更，这是很困难的。</p>
+<h3 id="32-improved-hdfs"><a class="markdownIt-Anchor" href="#32-improved-hdfs"></a> 3.2 Improved HDFS</h3>
+<p>Improved HDFS 结构包含两部分：</p>
+<p>负责将小文件集成进一个大文件的客户端组件（client component）；和负责缓存资源管理的数据节点组件（data node component）。</p>
+<p><img data-src="dwsfi-improved-hdfs.png" alt="" /></p>
+<p>Improved HDFS 模型是基于索引的（index-based）。取决于文件的依赖性，同一目录下的文件会被集成进同一个大文件中，并会每个小文件构建相应的索引，以减少这些小文件的 Namenode 上的开销。</p>
+<p>缓存策略（Cache policy）则是为了提高小文件访问的效率。cache manager （缓存管理器）位于 Datanode 中，当每次需要读取小文件时，会优先检索缓存中的数据，如果缓存数据未命中才会从 Datanode 的磁盘进行检索。</p>
+<p><strong>文件集成的设计</strong>（The Design of file integration）: 每个大文件中包含一个索引文件，该索引文件记录了每个原始的小文件的偏移量（offset）和长度（length）。</p>
+<p><strong>文件集成的处理过程:</strong></p>
+<ul>
+<li>将目录下的小文件进行排序，然后将它们依次写入到相应的大文件中；</li>
+<li>确定小文件的总数量；</li>
+<li>确定文件集成后的大文件的大小，并和 HDFS block 默认大小进行比较；</li>
+</ul>
+<p>基于每个小文件的 offset 及 length 创建出相应的索引文件。如要将大文件存储于单个 block 中，则要求大文件的整体的大小应小于 block size。否则，将使用多个 block 来存储该大文件。</p>
+<h3 id="33-extended-hdfs"><a class="markdownIt-Anchor" href="#33-extended-hdfs"></a> 3.3 Extended HDFS</h3>
+<p>扩展 HDFS (extended HDFS) 同样是基于索引的，当索引文件中小文件的数量非常大时，索引的更新将会变得非常困难，因此该方法采用一种预读取方案来提高 HDFS 的读性能。</p>
+<p>EHDFS 提供了一种改进的索引机制及索引信息的预读取技术。其中有四种技术（file merging、file mapping、prefetching、file extraction）在提升 HDFS 处理小文件效率方面起了很关键的作用。</p>
+<p>总体系统结构及各模块的交互情况如下：</p>
+<p><img data-src="dwsfi-extended-hdfs.png" alt="extended-hdfs-architecture" /></p>
+<p><strong>File Merging</strong>: 在文件合并阶段，Namenode 仅维护合并后的文件的元数据，而不是它包含的所有小文件。除文件数据外，每个 block 的起始位置都会放置一个索引表。该索引表包含了该 block 中每个小文件的索引信息，即每个索引表项目都是一个 (offset, length) 对。文件合并后的 block 结构如下图所示:</p>
+<div style="display: grid; grid-template-columns: 45% 10% 45%;">
+    <div style="display: flex; justify-content: center; align-items: center; font-size: bold;">
+        <img data-src="dwsfi-extended-hdfs-file-merging.png" />
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; font-size: bold;">
+        <span>→</span>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; font-size: bold;">
+        <img data-src="dwsfi-extended-hdfs-file-map.png" />
+    </div>
+</div>
+<p>扩展后的 block 表示合并文件的一部分。和其他正常的文件 block 一样，extended block 也存放在 HDFS Datanode 中。</p>
+<p><strong>File Mapping</strong>: 该过程由 Namenode 执行，文件映射是将小文件名映射至包含该文件的合并文件 block的过程。要获取目标小文件的位置，请求需要将小文件和相应合并文件名发送给 Namenode。</p>
+<p>对于每个合并文件，Namenode 会维护一个 <code>ConstituentFileMap</code> 数据结构。小文件名和包含该小文件名的合并文件中的逻辑块号会进行映射。Namenode 还会维护一个“索引项目号（index entry number）“，该索引项目号指向索引表中的项目。下图展示了一个 <code>temp</code> 合并文件的 <code>ConstituentFileMap</code> 数据结构：</p>
+<p><img data-src="dwsfi-extended-hdfs-file-map.png" alt="constituent-file-map-structure" /></p>
+<p><strong>Prefetching</strong>: 上述的文件合并并不会提升读操作的性能，它仅仅减少了 Namenode 中元数据存储的开销。对于小文件的读取仍会给 Namenode 带来较大的负载，这也将会成为系统的性能瓶径。EHDFS 通过使用预读取文件元数据的框架解决了该瓶径问题。</p>
+<p><strong>File Extraction</strong>: 该过程由 Datanode 执行。文件提取是从一个数据块中提取目标文件内容的过程。</p>
+<p>当客户端读取一个文件时，会同时指定小文件名称和合并文件的名称，这些信息将会被用于：</p>
+<ul>
+<li>获取包含该文件数据的 block 块；</li>
+<li>获取存放相应数据块的 Datanode；</li>
+<li>从 Namenode 获取索引项目号；</li>
+</ul>
+<h3 id="34-new-har"><a class="markdownIt-Anchor" href="#34-new-har"></a> 3.4 New HAR</h3>
+<p>NHAR 的基本思想主要包含以下两点：</p>
+<ul>
+<li>将小文件合并成大文件，以减少文件数量并优化访问的性能；</li>
+<li>扩展 HAR 的文件管理的功能，使其与传统文件系统相似；</li>
+</ul>
+<p>NHAR 重构了索引结构来改进 HDFS 的元数据主体框架，并实现在不变更 HDFS 架构的情况下提升了文件访问的性能。新的设计允许 NHAR 能够将额外的文件添加到已存在的 HAR 压缩文件中。</p>
+<p>对于 HAR 的文件访问，是需要访问两次索引的，这必然会导致不必要的开销。因此，为了提高访问的性能，NHAR 模型采用了单级索引（single-level index）。NHAR 使用索引信息创建了一个 hash table ，而不是 master-index 方案，这些索引信息会被分配到多个索引文件中，如下图所示:</p>
+<p><img data-src="dwsfi-nhar-structure.png" alt="NHAR-file-structure" /></p>
+<p>定位包含目标元数据的索引文件，取决于现有索引文件的数量。将文件的名称 hash 后模现有索引文件数，得到的便是目标索引文件。</p>
+<p>与 HAR 类似，实际的文件数据存放于 part 文件中，下图展示了 NHAR 的 hash 机制：</p>
+<p><img data-src="dwsfi-nhar-hash-mechanism.png" alt="NHAR-hashing-mechanism" /></p>
+<p>在 HAR 方案中，如果要向已有 HAR 压缩文件中添加新的文件，则需要创建出一个新的 HAR 文件，效率非常低。而采用 NHAR 方案后，我们可以直接将文件插入到现有的 NHAR 文件中，其插入的过程主要包含三个步骤：压缩新文件，合并索引文件，以及将新的 part 文件移至相应的 NHAR 文件中。例如将 <code>file-7</code>, <code>file-8</code> 插入到 <code>bar.har</code> 中：</p>
+<p><img data-src="dwsfi-nhar-file-inserting.png" alt="inserting-files-into-NHAR" /></p>
+<p>文件插入的过程如下：</p>
+<ul>
+<li>使用压缩程序将给定的文件压缩至 <code>tmp.har</code> 中；</li>
+<li>为避免文件重复，检查 <code>bar.har</code> 中的 part file (<code>Part-0</code>, <code>Part-1</code>, …) ，看是否已经存在；</li>
+<li>将 <code>tmp.har</code> 中的索引文件合并至 <code>bar.har</code> 中的索引文件中；</li>
+<li>将 <code>tmp.har</code> 中的 part file 移至 <code>bar.har</code> 中；</li>
+<li>删除 <code>tmp.har</code> 文件</li>
+</ul>
+<h3 id="35-combinefileinputformat"><a class="markdownIt-Anchor" href="#35-combinefileinputformat"></a> 3.5 CombineFileInputFormat</h3>
+<p>现有 HDFS 系统采用多个 mappers 和单个 reducer 的形式进行文件读取处理，<code>InputFormat</code> 负责将输入的文件进行分片处理，随后为每个分片生成一个相应的 map 任务进行处理。</p>
+<p><code>CombineFileInputFormat</code> 方法主要通过修改 <code>InputFormat</code> 类来提升系统的性能。修改后的 <code>InputFormat</code>，可以将多个文件合并到单个分片中，这意味着相比于原先的系统，每个 map 任务将能够处理更多的数据输入。处理大量小文件所需的时间也大大地减少了。同时为了提高并行度还将会使用多个 reducers。</p>
+<p><img data-src="dwsfi-combine-file-inputformat.png" alt="workflow-of-CombineFileInputFormat" /></p>
+<p>Namenode 允许 HDFS 客户端创建小文件，当这些小文件提交的时候，Namenode 会将这些文件合并到单个分片中，作为输入分配给 map 任务，然后由 map 任务输出的中间结果将会作为多个 reducer 的输入。最后 reducer 会给出一个排序后的合并输出结果。因为 map 任务数减少了，相应地数据处理时间也减少了。使用 <code>CombineFileInputFormat</code> 将获得高于平均水平的性能。</p>
+<h2 id="4-comparative-study-and-analysis"><a class="markdownIt-Anchor" href="#4-comparative-study-and-analysis"></a> 4. Comparative Study and Analysis</h2>
+<p>下面的表格展示了五种处理 HDFS 中小文件问题方法的对比分析情况。第一种 HAR 方法通过减少命名空间的使用和提高文件读取效率，提供了比较高的可扩展性，但采用 HAR 后，reduce 操作所需的时间将会有所增加。</p>
+<p>使用 Improved HDFS 方法，相比于原先的 HDFS 系统，小文件的读写性能有了大幅度的提高，且平均内存使用率下降了。由于采用了缓存管理器，该方法提供了高扩展性。如果文件不在缓存中，开销将会包含从缓存和 Datanode 检索资源的开销。</p>
+<p><img data-src="dwsfi-comparison-and-analysis.png" alt="dwsfpihdfs-table-comparison-and-analysis" /></p>
+<p>EHDFS 通过为小文件提供更高效的元数据管理来更加充分地利用 HDFS 资源。EHDFS 仅维护每个小文件的元数据而非数据块的元数据。Namenode 仅对合并文件的数据块进行元数据维护，而不是合并文件中包含的每一个小文件，这很大程度上减少了 EHDFS 中 Namenode 的内存使用。此外，HDFS 部分节点故障可能会导致整体系统性能下降，为避免该问题 EHDFS 实现了数据复制（replication），基本上能尽可能地避免系统性能的下降。因为该方案使用映射技术将文件映射成逻辑数据块号，而逻辑数据块号又作为文件名的部分映射，并且使用索引项目号的开销很小，因此，该方案拥有较高的扩展性。</p>
+<p>NHAR 由于其索引文件策略，采用 4 个索引文件，而非原来的 2 个索引文件，将导致 namenode 额外的内存开销。因此它需要消耗稍微多些内存。HAR 同样支持添加新的文件至已存储的归档包（har）中，具备一定扩展性。</p>
+<p>最后，CombineFileInputFormat 则通过将多个文件合并成一个 split 来使每个 mapper 可以一次性处理多个文件。因此，每个 mapper 都能高效地处理它的输入，能带来非常大的性能提升表现。但正因如此，mapper 同时处理多个文件会带来额外的开销，且该方案仍会消耗 namenode 大量的内存。</p>
+<h2 id="5-conclusion"><a class="markdownIt-Anchor" href="#5-conclusion"></a> 5、Conclusion</h2>
+<p>本文针对 Hadoop HDFS 文件系统中面临的小文件问题，对已提出的各种方案进行了介绍和对比。在给定相同参数配置下，能明显看到  CombineFileInputFormat 相比于其他方法，它能在引入合并文件的少量开销的情况下，带来最佳的性能表现。</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
+<ol>
+<li>Dave, P. Learning Basics of Big Data in 21 Days. Retrieved Nov 26, 2014, available at <a href="http://blog.sqlauthority.com/2013/10/30/big-data">http://blog.sqlauthority.com/2013/10/30/big-data</a><br />
+learning-basics-of-big-data-in-21-days-\bookmark/</li>
+<li>Bappalige, S.P. An introduction to Apache Hadoop for big data. Retrieved Nov 27, 2014, available at <a href="http://opensource.com/life/14/8/intro-">http://opensource.com/life/14/8/intro-</a><br />
+apache-hadoop-big-data</li>
+<li>Maniyam, S., Kerzner, M. Hadoop illuminated} (1st Ed.). Houston: Hadoop Illuminated LLC., 2013.</li>
+<li>Panchal, B., Gohil, P., “Efficient Ways to Improve the Performance of HDFS for Small Files”, Computer Engineering and Intelligent Systems,<br />
+Vol.5, pp.45-49, August 2014.</li>
+<li>Palmer, B., “Hadoop: Strengths and Limitations in National Security Missions”, SAP National Security Services, June 2012.</li>
+<li>Beal, V. HDFS. Retrieved Nov 27, 2014, available at <a href="http://www.webopedia.com/TERM/H/hadoop_distributed_file_system_hdfs.html">http://www.webopedia.com/TERM/H/hadoop_distributed_file_system_hdfs.html</a>.</li>
+<li>Chansler, R., Kuang, H., Radia, S., and Shvachko, K., The Architecture of Open Source Applications} (1st ed.). Brea: aosabook, (2013).</li>
+<li>Korat, V.G., Pamu, K.S., “Reduction of Data at Namenode in HDFS using HAR Technique”, International Journal of Advanced Research in<br />
+Computer Engineering and Technology, Vol.1, pp.635-642, June 2012.</li>
+<li>Chen, J., Wang, D., Fu, L., and Zhao, W., “An Improved Small File Processing Method for HDFS”, International Journal of Digital Content<br />
+Technology and its Applications (JDCTA), Vol.6, pp.296-304, Nov 2012.</li>
+<li>Gurav, Y.B., Jayakar, K.P., “Efficient Way for Handling Small Files using Extended HDFS”, International Journal of Computer Science and<br />
+Mobile Computing, Vol.3, pp.785-789, June 2014.</li>
+<li>Nupairoj, N., Vorapongkitipun, Chatuporn., “Improving Performance of Small-File Accessing in Hadoop”, 11th International Joint<br />
+Conference on Computer Science and Software Engineering, pp.200-205, May 2014.</li>
+<li>Dr. Raut, S., Phakade, P., “An Innovative Strategy for Improved Processing of Small Files in Hadoop” International Journal of Application or<br />
+Innovation in Engineering and Management, Vol.3, pp. 278-280, July 2014.</li>
+</ol>
+]]></content>
+      <categories>
+        <category>BigData</category>
+      </categories>
+      <tags>
+        <tag>Hadoop</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>大数据文件格式</title>
     <url>/posts/547465c0/</url>
     <content><![CDATA[<p>本文旨在介绍常见的大数据文件格式，如 Avro、Parquet 和 ORC，了解它们是如何被开发出来的，以及它们的优点和缺点。</p>
@@ -5169,81 +5409,6 @@ s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class=
       </categories>
       <tags>
         <tag>union-find</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用 Docker 运行 Oracle 数据库</title>
-    <url>/posts/c5182a98/</url>
-    <content><![CDATA[<p>虽然之前上过 oracle 数据库相关的课程，但学得比较浅，上完课后也没怎么使用到 oracle 数据库，一般都使用 mysql、mariadb 等。</p>
-<p>最近因为工作需要，不得不重新认真学学 Oracle 数据库了「重复学习真的很浪费时间😓」，而首先需要考虑的就是如何安装一个 oracle 数据库了，之前已有在 windows 系统下直接安装 oracle 数据库的经验。</p>
-<p>理论上，再在 win10 上安装一个 oracle 数据库很简单，但我平时主要使用笔记本电脑上的 manjaro 系统，其他的系统只是备用而已。</p>
-<span id="more"></span>
-<h2 id="intro"><a class="markdownIt-Anchor" href="#intro"></a> Intro</h2>
-<p>自从用了 Docker 之后，平时自己在学习或开发，遇到需要在本机上搭建相关环境时，就会很自然地想到能不能使用 Docker 容器来处理呢！</p>
-<p>主要是想让搭建的开发环境与系统环境隔离，我们只在需要使用时才启动相关的容器。当我们不需要使用到该已搭建的环境时，也方便清理！</p>
-<p>既然已经决定要使用 Docker 来安装并运行 oracle 数据库，那么我们应该首先看看官方有没有提供相应的镜像，如果有的话，我们便可以直接 <code>pull</code> 下来，然后运行即可。没有，我们也可从基础镜像开始配置，如从 <code>oracle-linux</code> 开始，一层一层去配置我们需要的镜像。</p>
-<h2 id="1-资源下载及准备"><a class="markdownIt-Anchor" href="#1-资源下载及准备"></a> 1. 资源下载及准备</h2>
-<p>好在通过 google 直接搜 「run oracle database using docker」，便有了相关的资源。</p>
-<p>我选择了 oracle 在 github 上提供的 <a href="https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance">docker-image</a> 库。他们也提供了相应的 <a href="http://README.md">README.md</a>，给出了如何构建及运行 oracle 镜像的说明。</p>
-<p>接下来，我将以 Oracle Database 12c Release 1 (12.1.0.2) Enterprise Edition and Standard Edition 2 为例，简单介绍该镜像的构建及运行使用。</p>
-<h3 id="11-镜像构建"><a class="markdownIt-Anchor" href="#11-镜像构建"></a> 1.1 镜像构建</h3>
-<p>将 docker-image 库下 <code>OracleDatabase</code> 目录下的所有文件下载下来后，在构建相应版本数据库之前，我们还需要从 <a href="http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html">Oracle Technology Network</a> 上下载需要构建数据库版本相应的 linux x86 二进制安装包，放到 <code>OracleDatabase/SingleInstance/dockerfiles/&lt;version&gt;</code>  目录中。</p>
-<p>接着，只需要执行 <code>buildDockerImage.sh</code> 即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[oracle@localhost dockerfiles]$ ./buildDockerImage.sh -h</span><br><span class="line"></span><br><span class="line">Usage: buildDockerImage.sh -v [version] [-e | -s | -x] [-i] [-o] [Docker build option]</span><br><span class="line">Builds a Docker Image for Oracle Database.</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">   -v: version to build</span><br><span class="line">       Choose one of: 11.2.0.2  12.1.0.2  12.2.0.1  18.3.0  18.4.0  19.3.0</span><br><span class="line">   -e: creates image based on &#x27;Enterprise Edition&#x27;</span><br><span class="line">   -s: creates image based on &#x27;Standard Edition 2&#x27;</span><br><span class="line">   -x: creates image based on &#x27;Express Edition&#x27;</span><br><span class="line">   -i: ignores the MD5 checksums</span><br><span class="line">   -o: passes on Docker build option</span><br><span class="line"></span><br><span class="line">* select one edition only: -e, -s, or -x</span><br><span class="line"></span><br><span class="line">LICENSE UPL 1.0</span><br><span class="line"></span><br><span class="line">Copyright (c) 2014-2019 Oracle and/or its affiliates. All rights reserved.</span><br></pre></td></tr></table></figure>
-<p>因为我们要构建 12.1.0.2 企业版数据库，因此执行 <code>./buildDockerImage.sh -v 12.1.0.2 -e</code>。</p>
-<div class="note info"><p>需要注意的，完成该构建镜像过程后，只是生成安装了 Oracle 二进制文件的镜像。在容器第一次启动时，才会创建一个新的数据库实例，当数据库准备好可以使用时，会打印以下几行提示：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#########################</span><br><span class="line">DATABASE IS READY TO USE!</span><br><span class="line">#########################</span><br></pre></td></tr></table></figure></div>
-<p>以上是我们使用官方提供的 Dockerfile 来构建的镜像的例子，当然我们也可以使用我们编写的 Dockerfile 来扩展镜像，如创建用户和表空间等。</p>
-<blockquote>
-<p>官方提供的 Dockerfile 使用 oracle-linux 作为镜像基础层。</p>
-</blockquote>
-<p>数据库的字符集编码会在镜像构建过程中进行配置。11g Express Edition 仅支持 UTF-8，标准版 2 和企业版可以在我们第一次运行容器时进行配置，可为不同表空间配置不同的字符集。</p>
-<div class="note warning"><p>我们知道，docker 在构建镜像时，会将所有需要使用到的文件打包传送到构建上下文 (build context) 中，交由 dockerd 服务器来执行构建。</p>
-<p>因此，我们应该尽量让构建上下文只包含我们需要的文件，必要时请使用 <code>.dokerignore</code> 文件，来忽略构建镜像时不需要用到的文件。</p>
-</div>
-<p>镜像的构建过程可能需要花费点时间。以我为例，我选择的数据库版本下载下来的安装包大概 4G 左右，然后构建镜像需要 22 步（22 层），花了将近一个小时吧。</p>
-<p>镜像的构建过程大概如下（仅列出关键步）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">Building image &#x27;oracle/database:12.2.0.1-ee&#x27; ...</span><br><span class="line">Sending build context to Docker daemon  3.454GB</span><br><span class="line">Step 1/22 : FROM oraclelinux:7-slim as base</span><br><span class="line">...</span><br><span class="line">Step 2/22 : LABEL &quot;provider&quot;=&quot;Oracle&quot;                                                     &quot;issues&quot;=&quot;https://github.com/oracle/docker-images/issues&quot;               &quot;volume.data&quot;=&quot;/opt/oracle/oradata&quot;                                     &quot;volume.setup.location1&quot;=&quot;/opt/oracle/scripts/setup&quot;                    &quot;volume.setup.location2&quot;=&quot;/docker-entrypoint-initdb.d/setup&quot;            &quot;volume.startup.location1&quot;=&quot;/opt/oracle/scripts/startup&quot;                &quot;volume.startup.location2&quot;=&quot;/docker-entrypoint-initdb.d/startup&quot;        &quot;port.listener&quot;=&quot;1521&quot;                                                  &quot;port.oemexpress&quot;=&quot;5500&quot;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Step 3/22 : ENV ORACLE_BASE=/opt/oracle     ORACLE_HOME=/opt/oracle/product/12.2.0.1/dbhome_1     INSTALL_DIR=/opt/install     INSTALL_FILE_1=&quot;linuxx64_12201_database.zip&quot;     INSTALL_RSP=&quot;db_inst.rsp&quot;     CONFIG_RSP=&quot;dbca.rsp.tmpl&quot;     PWD_FILE=&quot;setPassword.sh&quot;     RUN_FILE=&quot;runOracle.sh&quot;     START_FILE=&quot;startDB.sh&quot;     CREATE_DB_FILE=&quot;createDB.sh&quot;     SETUP_LINUX_FILE=&quot;setupLinuxEnv.sh&quot;     CHECK_SPACE_FILE=&quot;checkSpace.sh&quot;     CHECK_DB_FILE=&quot;checkDBStatus.sh&quot;     USER_SCRIPTS_FILE=&quot;runUserScripts.sh&quot;     INSTALL_DB_BINARIES_FILE=&quot;installDBBinaries.sh&quot;</span><br><span class="line">...</span><br><span class="line">Step 4/22 : ENV PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch/:/usr/sbin:$PATH     LD_LIBRARY_PATH=$ORACLE_HOME/lib:/usr/lib     CLASSPATH=$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib</span><br><span class="line">...</span><br><span class="line">Step 5/22 : COPY $SETUP_LINUX_FILE $CHECK_SPACE_FILE $INSTALL_DIR/</span><br><span class="line">...</span><br><span class="line">Step 6/22 : COPY $RUN_FILE $START_FILE $CREATE_DB_FILE $CONFIG_RSP $PWD_FILE $CHECK_DB_FILE $USER_SCRIPTS_FILE $ORACLE_BASE/</span><br><span class="line">...</span><br><span class="line">Step 7/22 : RUN chmod ug+x $INSTALL_DIR/*.sh &amp;&amp;     sync &amp;&amp;     $INSTALL_DIR/$CHECK_SPACE_FILE &amp;&amp;     $INSTALL_DIR/$SETUP_LINUX_FILE &amp;&amp;     rm -rf $INSTALL_DIR</span><br><span class="line">...</span><br><span class="line">Step 8/22 : FROM base AS builder</span><br><span class="line">...</span><br><span class="line">Step 9/22 : ARG DB_EDITION</span><br><span class="line">...</span><br><span class="line">Step 10/22 : RUN yum -y install unzip</span><br><span class="line">...</span><br><span class="line">Step 11/22 : COPY --chown=oracle:dba $INSTALL_FILE_1 $INSTALL_RSP $INSTALL_DB_BINARIES_FILE $INSTALL_DIR/</span><br><span class="line">...</span><br><span class="line">Step 12/22 : USER oracle</span><br><span class="line">...</span><br><span class="line">Step 13/22 : RUN chmod ug+x $INSTALL_DIR/*.sh &amp;&amp;     sync &amp;&amp;     $INSTALL_DIR/$INSTALL_DB_BINARIES_FILE $DB_EDITION</span><br><span class="line">...</span><br><span class="line">Step 14/22 : FROM base</span><br><span class="line">...</span><br><span class="line">Step 15/22 : USER oracle</span><br><span class="line">...</span><br><span class="line">Step 16/22 : COPY --chown=oracle:dba --from=builder $ORACLE_BASE $ORACLE_BASE</span><br><span class="line">...</span><br><span class="line">Step 17/22 : USER root</span><br><span class="line">...</span><br><span class="line">Step 18/22 : RUN $ORACLE_BASE/oraInventory/orainstRoot.sh &amp;&amp;     $ORACLE_HOME/root.sh</span><br><span class="line">...</span><br><span class="line">Step 19/22 : USER oracle</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>构建完成后，我们使用 <code>docker images</code> 来查看相关的镜像。</p>
-<p><img data-src="docker-built-oracle-images.png" alt="" /></p>
-<h2 id="2-运行及使用"><a class="markdownIt-Anchor" href="#2-运行及使用"></a> 2. 运行及使用</h2>
-<p>由于我们构建的 oracle 数据库是企业版 2，因此容器运行主要参考如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --name &lt;container name&gt; \</span><br><span class="line">-p &lt;host port&gt;:1521 -p &lt;host port&gt;:5500 \</span><br><span class="line">-e ORACLE_SID=&lt;your SID&gt; \</span><br><span class="line">-e ORACLE_PDB=&lt;your PDB name&gt; \</span><br><span class="line">-e ORACLE_PWD=&lt;your database passwords&gt; \</span><br><span class="line">-e ORACLE_CHARACTERSET=&lt;your character set&gt; \</span><br><span class="line">-v [&lt;host mount point&gt;:]/opt/oracle/oradata \</span><br><span class="line">oracle/database:19.3.0-ee</span><br><span class="line"></span><br><span class="line">Parameters:</span><br><span class="line">   --name:        The name of the container (default: auto generated)</span><br><span class="line">   -p:            The port mapping of the host port to the container port. </span><br><span class="line">                  Two ports are exposed: 1521 (Oracle Listener), 5500 (OEM Express)</span><br><span class="line">   -e ORACLE_SID: The Oracle Database SID that should be used (default: ORCLCDB)</span><br><span class="line">   -e ORACLE_PDB: The Oracle Database PDB name that should be used (default: ORCLPDB1)</span><br><span class="line">   -e ORACLE_PWD: The Oracle Database SYS, SYSTEM and PDB_ADMIN password (default: auto generated)</span><br><span class="line">   -e ORACLE_CHARACTERSET:</span><br><span class="line">                  The character set to use when creating the database (default: AL32UTF8)</span><br><span class="line">   -v /opt/oracle/oradata</span><br><span class="line">                  The data volume to use for the database.</span><br><span class="line">                  Has to be writable by the Unix &quot;oracle&quot; (uid: 54321) user inside the container!</span><br><span class="line">                  If omitted the database will not be persisted over container recreation.</span><br><span class="line">   -v /opt/oracle/scripts/startup | /docker-entrypoint-initdb.d/startup</span><br><span class="line">                  Optional: A volume with custom scripts to be run after database startup.</span><br><span class="line">                  For further details see the &quot;Running scripts after setup and on startup&quot; section below.</span><br><span class="line">   -v /opt/oracle/scripts/setup | /docker-entrypoint-initdb.d/setup</span><br><span class="line">                  Optional: A volume with custom scripts to be run after database setup.</span><br><span class="line">                  For further details see the &quot;Running scripts after setup and on startup&quot; section below.</span><br></pre></td></tr></table></figure>
-<p>例如:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker run --name dev-oracle-database \</span><br><span class="line">-p 1521:1521 -p 5500:5500 \</span><br><span class="line">-e ORACLE_SID=ORCLCDB \</span><br><span class="line">-e ORACLE_PDB=ORCLPDB1 \</span><br><span class="line">-e ORACLE_PWD=&lt;your password&gt; \</span><br><span class="line">-e ORACLE_CHARACTERSET=UTF-8 \</span><br><span class="line">-v ./docker-volumes/dev-oracle-database/oradata:/opt/oracle/oradata \</span><br><span class="line">-d oracle/database:12.2.0.1-ee</span><br></pre></td></tr></table></figure>
-<p>在容器启动后及数据库创建完成后，我们可以通过以下方式连接数据库：</p>
-<div class="note info"><p>如果本机系统上没有 oracle 数据库的客户端，我们可以直接 <code>docker exec -it &lt;container_id&gt; or &lt;container_name&gt; bash</code> 进入容器，之后再使用容器中提供的 <code>sqlplus</code> 去连接数据库。</p>
-<p>oracle-linux 系统中肯定是有相应的工具的。</p>
-<p>当然啦，当本机上有 Oracle 数据库客户端后，就可以用我们熟悉的方式去连接数据库了。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sqlplus sys/&lt;your password&gt;@//localhost:1521/&lt;your SID&gt; as sysdba</span><br><span class="line">sqlplus system/&lt;your password&gt;@//localhost:1521/&lt;your SID&gt;</span><br><span class="line">sqlplus pdbadmin/&lt;your password&gt;@//localhost:1521/&lt;Your PDB name&gt;</span><br></pre></td></tr></table></figure>
-<p>该 oracle 数据库容器还配置了 OEM (Oracle Enterprise Manager) Express ,我们可以通过浏览器打开以下 URL 来访问:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://localhost:5500/em/</span><br></pre></td></tr></table></figure>
-<div class="note info"><p>Oracle 数据库容器可以通过使用 <code>O_DIRECT</code> 标志来绕过一些文件的文件系统缓存。但不建议在不支持 <code>O_DIRECT</code> 标志的文件系统上运行容器。</p>
-</div>
-<p><strong>修改 admin 账号的密码</strong></p>
-<p>如果第一次启动容器时没有指定密码的话，则会生成随机密码。我们可以在输出日志中的以下行，找到这些账号的密码：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ORACLE PASSWORD FOR SYS, SYSTEM AND PDBADMIN:</span><br></pre></td></tr></table></figure>
-<p>要修改这些账号的密码，我们可以通过 <code>docker exec</code> 去执行容器中的 <code>setPassword.sh</code> 脚本：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> &lt;container name&gt; ./setPassword.sh &lt;your password&gt;</span><br></pre></td></tr></table></figure>
-<div class="note warning"><p>其他版本的数据库的容器的运行与上面提到的企业版和标准版 2 有点不一样，具体可以参考<br />
-Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md</a> 文件。</p>
-</div>
-<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
-<p>本文主要简单介绍了，如何使用 oracle 提供的 docker-image 库构建自己想要的 oracle 数据库镜像，然后运行并使用已构建的镜像。</p>
-<p>实际上，除了使用 oracle 提供的 docker-image 库自己构建相应的镜像外（能使用提供的 Dockerfile 进行自定义），我们也能直接通过类似 <code>docker pull store/oracle/database-enterprise:12.2.0.1-slim</code> 命令直接从官方库上下相应的镜像。</p>
-<p><strong>References</strong></p>
-<ol>
-<li><a href="https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance">https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance</a></li>
-<li><a href="https://dzone.com/articles/oracle-12c-image-installation-in-docker">https://dzone.com/articles/oracle-12c-image-installation-in-docker</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Database</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-        <tag>Oracle</tag>
       </tags>
   </entry>
   <entry>
