@@ -2544,64 +2544,6 @@ P(s\sigma)&amp; = &amp;P(s)P(\sigma) &amp;s\in \Sigma^*, \sigma\in\Sigma.
       </tags>
   </entry>
   <entry>
-    <title>SQL - 查找并清除重复的数据行</title>
-    <url>/posts/a264c38d/</url>
-    <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
-<p>接下来，我们谈一谈，如果数据库中已有重复的数据行，我们该如何把它们找出来，并将这些数据行删除。</p>
-<span id="more"></span>
-<h2 id="1-准备"><a class="markdownIt-Anchor" href="#1-准备"></a> 1. 准备</h2>
-<p>为了方便后续进行处理展示，我们将创建一个简单的数据库，仅包含一个数据表，且该表包含重复的数据行。下面是创建测试用的数据库相应的 <code>sql</code> 脚本。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing &#x27;find&amp;remove dupicate rows experiment&#x27;.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> schema IF <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> schema IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line">USE testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="type">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    <span class="keyword">primary</span> key (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">&#x27;Stu1&#x27;</span>, <span class="string">&#x27;stu1@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">&#x27;Stu2&#x27;</span>, <span class="string">&#x27;stu2@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">&#x27;Stu3&#x27;</span>, <span class="string">&#x27;stu3@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
-<h2 id="2-查找重复的数据行"><a class="markdownIt-Anchor" href="#2-查找重复的数据行"></a> 2. 查找重复的数据行</h2>
-<p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
-<ol>
-<li>使用自连接 self <code>join</code>:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>使用子查询:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> name</span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name;</span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>使用双表查询:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="4">
-<li>使用 <code>group by</code>:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, mail</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> name, mail</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">2</span>) <span class="operator">&gt;=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="3-删除重复的数据行"><a class="markdownIt-Anchor" href="#3-删除重复的数据行"></a> 3. 删除重复的数据行</h2>
-<p>要删除重复的数据行，与查找重复数据行的方式类似，使用 <code>delete from</code> 语法即可。</p>
-<blockquote>
-<p>删除重复的 <code>id</code> 字段较大的数据行，保留 <code>id</code> 较小的数据行</p>
-</blockquote>
-<ol>
-<li>使用双表进行删除:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>使用自链接 self join:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s2</span><br><span class="line"><span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>以上就是关于查找和删除数据库中重复数据行的相关方法，需要说明的是，除了上面提到的 sql 以外，相信还有更多的实现方式。从简单易用的角度来考虑的话，双表以及自链接的实现方式都是不错的选择。</p>
-<p>最后，对于已相关 sql 实现方法，我们并未对 sql 执行的性能进行测试。</p>
-<blockquote>
-<p>References</p>
-<ul>
-<li><a href="https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/">https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/</a></li>
-<li><a href="https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/">https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/</a></li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Dev</category>
-      </categories>
-      <tags>
-        <tag>sql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用 Docker 运行 Oracle 数据库</title>
     <url>/posts/c5182a98/</url>
     <content><![CDATA[<p>虽然之前上过 oracle 数据库相关的课程，但学得比较浅，上完课后也没怎么使用到 oracle 数据库，一般都使用 mysql、mariadb 等。</p>
@@ -2773,6 +2715,166 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
         <tag>Docker</tag>
         <tag>SpringBoot</tag>
         <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL - 查找并清除重复的数据行</title>
+    <url>/posts/a264c38d/</url>
+    <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
+<p>接下来，我们谈一谈，如果数据库中已有重复的数据行，我们该如何把它们找出来，并将这些数据行删除。</p>
+<span id="more"></span>
+<h2 id="1-准备"><a class="markdownIt-Anchor" href="#1-准备"></a> 1. 准备</h2>
+<p>为了方便后续进行处理展示，我们将创建一个简单的数据库，仅包含一个数据表，且该表包含重复的数据行。下面是创建测试用的数据库相应的 <code>sql</code> 脚本。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing &#x27;find&amp;remove dupicate rows experiment&#x27;.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> schema IF <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> schema IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line">USE testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="type">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    <span class="keyword">primary</span> key (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">&#x27;Stu1&#x27;</span>, <span class="string">&#x27;stu1@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">&#x27;Stu2&#x27;</span>, <span class="string">&#x27;stu2@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">&#x27;Stu3&#x27;</span>, <span class="string">&#x27;stu3@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="2-查找重复的数据行"><a class="markdownIt-Anchor" href="#2-查找重复的数据行"></a> 2. 查找重复的数据行</h2>
+<p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
+<ol>
+<li>使用自连接 self <code>join</code>:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用子查询:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> name</span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>使用双表查询:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>使用 <code>group by</code>:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, mail</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> name, mail</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">2</span>) <span class="operator">&gt;=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="3-删除重复的数据行"><a class="markdownIt-Anchor" href="#3-删除重复的数据行"></a> 3. 删除重复的数据行</h2>
+<p>要删除重复的数据行，与查找重复数据行的方式类似，使用 <code>delete from</code> 语法即可。</p>
+<blockquote>
+<p>删除重复的 <code>id</code> 字段较大的数据行，保留 <code>id</code> 较小的数据行</p>
+</blockquote>
+<ol>
+<li>使用双表进行删除:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用自链接 self join:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s2</span><br><span class="line"><span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>以上就是关于查找和删除数据库中重复数据行的相关方法，需要说明的是，除了上面提到的 sql 以外，相信还有更多的实现方式。从简单易用的角度来考虑的话，双表以及自链接的实现方式都是不错的选择。</p>
+<p>最后，对于已相关 sql 实现方法，我们并未对 sql 执行的性能进行测试。</p>
+<blockquote>
+<p>References</p>
+<ul>
+<li><a href="https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/">https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/</a></li>
+<li><a href="https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/">https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/</a></li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Dev</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java shaded dependencies</title>
+    <url>/posts/99f23fe2/</url>
+    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
+<span id="more"></span>
+<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
+<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
+<p>Relocating classes 示例：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
+<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
+<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
+<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
+<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
+<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
+<ol>
+<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
+<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
+<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
+<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maven 项目构建提速</title>
+    <url>/posts/4d39110c/</url>
+    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
+在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
+<span id="more"></span>
+<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
+<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
+<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
+<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
+<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
+<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
+如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
+<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
+<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
+<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
+<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
+<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
+<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
+<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
+<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
+<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
+<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
+<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
+一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
+<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
+<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
+<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
+<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
+<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
+<ul>
+<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
+<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
+<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
+</ul>
+<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
+<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
+<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
+<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
+对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
+当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
+<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
+<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
+<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
+<blockquote>
+<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
+<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
+<ol>
+<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
+<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
+<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
+<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
@@ -3809,76 +3911,6 @@ JDK = JRE + tools to develop Java application.</p>
         <tag>JVM</tag>
         <tag>JRE</tag>
         <tag>JDK</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Maven 项目构建提速</title>
-    <url>/posts/4d39110c/</url>
-    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
-在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
-<span id="more"></span>
-<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
-<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
-<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
-<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
-<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
-<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
-如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
-<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
-<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
-<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
-<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
-<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
-<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
-<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
-<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
-<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
-<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
-<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
-一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
-<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
-<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
-<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
-<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
-<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
-<ul>
-<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
-<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
-<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
-</ul>
-<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
-<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
-<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
-<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
-对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
-当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
-<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
-<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
-<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
-<blockquote>
-<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
-<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
-<ol>
-<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
-<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
-<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
-<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
