@@ -2776,108 +2776,6 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </tags>
   </entry>
   <entry>
-    <title>Java shaded dependencies</title>
-    <url>/posts/99f23fe2/</url>
-    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
-<span id="more"></span>
-<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
-<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
-<p>Relocating classes 示例：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
-<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
-<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
-<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
-<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
-<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
-<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
-<ol>
-<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
-<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
-<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
-<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Maven 项目构建提速</title>
-    <url>/posts/4d39110c/</url>
-    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
-在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
-<span id="more"></span>
-<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
-<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
-<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
-<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
-<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
-<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
-如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
-<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
-<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
-<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
-<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
-<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
-<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
-<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
-<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
-<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
-<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
-<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
-一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
-<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
-<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
-<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
-<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
-<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
-<ul>
-<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
-<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
-<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
-</ul>
-<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
-<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
-<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
-<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
-对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
-当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
-<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
-<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
-<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
-<blockquote>
-<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
-<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
-<ol>
-<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
-<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
-<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
-<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JVM知识体系 (一) | 类的装载</title>
     <url>/posts/4661f621/</url>
     <content><![CDATA[<p><img data-src="/images/java/basic/class-loading-subsystem.png" alt="class-loading-subsystem" /></p>
@@ -3698,6 +3596,51 @@ method.invoke(对象,参数列表)</li>
       </tags>
   </entry>
   <entry>
+    <title>Java 泛型 PECS</title>
+    <url>/posts/a3d08d1f/</url>
+    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
+<blockquote>
+<p>Producer extends Consumer super</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
+<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
+<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
+<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
+<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
+<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
+<blockquote>
+<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
+<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
+</blockquote>
+<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
+<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
+<blockquote>
+<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
+<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
+<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
+<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
+<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
+<ol>
+<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
+<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
     <title>JDK, JRE, JVM | 深入了解</title>
     <url>/posts/12448424/</url>
     <content><![CDATA[<p>了解<strong>JDK, JRE, JVM之间的区别</strong>，<strong>JVM</strong>是如何工作的？什么是<strong>类加载器</strong>(<em>class loaders</em>), <strong>解释器</strong>(<em>interpreter</em>)和<strong>及时编译器</strong>(<em>JIT compilers</em>)</p>
@@ -3911,6 +3854,108 @@ JDK = JRE + tools to develop Java application.</p>
         <tag>JVM</tag>
         <tag>JRE</tag>
         <tag>JDK</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java shaded dependencies</title>
+    <url>/posts/99f23fe2/</url>
+    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
+<span id="more"></span>
+<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
+<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
+<p>Relocating classes 示例：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
+<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
+<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
+<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
+<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
+<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
+<ol>
+<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
+<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
+<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
+<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maven 项目构建提速</title>
+    <url>/posts/4d39110c/</url>
+    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
+在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
+<span id="more"></span>
+<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
+<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
+<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
+<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
+<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
+<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
+如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
+<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
+<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
+<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
+<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
+<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
+<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
+<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
+<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
+<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
+<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
+<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
+一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
+<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
+<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
+<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
+<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
+<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
+<ul>
+<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
+<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
+<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
+</ul>
+<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
+<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
+<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
+<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
+对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
+当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
+<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
+<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
+<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
+<blockquote>
+<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
+<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
+<ol>
+<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
+<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
+<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
+<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
