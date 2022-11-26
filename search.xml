@@ -3102,111 +3102,6 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </tags>
   </entry>
   <entry>
-    <title>Java Reflection</title>
-    <url>/posts/d897152e/</url>
-    <content><![CDATA[<p>简单了解Java反射的基本内容。</p>
-<span id="more"></span>
-<h3 id="java反射"><a class="markdownIt-Anchor" href="#java反射"></a> Java反射</h3>
-<h4 id="class类的使用"><a class="markdownIt-Anchor" href="#class类的使用"></a> Class类的使用</h4>
-<ul>
-<li>A class named Class</li>
-<li>1)在面向对象的世界里，万事万物皆对象。</li>
-<li>类是对象，类是java.lang.Class类的实例对象</li>
-<li>2)任何一个类都是Class的实例对象，这个实例对象有三种表示方式：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  		<span class="comment">//Foo的实例对象如何表示</span></span><br><span class="line">  		Foo foo1 = <span class="keyword">new</span> Foo() ;<span class="comment">// foo1就表示出来了.</span></span><br><span class="line">  		<span class="comment">//Foo这个类本身 也是一个实例对象，Class类的实例对象</span></span><br><span class="line">  		<span class="comment">// 第一种表示方式 --&gt; 任何一个类都有一个隐含的静态成员变量class</span></span><br><span class="line">  		Class c1 = Foo.class;</span><br><span class="line">  		<span class="comment">//第二种表示方式 --&gt; 已经知道该类的对象通过getClass()方法</span></span><br><span class="line">  		Class c2 = foo1.getClass() ;</span><br><span class="line">  		<span class="comment">/* c1,c2 表示了Foo类的类类型(class type)*/</span></span><br><span class="line">  		<span class="comment">// 不管c1 or c2 都代表了Foo类的类类型，一个类只可能是Class类的一个实例对象</span></span><br><span class="line">  		<span class="comment">// 第三种表达方式</span></span><br><span class="line">  		Class c3 = <span class="keyword">null</span> ;</span><br><span class="line">  		c3 = Class.forName(<span class="string">&quot;com.rovo98.Foo&quot;</span>);</span><br><span class="line">  		<span class="comment">// 我们完全可以通过类的类类型创建该类的对象实例</span></span><br><span class="line">  		Foo foo = (Foo)c1.newInstance() ;<span class="comment">//需要有无参构造方法</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="java动态加载类"><a class="markdownIt-Anchor" href="#java动态加载类"></a> Java动态加载类</h4>
-<ul>
-<li>Class.forName(“类的名称”)
-<ul>
-<li>不仅表示了类的类类型，还代表了动态加载类</li>
-<li>编译时刻加载类是静态加载类、运行时刻加载类是动态加载类</li>
-</ul>
-</li>
-<li>使用：当有多个功能模块(具体由类实现)时，使用动态加载</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//动态加载实例</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">OfficeAble</span>  // 指定接口标准</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Word</span> <span class="keyword">implements</span> <span class="title">OfficeAble</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	System.out.println(<span class="string">&quot;Start the Word&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Office</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">  		<span class="keyword">try</span>&#123;</span><br><span class="line">  			<span class="comment">//实现动态加载，运行时加载类</span></span><br><span class="line">  			Class c = Class.forName(args[<span class="number">0</span>]) ;</span><br><span class="line">  			OfficeAble oa = c.newInstance() ;</span><br><span class="line">  			oa.start() ;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">  			e.printStackTrace() ;</span><br><span class="line">		&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="通过反射获取方法信息"><a class="markdownIt-Anchor" href="#通过反射获取方法信息"></a> 通过反射获取方法信息</h4>
-<ul>
-<li>getMethods()  获取所有public 方法，包括父类继承而来的</li>
-<li>getDeclaredMethods() 获取所有自定义的方法，不包含访问权限</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo2</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">  	 </span><br><span class="line">  	 Class c1 = <span class="keyword">int</span>.class; <span class="comment">// int 的类类型</span></span><br><span class="line">  	 Class c2 = String.class; <span class="comment">//String的类类型</span></span><br><span class="line">  	 Class c3 = <span class="keyword">double</span>.class ;</span><br><span class="line">  	 Class c4 = Double.class ;</span><br><span class="line">  	 Class c5 = <span class="keyword">void</span>.class ;</span><br><span class="line">  	 System.out.println(c1.getName()) ;</span><br><span class="line">  	 System.out.println(c3.getSimpleName()) ;<span class="comment">//打印不包含包名的类信息</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>案例：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.feflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassUtil</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  *打印类的信息，包括类的成员变量，成员方法</span></span><br><span class="line"><span class="comment">  *<span class="doctag">@param</span> obj 该对象所属类的信息</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  	<span class="comment">//要获取类的信息 首先要获取类的类类型</span></span><br><span class="line">  	Class c = obj.getClass() ;<span class="comment">//传递的是哪个子类的对象 c就是该子类的类类型</span></span><br><span class="line">  	<span class="comment">// 获取类名称</span></span><br><span class="line">  	System.out.println(<span class="string">&quot;类的名称：&quot;</span>+c.getName()) ;</span><br><span class="line">  	<span class="comment">/*</span></span><br><span class="line"><span class="comment">  	*Method类 ，方法对象</span></span><br><span class="line"><span class="comment">  	*一个成员方法就是一个Method对象</span></span><br><span class="line"><span class="comment">  	*getMethods()方法获取的是所有public的函数，包括父类继承而来的</span></span><br><span class="line"><span class="comment">  	*getDeclaredMethods()获取的是所有该类自己声明的方法，不包含访问权限</span></span><br><span class="line"><span class="comment">  	*/</span></span><br><span class="line">  	Method[] ms = c.getMethods() ;<span class="comment">//c.getDeclaredMethods()</span></span><br><span class="line">  	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;ms.length; i++) &#123;</span><br><span class="line">        <span class="comment">// 得到方法的返回值类型的类类型</span></span><br><span class="line">        Class returnType = ms[i].getReturnType() ;</span><br><span class="line">        System.out.print(returnType.getName()+<span class="string">&quot; &quot;</span>) ;</span><br><span class="line">        <span class="comment">//得到方法的名称</span></span><br><span class="line">        System.out.print(ms[i].getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">        <span class="comment">//获取参数类型 --&gt; 得到的是参数列表的类型的类类型</span></span><br><span class="line">        <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">  			System.out.print(class1.getName()+<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">	 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="成员变量和构造方法信息的获取"><a class="markdownIt-Anchor" href="#成员变量和构造方法信息的获取"></a> 成员变量和构造方法信息的获取</h4>
-<ul>
-<li>getField()方法获取的是所有的public的成员变量的信息</li>
-<li>getDeclaredField()获取的是该类自己声明的成员变量的信息</li>
-<li>getConstructors获取所有的public的构造方法</li>
-<li>getDeclaredConstructors得到所有的构造方法</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassFieldMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">*成员变量也是对象</span></span><br><span class="line"><span class="comment">*java.lang.reflect.Field</span></span><br><span class="line"><span class="comment">*Field类封装了关于成员变量的操作</span></span><br><span class="line"><span class="comment">*getField()方法获取的是所有的public的成员变量的信息</span></span><br><span class="line"><span class="comment">*getDeclaredField()获取的是该类自己声明的成员变量的信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//Field[] fs = c.getDeclaredFields();</span></span><br><span class="line">Filed[] fs = c.getDeclaredFields();</span><br><span class="line"><span class="keyword">for</span> (Field field:fs) &#123;</span><br><span class="line">  <span class="comment">//得到成员变量的类型的类类型</span></span><br><span class="line">  Class fieldType = field.getType();</span><br><span class="line">  String typeName = fieldType.getName();</span><br><span class="line">  <span class="comment">//得到成员变量的名称</span></span><br><span class="line">  String fieldName = field.getName();</span><br><span class="line">  System.out.println(typeName+<span class="string">&quot; &quot;</span>+fieldName) ;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*打印对象的构造函数的信息</span></span><br><span class="line"><span class="comment">*<span class="doctag">@param</span> obj</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printConMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  Class c = obj.getClass();</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  *构造方法也是对象</span></span><br><span class="line"><span class="comment">  *java.lang.Constructor中封装了构造方法的信息</span></span><br><span class="line"><span class="comment">  *getConstructors获取所有的public的构造方法</span></span><br><span class="line"><span class="comment">  *getDeclaredConstructors得到所有的构造方法</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">//Constructor[] cs = c.getConstructors();</span></span><br><span class="line">  Construtor() cs = c.getDeclaredConstructors();</span><br><span class="line">  <span class="keyword">for</span> (Constructor constructor : cs) &#123;</span><br><span class="line">    <span class="comment">//打印构造方法信息</span></span><br><span class="line">    System.out.print(constructor.getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">    Class[] paramTypes = constructor.getParameterTypes();</span><br><span class="line">    <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">       System.out.print(class1.getName+<span class="string">&quot; &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="java方法反射的基本操作"><a class="markdownIt-Anchor" href="#java方法反射的基本操作"></a> java方法反射的基本操作</h3>
-<h4 id="方法的反射"><a class="markdownIt-Anchor" href="#方法的反射"></a> 方法的反射</h4>
-<ul>
-<li>1)如何获取某个方法<br />
-方法的名称和方法的参数列表才能唯一决定某个方法</li>
-<li>2)方法反射的操作<br />
-method.invoke(对象,参数列表)</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo1</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    <span class="comment">//要获取print(int, int)方法</span></span><br><span class="line">    <span class="comment">//1.要先获取类的类类类型</span></span><br><span class="line">    <span class="comment">//2.获取类的信息</span></span><br><span class="line">    A a1 = <span class="keyword">new</span> A() ;</span><br><span class="line">    Class c = a1.getClass() ;</span><br><span class="line">    <span class="comment">// 3.获取方法 名称和参数列表决定</span></span><br><span class="line">    <span class="comment">//getMethod获取的是public的方法</span></span><br><span class="line">    <span class="comment">//getDeclaredMethod自己的声明的方法</span></span><br><span class="line">    <span class="comment">//c.getMethod(name,parameterTypes);</span></span><br><span class="line">    <span class="comment">//Method m = c.getMethod(&quot;print&quot;,new Class[]&#123;int.class,int.class&#125;);</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 获取print(int,int)方法</span></span><br><span class="line">      Method m = c.getMethod(<span class="string">&quot;print&quot;</span>,<span class="keyword">int</span>.class,<span class="keyword">int</span>.class);</span><br><span class="line">      <span class="comment">//方法的反射操作</span></span><br><span class="line">      <span class="comment">//使用m对象来进行方法调用 和a1对象调用一样</span></span><br><span class="line">      <span class="comment">//方法如果没有返回值返回null,有则返回具体返回值</span></span><br><span class="line">      <span class="comment">//本来是a1.print(10,20);</span></span><br><span class="line">      Object o = m.invoke(a1,<span class="keyword">new</span> Object[]&#123;<span class="number">10</span>,<span class="number">20</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> vodi <span class="title">print</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a + b) ;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String a, String b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a.toUpperCase()+<span class="string">&quot;,&quot;</span>+b.tolowerCase()) ;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="通过反射了解集合泛型的本质"><a class="markdownIt-Anchor" href="#通过反射了解集合泛型的本质"></a> 通过反射了解集合泛型的本质</h4>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo4</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    ArrayList list = <span class="keyword">new</span> ArrayList() ;</span><br><span class="line">    ArrayList&lt;String&gt; list1 = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">    list1.add(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    <span class="comment">//list1.add(20);  错误的</span></span><br><span class="line">    </span><br><span class="line">    Class c1 = list.getClass() ;</span><br><span class="line">    Class c2 = list1.getClass() ;</span><br><span class="line">    System.out.println(c1 == c2) ;</span><br><span class="line">    <span class="comment">//反射的操作都是编译之后的操作</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    *c1 == c2 结果返回true说明编译之后集合的泛型是去泛型化的</span></span><br><span class="line"><span class="comment">    *java中集合的泛型，是防止错误输入的，只在编译阶段有效</span></span><br><span class="line"><span class="comment">    *验证：可以通过方法的反射操作，绕过编译</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">       Method m = c1.getMethod(<span class="string">&quot;add&quot;</span>,Object.class) ;</span><br><span class="line">       <span class="comment">// 绕过编译操作，绕过了泛型</span></span><br><span class="line">       Object o = c1.invoke(list1,<span class="number">20</span>) ;</span><br><span class="line">       System.out.println(list1.size()) ;</span><br><span class="line">       <span class="comment">// list1.size --&gt; 2</span></span><br><span class="line">       <span class="comment">// list1 -- &gt; [&quot;hello&quot;,20]</span></span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>basic</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java 泛型 PECS</title>
-    <url>/posts/a3d08d1f/</url>
-    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
-<blockquote>
-<p>Producer extends Consumer super</p>
-</blockquote>
-<span id="more"></span>
-<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
-<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
-<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
-<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
-<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
-<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
-<blockquote>
-<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
-<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
-</blockquote>
-<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
-<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
-<blockquote>
-<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
-<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
-<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
-<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
-<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
-<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
-<ol>
-<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
-<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-  </entry>
-  <entry>
     <title>JVM知识体系 (一) | 类的装载</title>
     <url>/posts/4661f621/</url>
     <content><![CDATA[<p><img data-src="/images/java/basic/class-loading-subsystem.png" alt="class-loading-subsystem" /></p>
@@ -3728,6 +3623,111 @@ JVM调用<code>main</code>方法时不会创建类的实例，因此将<code>mai
       </categories>
       <tags>
         <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java 泛型 PECS</title>
+    <url>/posts/a3d08d1f/</url>
+    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
+<blockquote>
+<p>Producer extends Consumer super</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
+<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
+<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
+<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
+<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
+<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
+<blockquote>
+<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
+<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
+</blockquote>
+<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
+<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
+<blockquote>
+<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
+<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
+<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
+<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
+<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
+<ol>
+<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
+<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Java Reflection</title>
+    <url>/posts/d897152e/</url>
+    <content><![CDATA[<p>简单了解Java反射的基本内容。</p>
+<span id="more"></span>
+<h3 id="java反射"><a class="markdownIt-Anchor" href="#java反射"></a> Java反射</h3>
+<h4 id="class类的使用"><a class="markdownIt-Anchor" href="#class类的使用"></a> Class类的使用</h4>
+<ul>
+<li>A class named Class</li>
+<li>1)在面向对象的世界里，万事万物皆对象。</li>
+<li>类是对象，类是java.lang.Class类的实例对象</li>
+<li>2)任何一个类都是Class的实例对象，这个实例对象有三种表示方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  		<span class="comment">//Foo的实例对象如何表示</span></span><br><span class="line">  		Foo foo1 = <span class="keyword">new</span> Foo() ;<span class="comment">// foo1就表示出来了.</span></span><br><span class="line">  		<span class="comment">//Foo这个类本身 也是一个实例对象，Class类的实例对象</span></span><br><span class="line">  		<span class="comment">// 第一种表示方式 --&gt; 任何一个类都有一个隐含的静态成员变量class</span></span><br><span class="line">  		Class c1 = Foo.class;</span><br><span class="line">  		<span class="comment">//第二种表示方式 --&gt; 已经知道该类的对象通过getClass()方法</span></span><br><span class="line">  		Class c2 = foo1.getClass() ;</span><br><span class="line">  		<span class="comment">/* c1,c2 表示了Foo类的类类型(class type)*/</span></span><br><span class="line">  		<span class="comment">// 不管c1 or c2 都代表了Foo类的类类型，一个类只可能是Class类的一个实例对象</span></span><br><span class="line">  		<span class="comment">// 第三种表达方式</span></span><br><span class="line">  		Class c3 = <span class="keyword">null</span> ;</span><br><span class="line">  		c3 = Class.forName(<span class="string">&quot;com.rovo98.Foo&quot;</span>);</span><br><span class="line">  		<span class="comment">// 我们完全可以通过类的类类型创建该类的对象实例</span></span><br><span class="line">  		Foo foo = (Foo)c1.newInstance() ;<span class="comment">//需要有无参构造方法</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="java动态加载类"><a class="markdownIt-Anchor" href="#java动态加载类"></a> Java动态加载类</h4>
+<ul>
+<li>Class.forName(“类的名称”)
+<ul>
+<li>不仅表示了类的类类型，还代表了动态加载类</li>
+<li>编译时刻加载类是静态加载类、运行时刻加载类是动态加载类</li>
+</ul>
+</li>
+<li>使用：当有多个功能模块(具体由类实现)时，使用动态加载</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//动态加载实例</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">OfficeAble</span>  // 指定接口标准</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Word</span> <span class="keyword">implements</span> <span class="title">OfficeAble</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	System.out.println(<span class="string">&quot;Start the Word&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Office</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">  		<span class="keyword">try</span>&#123;</span><br><span class="line">  			<span class="comment">//实现动态加载，运行时加载类</span></span><br><span class="line">  			Class c = Class.forName(args[<span class="number">0</span>]) ;</span><br><span class="line">  			OfficeAble oa = c.newInstance() ;</span><br><span class="line">  			oa.start() ;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">  			e.printStackTrace() ;</span><br><span class="line">		&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="通过反射获取方法信息"><a class="markdownIt-Anchor" href="#通过反射获取方法信息"></a> 通过反射获取方法信息</h4>
+<ul>
+<li>getMethods()  获取所有public 方法，包括父类继承而来的</li>
+<li>getDeclaredMethods() 获取所有自定义的方法，不包含访问权限</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo2</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">  	 </span><br><span class="line">  	 Class c1 = <span class="keyword">int</span>.class; <span class="comment">// int 的类类型</span></span><br><span class="line">  	 Class c2 = String.class; <span class="comment">//String的类类型</span></span><br><span class="line">  	 Class c3 = <span class="keyword">double</span>.class ;</span><br><span class="line">  	 Class c4 = Double.class ;</span><br><span class="line">  	 Class c5 = <span class="keyword">void</span>.class ;</span><br><span class="line">  	 System.out.println(c1.getName()) ;</span><br><span class="line">  	 System.out.println(c3.getSimpleName()) ;<span class="comment">//打印不包含包名的类信息</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>案例：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.feflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassUtil</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  *打印类的信息，包括类的成员变量，成员方法</span></span><br><span class="line"><span class="comment">  *<span class="doctag">@param</span> obj 该对象所属类的信息</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  	<span class="comment">//要获取类的信息 首先要获取类的类类型</span></span><br><span class="line">  	Class c = obj.getClass() ;<span class="comment">//传递的是哪个子类的对象 c就是该子类的类类型</span></span><br><span class="line">  	<span class="comment">// 获取类名称</span></span><br><span class="line">  	System.out.println(<span class="string">&quot;类的名称：&quot;</span>+c.getName()) ;</span><br><span class="line">  	<span class="comment">/*</span></span><br><span class="line"><span class="comment">  	*Method类 ，方法对象</span></span><br><span class="line"><span class="comment">  	*一个成员方法就是一个Method对象</span></span><br><span class="line"><span class="comment">  	*getMethods()方法获取的是所有public的函数，包括父类继承而来的</span></span><br><span class="line"><span class="comment">  	*getDeclaredMethods()获取的是所有该类自己声明的方法，不包含访问权限</span></span><br><span class="line"><span class="comment">  	*/</span></span><br><span class="line">  	Method[] ms = c.getMethods() ;<span class="comment">//c.getDeclaredMethods()</span></span><br><span class="line">  	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;ms.length; i++) &#123;</span><br><span class="line">        <span class="comment">// 得到方法的返回值类型的类类型</span></span><br><span class="line">        Class returnType = ms[i].getReturnType() ;</span><br><span class="line">        System.out.print(returnType.getName()+<span class="string">&quot; &quot;</span>) ;</span><br><span class="line">        <span class="comment">//得到方法的名称</span></span><br><span class="line">        System.out.print(ms[i].getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">        <span class="comment">//获取参数类型 --&gt; 得到的是参数列表的类型的类类型</span></span><br><span class="line">        <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">  			System.out.print(class1.getName()+<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">	 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="成员变量和构造方法信息的获取"><a class="markdownIt-Anchor" href="#成员变量和构造方法信息的获取"></a> 成员变量和构造方法信息的获取</h4>
+<ul>
+<li>getField()方法获取的是所有的public的成员变量的信息</li>
+<li>getDeclaredField()获取的是该类自己声明的成员变量的信息</li>
+<li>getConstructors获取所有的public的构造方法</li>
+<li>getDeclaredConstructors得到所有的构造方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassFieldMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">*成员变量也是对象</span></span><br><span class="line"><span class="comment">*java.lang.reflect.Field</span></span><br><span class="line"><span class="comment">*Field类封装了关于成员变量的操作</span></span><br><span class="line"><span class="comment">*getField()方法获取的是所有的public的成员变量的信息</span></span><br><span class="line"><span class="comment">*getDeclaredField()获取的是该类自己声明的成员变量的信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//Field[] fs = c.getDeclaredFields();</span></span><br><span class="line">Filed[] fs = c.getDeclaredFields();</span><br><span class="line"><span class="keyword">for</span> (Field field:fs) &#123;</span><br><span class="line">  <span class="comment">//得到成员变量的类型的类类型</span></span><br><span class="line">  Class fieldType = field.getType();</span><br><span class="line">  String typeName = fieldType.getName();</span><br><span class="line">  <span class="comment">//得到成员变量的名称</span></span><br><span class="line">  String fieldName = field.getName();</span><br><span class="line">  System.out.println(typeName+<span class="string">&quot; &quot;</span>+fieldName) ;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*打印对象的构造函数的信息</span></span><br><span class="line"><span class="comment">*<span class="doctag">@param</span> obj</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printConMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  Class c = obj.getClass();</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  *构造方法也是对象</span></span><br><span class="line"><span class="comment">  *java.lang.Constructor中封装了构造方法的信息</span></span><br><span class="line"><span class="comment">  *getConstructors获取所有的public的构造方法</span></span><br><span class="line"><span class="comment">  *getDeclaredConstructors得到所有的构造方法</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">//Constructor[] cs = c.getConstructors();</span></span><br><span class="line">  Construtor() cs = c.getDeclaredConstructors();</span><br><span class="line">  <span class="keyword">for</span> (Constructor constructor : cs) &#123;</span><br><span class="line">    <span class="comment">//打印构造方法信息</span></span><br><span class="line">    System.out.print(constructor.getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">    Class[] paramTypes = constructor.getParameterTypes();</span><br><span class="line">    <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">       System.out.print(class1.getName+<span class="string">&quot; &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="java方法反射的基本操作"><a class="markdownIt-Anchor" href="#java方法反射的基本操作"></a> java方法反射的基本操作</h3>
+<h4 id="方法的反射"><a class="markdownIt-Anchor" href="#方法的反射"></a> 方法的反射</h4>
+<ul>
+<li>1)如何获取某个方法<br />
+方法的名称和方法的参数列表才能唯一决定某个方法</li>
+<li>2)方法反射的操作<br />
+method.invoke(对象,参数列表)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo1</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    <span class="comment">//要获取print(int, int)方法</span></span><br><span class="line">    <span class="comment">//1.要先获取类的类类类型</span></span><br><span class="line">    <span class="comment">//2.获取类的信息</span></span><br><span class="line">    A a1 = <span class="keyword">new</span> A() ;</span><br><span class="line">    Class c = a1.getClass() ;</span><br><span class="line">    <span class="comment">// 3.获取方法 名称和参数列表决定</span></span><br><span class="line">    <span class="comment">//getMethod获取的是public的方法</span></span><br><span class="line">    <span class="comment">//getDeclaredMethod自己的声明的方法</span></span><br><span class="line">    <span class="comment">//c.getMethod(name,parameterTypes);</span></span><br><span class="line">    <span class="comment">//Method m = c.getMethod(&quot;print&quot;,new Class[]&#123;int.class,int.class&#125;);</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 获取print(int,int)方法</span></span><br><span class="line">      Method m = c.getMethod(<span class="string">&quot;print&quot;</span>,<span class="keyword">int</span>.class,<span class="keyword">int</span>.class);</span><br><span class="line">      <span class="comment">//方法的反射操作</span></span><br><span class="line">      <span class="comment">//使用m对象来进行方法调用 和a1对象调用一样</span></span><br><span class="line">      <span class="comment">//方法如果没有返回值返回null,有则返回具体返回值</span></span><br><span class="line">      <span class="comment">//本来是a1.print(10,20);</span></span><br><span class="line">      Object o = m.invoke(a1,<span class="keyword">new</span> Object[]&#123;<span class="number">10</span>,<span class="number">20</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> vodi <span class="title">print</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a + b) ;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String a, String b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a.toUpperCase()+<span class="string">&quot;,&quot;</span>+b.tolowerCase()) ;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="通过反射了解集合泛型的本质"><a class="markdownIt-Anchor" href="#通过反射了解集合泛型的本质"></a> 通过反射了解集合泛型的本质</h4>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo4</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    ArrayList list = <span class="keyword">new</span> ArrayList() ;</span><br><span class="line">    ArrayList&lt;String&gt; list1 = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">    list1.add(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    <span class="comment">//list1.add(20);  错误的</span></span><br><span class="line">    </span><br><span class="line">    Class c1 = list.getClass() ;</span><br><span class="line">    Class c2 = list1.getClass() ;</span><br><span class="line">    System.out.println(c1 == c2) ;</span><br><span class="line">    <span class="comment">//反射的操作都是编译之后的操作</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    *c1 == c2 结果返回true说明编译之后集合的泛型是去泛型化的</span></span><br><span class="line"><span class="comment">    *java中集合的泛型，是防止错误输入的，只在编译阶段有效</span></span><br><span class="line"><span class="comment">    *验证：可以通过方法的反射操作，绕过编译</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">       Method m = c1.getMethod(<span class="string">&quot;add&quot;</span>,Object.class) ;</span><br><span class="line">       <span class="comment">// 绕过编译操作，绕过了泛型</span></span><br><span class="line">       Object o = c1.invoke(list1,<span class="number">20</span>) ;</span><br><span class="line">       System.out.println(list1.size()) ;</span><br><span class="line">       <span class="comment">// list1.size --&gt; 2</span></span><br><span class="line">       <span class="comment">// list1 -- &gt; [&quot;hello&quot;,20]</span></span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>basic</tag>
       </tags>
   </entry>
   <entry>
@@ -4479,6 +4479,100 @@ loop1: 4, 2, 3, 1 -&gt;<br />
       </tags>
   </entry>
   <entry>
+    <title>大数据文件格式</title>
+    <url>/posts/547465c0/</url>
+    <content><![CDATA[<p>本文旨在介绍常见的大数据文件格式，如 Avro、Parquet 和 ORC，了解它们是如何被开发出来的，以及它们的优点和缺点。</p>
+<p><img data-src="/images/bigdata/parquet-avro-orc-dig.png" alt="" /></p>
+<p>最关键的问题是：<strong>在实践中，为实现最优的性能，我们该如何选择合适的大数据文件格式？</strong></p>
+<span id="more"></span>
+<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>大数据文件格式时间线：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CSV(1978)-&gt; XML(1996) -&gt; JSON(2001) -&gt; Thrift(2007) -&gt; Protobuf(2008)</span><br><span class="line">	-&gt; Avro(2009) -&gt; RC File(2011) -&gt; Parquet(2013) -&gt; ORC(2016)</span><br></pre></td></tr></table></figure>
+<p>在开始具体讨论 Avro、Parquet 及 ORC 之前，我们需要先建立一个评估框架，站在工程师的角度上考虑如何选择合适的大数据文件格式。该评估框架主要包含四个关键因素：</p>
+<ul>
+<li>Row vs Column: 行式存储 or 列式存储</li>
+<li>Schema management: 模式管理</li>
+<li>Splitability: 分片能力</li>
+<li>Compression: 压缩</li>
+</ul>
+<p>接下来，我们将依次介绍评估框架涉及的四个关键因素，引入一些前置知识，以帮助我们思考如何选择合适的文件格式。</p>
+<h2 id="评估框架-行存储-vs-列存储"><a class="markdownIt-Anchor" href="#评估框架-行存储-vs-列存储"></a> 评估框架 - 行存储 vs 列存储</h2>
+<p>首先，对于行式存储及列式存储的文件格式，需要判断哪种是最适合我们需求的。一般而言，列式存储大多用于执行分析查询，因为这些查询通常只需要从海量数据集中获取部分列的数据。相反地，如果查询需要访问数据行的绝大多数列或全部列，那么行式存储的文件格式将会更加合适。</p>
+<blockquote>
+<p>列式存储：适合从海量数据行中访问部分列数据，如分析查询等。</p>
+<p>行式存储：适合访问数据行绝大多数列或全部列的需求。</p>
+</blockquote>
+<p>行式存储是数据表最简单的形式，在高度结构化的数据库系统，如 MySQL 及 Oracle 等中广泛使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Prod1,100.00,2018-04-02;Liam,Prod2,79.99,2018-04-02;Noah,Prod3,19.99,2018-04-01;Olivia,Prod2,79.99,2018-04-03</span><br></pre></td></tr></table></figure>
+<p>数据处理时是从左到右按行读取的。</p>
+<p>不同于行式存储，同样的数据，列式存储形式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Liam,Noah,Olivia;Prod1,Prod2,Prod3;Prod2;100.00,79.99,19.99,79.99;2018-04-02,2018-04-02,2018-04-01,2018-04-03</span><br></pre></td></tr></table></figure>
+<p>可以看到，数据按列从上到下存储，采用这种列分组存储形式可以更高效地处理特定列数据计算。</p>
+<p>列式存储格式在读取数据时，可以跳过不相关的列，只读取所需的列数据，能够实现高效的计算和压缩。</p>
+<h2 id="评估框架-模式管理"><a class="markdownIt-Anchor" href="#评估框架-模式管理"></a> 评估框架 - 模式管理</h2>
+<p>在数据库中，模式 (schema) 是指数据库的组织形式 - 表、列、视图、主键、关系等等。而当我们讨论单个数据集或数据文件的模式时，则相对要简单得多，此时模式只考虑属性列（attribute）层面，是指存储每个属性及其类型的定义。</p>
+<blockquote>
+<p>The schema stores the definition of each attribute and its type.</p>
+</blockquote>
+<p>在实践中，数据模式会时常发生变动（schema evolution），例如字段变更（修改、增加、删除），字段类型变更。那么如何管理模式演化信息也是我们考虑选择何种文件格式的重要因素之一。</p>
+<p>一些可供参考的评估模式管理能力的问题如下：</p>
+<ul>
+<li>更新模式的难易程度？</li>
+<li>不同模式版本如何交互？</li>
+<li>是否人类可读？</li>
+<li>模式处理的速度？</li>
+<li>是否影响数据的大小？</li>
+</ul>
+<p>我们将会在后文讨论具体文件格式时，尝试回答这些问题。</p>
+<h2 id="评估框架-分片能力"><a class="markdownIt-Anchor" href="#评估框架-分片能力"></a> 评估框架 - 分片能力</h2>
+<p>大数据场景中，数据集通常由成百上千个文件组成，且每个文件可能包含数百万或更多条数据记录。这些基于文件的数据块一般也是持续生成的。要高效地处理这些数据集，需要把作业分成不同的子任务，分配到独立的处理器上并行执行。</p>
+<p>数据文件格式的选择在并行实现上会有非常重要的影响。例如，如果一个数据集中的文件包含的是拥有大量数据记录的 XML 或 JSON 记录，这些文件是不可分片的，意味着该数据集无法划分成独立的小部分进行处理。</p>
+<blockquote>
+<p>Splitability: 分片能力，数据格式是否能拆分成独立的小部分，以支撑并行处理。</p>
+</blockquote>
+<p>在本文中介绍的 Avro、Parquet 及 Orc 均支持分片能力，它们之中大多在 MapReduce 生态系统中扮演着重要的角色，能够将大型的数据块分割成更小更适合处理的数据块。</p>
+<h2 id="评估框架-压缩"><a class="markdownIt-Anchor" href="#评估框架-压缩"></a> 评估框架 - 压缩</h2>
+<p>数据压缩可以降低数据存储和传输的需求，通常能够节省金钱和时间。压缩技术通过对频繁重复出现的数据进行编码来实现。</p>
+<p>相比于行式存储的数据，列式存储数据可以获得更高的压缩率。因为数据值按列存储，同类型数据值放在一起，可以实现更高效地压缩。</p>
+<p>尽管使用压缩技术能够显著地节省存储开销，但我们还需要考虑采用压缩所需的计算资源开销，解压缩同样需要消耗计算资源。因此，考虑压缩时，需要权衡计算资源和存储资源的开销。</p>
+<h2 id="文件格式"><a class="markdownIt-Anchor" href="#文件格式"></a> 文件格式</h2>
+<p>通过上文引入的评估框架，现在我们可以通过框架介绍的四种考量来判断该使用哪种大数据文件格式了。接下来，我们将进一步介绍目前常见的大数据文件格式：Avro、Parquet、ORC。</p>
+<h3 id="avro"><a class="markdownIt-Anchor" href="#avro"></a> Avro</h3>
+<p>Apache Avro 由 Hadoop 工作组于 2009 年发布。它是一种高度可分片的行式存储格式。Avro 的革新和关键特性是模式与数据一起传输，模式以 JSON 格式存储而数据则保持二进制格式，在最小化文件大小的同时最大化处理效率。</p>
+<p>Avro 还支持模式演化，适合存在潜在数据变更需求的场景。借助 Avro 管理模式的能力，在不同时间点，我们都能在低不兼容风险情况下，独立地对组件进行更新。由于 Avro 的模式所有版本均以可读 JSON 格式存储，开发人员可以很容易地了解数据可用的所有字段。不再需要开发人员写 If-else 语句来处理不同的模式版本，也不需要通过看旧的代码来了解旧的模式版本。</p>
+<p>Avro 支持多种编程语言，且由于模式定义以 JSON 格式存储而数据以二进制格式存储，Avro 还算是数据存储和传输场景中相对紧凑的选项。一般地，<strong>Avro 比较适合重数据写的场景，因为它可以很容易地新增数据行。</strong></p>
+<h3 id="parquet"><a class="markdownIt-Anchor" href="#parquet"></a> Parquet</h3>
+<p>2013年，受 Google Dremel Query System 启发，Parquet 由 Cloudera 和 Twitter 开发，作为 Hadoop 上的一种优化列式数据存储而存在。因为数据列式存储，它可高度压缩且支持分片能力。Parquet 通常会和 Impala (Hadoop MPP) 一起使用。</p>
+<p>Parquet 文件中的元数据 (metadata) 存储于文件末尾处，以便快速地进行写入。其中元数据包括数据类型、模式压缩编码、统计数据等信息。</p>
+<p><strong>Parquet 非常适合分析拥有许多列的宽数据集场景。</strong> Parquet 文件包含的二进制数据以 row group (行组)的形式进行组织，对于每一个行组，其中的数据以列的形式组织。面对重数据读取场景时，Parquet 将会是一个非常不错的选择。</p>
+<p>需要注意的是，Parquet 文件虽然支持模式演化，但并不是所有使用 Parquet 文件的系统都能很好地支持模式演化，例如 Impala，因为数据库对于同一张表需要维护至少两个版本的模式，所以 Impala 很难支持模式演化功能。</p>
+<h3 id="orc"><a class="markdownIt-Anchor" href="#orc"></a> ORC</h3>
+<p>ORC (Optimized Row Columnar，优化的行列式存储) 格式由 Hortonworks 开发，用于提升 Hive 的存储及性能。ORC 将行数据以列形式进行存储，这种行-列格式能够实现高效的压缩及存储，允许跨集群并行处理，且这种列式格式能够跳过不需要的列以提高处理和解压缩的速度。<strong>ORC 格式同样比较适合重数据读取的场景</strong>。</p>
+<p>因为 ORC 的索引系统（index system），它支持高级的压缩功能。ORC 文件结构包含数据条（stripes of data），这些数据条作为数据构建块彼此间独立，这意味着，对于任意给定查询，可以直接跳到所需的数据 stripe ，而在具体的 stripe 内，reader 读取数据可以专注于所需的列。footer 文件包含数据 stripe 中每一列的统计信息，如 count，sum，min，max等。</p>
+<p><img data-src="orc-file-structure.png" alt="" /></p>
+<p>与 Parquet 类似，ORC 文件格式同样支持模式演化，但具体效果还取决于实际数据存储（data store）的支持情况，如 Hive，最近引入了一些高级特性，允许新增列（appending columns）、类型转换（type conversion）以及名称映射（name mapping）。</p>
+<h3 id="格式选择"><a class="markdownIt-Anchor" href="#格式选择"></a> 格式选择</h3>
+<p><img data-src="bigdata-formats-comparison.png" alt="" /></p>
+<p>上图是本文介绍的 Avro、Parquet 及 ORC 在评估框架各因素间的比较。在考虑如何选择合适的数据格式时，我们首先面临的问题便是：<strong>数据是适合行式存储？还是更适合列式存储？</strong></p>
+<p>对于事务数据等需要同时处理数据行的许多列的场景，会比较适合按行式存储，那么 Avro 将会最佳选择，它也是面对重数据写场景的典型选择。</p>
+<p>如果数据更适合按列式存储，那么问题就变成了在 Parquet 和 ORC 间作出选择了。除考虑分片能力（Splitability）、压缩（Compression）及模式演化（schema evolution）支持情况外，我们还需将使用的平台的兼容性也纳入考虑，如 Avro 更适合 Kafka, Druid，而 Parquet 则是 Impala，Arrow， Spark 等，ORC 可以在 Hive 中发挥出最大性能表现。可以根据实际使用的系统和对数据格式的熟悉情况来做抉择。 不同于行式存储格式，列式存储更适合于重数据读取场景。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>在本文中，我们了解了大数据的常见数据格式，并简单讨论了它们各自的优缺点，并采用了一个评估框架来权衡它们以帮助我们在实践中选择合适的数据格式。理想情况下，我们可以根据需求选择合适的数据格式，但现实中数据可能以各种形式存储，如 CSV，JSON，XML 等，为使数据处理和存储发挥最大的性能表现，一般需要将数据的原始格式进行转化。</p>
+<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
+<p>1、An Introduction to Big Data Formats - Understanding Avro, Parquet, and ORC —— Nexla</p>
+<p>2、<a href="https://www.datanami.com/2018/05/16/big-data-file-formats-demystified">https://www.datanami.com/2018/05/16/big-data-file-formats-demystified</a></p>
+<p>3、<a href="https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb">https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb</a></p>
+]]></content>
+      <categories>
+        <category>BigData</category>
+      </categories>
+      <tags>
+        <tag>avro</tag>
+        <tag>parquet</tag>
+        <tag>orc</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Dealing with Small Files Problem in Hadoop Distributed File System.</title>
     <url>/posts/defe18ab/</url>
     <content><![CDATA[<blockquote>
@@ -4641,100 +4735,6 @@ Innovation in Engineering and Management, Vol.3, pp. 278-280, July 2014.</li>
       </categories>
       <tags>
         <tag>Hadoop</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>大数据文件格式</title>
-    <url>/posts/547465c0/</url>
-    <content><![CDATA[<p>本文旨在介绍常见的大数据文件格式，如 Avro、Parquet 和 ORC，了解它们是如何被开发出来的，以及它们的优点和缺点。</p>
-<p><img data-src="/images/bigdata/parquet-avro-orc-dig.png" alt="" /></p>
-<p>最关键的问题是：<strong>在实践中，为实现最优的性能，我们该如何选择合适的大数据文件格式？</strong></p>
-<span id="more"></span>
-<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
-<p>大数据文件格式时间线：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CSV(1978)-&gt; XML(1996) -&gt; JSON(2001) -&gt; Thrift(2007) -&gt; Protobuf(2008)</span><br><span class="line">	-&gt; Avro(2009) -&gt; RC File(2011) -&gt; Parquet(2013) -&gt; ORC(2016)</span><br></pre></td></tr></table></figure>
-<p>在开始具体讨论 Avro、Parquet 及 ORC 之前，我们需要先建立一个评估框架，站在工程师的角度上考虑如何选择合适的大数据文件格式。该评估框架主要包含四个关键因素：</p>
-<ul>
-<li>Row vs Column: 行式存储 or 列式存储</li>
-<li>Schema management: 模式管理</li>
-<li>Splitability: 分片能力</li>
-<li>Compression: 压缩</li>
-</ul>
-<p>接下来，我们将依次介绍评估框架涉及的四个关键因素，引入一些前置知识，以帮助我们思考如何选择合适的文件格式。</p>
-<h2 id="评估框架-行存储-vs-列存储"><a class="markdownIt-Anchor" href="#评估框架-行存储-vs-列存储"></a> 评估框架 - 行存储 vs 列存储</h2>
-<p>首先，对于行式存储及列式存储的文件格式，需要判断哪种是最适合我们需求的。一般而言，列式存储大多用于执行分析查询，因为这些查询通常只需要从海量数据集中获取部分列的数据。相反地，如果查询需要访问数据行的绝大多数列或全部列，那么行式存储的文件格式将会更加合适。</p>
-<blockquote>
-<p>列式存储：适合从海量数据行中访问部分列数据，如分析查询等。</p>
-<p>行式存储：适合访问数据行绝大多数列或全部列的需求。</p>
-</blockquote>
-<p>行式存储是数据表最简单的形式，在高度结构化的数据库系统，如 MySQL 及 Oracle 等中广泛使用。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Prod1,100.00,2018-04-02;Liam,Prod2,79.99,2018-04-02;Noah,Prod3,19.99,2018-04-01;Olivia,Prod2,79.99,2018-04-03</span><br></pre></td></tr></table></figure>
-<p>数据处理时是从左到右按行读取的。</p>
-<p>不同于行式存储，同样的数据，列式存储形式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Liam,Noah,Olivia;Prod1,Prod2,Prod3;Prod2;100.00,79.99,19.99,79.99;2018-04-02,2018-04-02,2018-04-01,2018-04-03</span><br></pre></td></tr></table></figure>
-<p>可以看到，数据按列从上到下存储，采用这种列分组存储形式可以更高效地处理特定列数据计算。</p>
-<p>列式存储格式在读取数据时，可以跳过不相关的列，只读取所需的列数据，能够实现高效的计算和压缩。</p>
-<h2 id="评估框架-模式管理"><a class="markdownIt-Anchor" href="#评估框架-模式管理"></a> 评估框架 - 模式管理</h2>
-<p>在数据库中，模式 (schema) 是指数据库的组织形式 - 表、列、视图、主键、关系等等。而当我们讨论单个数据集或数据文件的模式时，则相对要简单得多，此时模式只考虑属性列（attribute）层面，是指存储每个属性及其类型的定义。</p>
-<blockquote>
-<p>The schema stores the definition of each attribute and its type.</p>
-</blockquote>
-<p>在实践中，数据模式会时常发生变动（schema evolution），例如字段变更（修改、增加、删除），字段类型变更。那么如何管理模式演化信息也是我们考虑选择何种文件格式的重要因素之一。</p>
-<p>一些可供参考的评估模式管理能力的问题如下：</p>
-<ul>
-<li>更新模式的难易程度？</li>
-<li>不同模式版本如何交互？</li>
-<li>是否人类可读？</li>
-<li>模式处理的速度？</li>
-<li>是否影响数据的大小？</li>
-</ul>
-<p>我们将会在后文讨论具体文件格式时，尝试回答这些问题。</p>
-<h2 id="评估框架-分片能力"><a class="markdownIt-Anchor" href="#评估框架-分片能力"></a> 评估框架 - 分片能力</h2>
-<p>大数据场景中，数据集通常由成百上千个文件组成，且每个文件可能包含数百万或更多条数据记录。这些基于文件的数据块一般也是持续生成的。要高效地处理这些数据集，需要把作业分成不同的子任务，分配到独立的处理器上并行执行。</p>
-<p>数据文件格式的选择在并行实现上会有非常重要的影响。例如，如果一个数据集中的文件包含的是拥有大量数据记录的 XML 或 JSON 记录，这些文件是不可分片的，意味着该数据集无法划分成独立的小部分进行处理。</p>
-<blockquote>
-<p>Splitability: 分片能力，数据格式是否能拆分成独立的小部分，以支撑并行处理。</p>
-</blockquote>
-<p>在本文中介绍的 Avro、Parquet 及 Orc 均支持分片能力，它们之中大多在 MapReduce 生态系统中扮演着重要的角色，能够将大型的数据块分割成更小更适合处理的数据块。</p>
-<h2 id="评估框架-压缩"><a class="markdownIt-Anchor" href="#评估框架-压缩"></a> 评估框架 - 压缩</h2>
-<p>数据压缩可以降低数据存储和传输的需求，通常能够节省金钱和时间。压缩技术通过对频繁重复出现的数据进行编码来实现。</p>
-<p>相比于行式存储的数据，列式存储数据可以获得更高的压缩率。因为数据值按列存储，同类型数据值放在一起，可以实现更高效地压缩。</p>
-<p>尽管使用压缩技术能够显著地节省存储开销，但我们还需要考虑采用压缩所需的计算资源开销，解压缩同样需要消耗计算资源。因此，考虑压缩时，需要权衡计算资源和存储资源的开销。</p>
-<h2 id="文件格式"><a class="markdownIt-Anchor" href="#文件格式"></a> 文件格式</h2>
-<p>通过上文引入的评估框架，现在我们可以通过框架介绍的四种考量来判断该使用哪种大数据文件格式了。接下来，我们将进一步介绍目前常见的大数据文件格式：Avro、Parquet、ORC。</p>
-<h3 id="avro"><a class="markdownIt-Anchor" href="#avro"></a> Avro</h3>
-<p>Apache Avro 由 Hadoop 工作组于 2009 年发布。它是一种高度可分片的行式存储格式。Avro 的革新和关键特性是模式与数据一起传输，模式以 JSON 格式存储而数据则保持二进制格式，在最小化文件大小的同时最大化处理效率。</p>
-<p>Avro 还支持模式演化，适合存在潜在数据变更需求的场景。借助 Avro 管理模式的能力，在不同时间点，我们都能在低不兼容风险情况下，独立地对组件进行更新。由于 Avro 的模式所有版本均以可读 JSON 格式存储，开发人员可以很容易地了解数据可用的所有字段。不再需要开发人员写 If-else 语句来处理不同的模式版本，也不需要通过看旧的代码来了解旧的模式版本。</p>
-<p>Avro 支持多种编程语言，且由于模式定义以 JSON 格式存储而数据以二进制格式存储，Avro 还算是数据存储和传输场景中相对紧凑的选项。一般地，<strong>Avro 比较适合重数据写的场景，因为它可以很容易地新增数据行。</strong></p>
-<h3 id="parquet"><a class="markdownIt-Anchor" href="#parquet"></a> Parquet</h3>
-<p>2013年，受 Google Dremel Query System 启发，Parquet 由 Cloudera 和 Twitter 开发，作为 Hadoop 上的一种优化列式数据存储而存在。因为数据列式存储，它可高度压缩且支持分片能力。Parquet 通常会和 Impala (Hadoop MPP) 一起使用。</p>
-<p>Parquet 文件中的元数据 (metadata) 存储于文件末尾处，以便快速地进行写入。其中元数据包括数据类型、模式压缩编码、统计数据等信息。</p>
-<p><strong>Parquet 非常适合分析拥有许多列的宽数据集场景。</strong> Parquet 文件包含的二进制数据以 row group (行组)的形式进行组织，对于每一个行组，其中的数据以列的形式组织。面对重数据读取场景时，Parquet 将会是一个非常不错的选择。</p>
-<p>需要注意的是，Parquet 文件虽然支持模式演化，但并不是所有使用 Parquet 文件的系统都能很好地支持模式演化，例如 Impala，因为数据库对于同一张表需要维护至少两个版本的模式，所以 Impala 很难支持模式演化功能。</p>
-<h3 id="orc"><a class="markdownIt-Anchor" href="#orc"></a> ORC</h3>
-<p>ORC (Optimized Row Columnar，优化的行列式存储) 格式由 Hortonworks 开发，用于提升 Hive 的存储及性能。ORC 将行数据以列形式进行存储，这种行-列格式能够实现高效的压缩及存储，允许跨集群并行处理，且这种列式格式能够跳过不需要的列以提高处理和解压缩的速度。<strong>ORC 格式同样比较适合重数据读取的场景</strong>。</p>
-<p>因为 ORC 的索引系统（index system），它支持高级的压缩功能。ORC 文件结构包含数据条（stripes of data），这些数据条作为数据构建块彼此间独立，这意味着，对于任意给定查询，可以直接跳到所需的数据 stripe ，而在具体的 stripe 内，reader 读取数据可以专注于所需的列。footer 文件包含数据 stripe 中每一列的统计信息，如 count，sum，min，max等。</p>
-<p><img data-src="orc-file-structure.png" alt="" /></p>
-<p>与 Parquet 类似，ORC 文件格式同样支持模式演化，但具体效果还取决于实际数据存储（data store）的支持情况，如 Hive，最近引入了一些高级特性，允许新增列（appending columns）、类型转换（type conversion）以及名称映射（name mapping）。</p>
-<h3 id="格式选择"><a class="markdownIt-Anchor" href="#格式选择"></a> 格式选择</h3>
-<p><img data-src="bigdata-formats-comparison.png" alt="" /></p>
-<p>上图是本文介绍的 Avro、Parquet 及 ORC 在评估框架各因素间的比较。在考虑如何选择合适的数据格式时，我们首先面临的问题便是：<strong>数据是适合行式存储？还是更适合列式存储？</strong></p>
-<p>对于事务数据等需要同时处理数据行的许多列的场景，会比较适合按行式存储，那么 Avro 将会最佳选择，它也是面对重数据写场景的典型选择。</p>
-<p>如果数据更适合按列式存储，那么问题就变成了在 Parquet 和 ORC 间作出选择了。除考虑分片能力（Splitability）、压缩（Compression）及模式演化（schema evolution）支持情况外，我们还需将使用的平台的兼容性也纳入考虑，如 Avro 更适合 Kafka, Druid，而 Parquet 则是 Impala，Arrow， Spark 等，ORC 可以在 Hive 中发挥出最大性能表现。可以根据实际使用的系统和对数据格式的熟悉情况来做抉择。 不同于行式存储格式，列式存储更适合于重数据读取场景。</p>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>在本文中，我们了解了大数据的常见数据格式，并简单讨论了它们各自的优缺点，并采用了一个评估框架来权衡它们以帮助我们在实践中选择合适的数据格式。理想情况下，我们可以根据需求选择合适的数据格式，但现实中数据可能以各种形式存储，如 CSV，JSON，XML 等，为使数据处理和存储发挥最大的性能表现，一般需要将数据的原始格式进行转化。</p>
-<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
-<p>1、An Introduction to Big Data Formats - Understanding Avro, Parquet, and ORC —— Nexla</p>
-<p>2、<a href="https://www.datanami.com/2018/05/16/big-data-file-formats-demystified">https://www.datanami.com/2018/05/16/big-data-file-formats-demystified</a></p>
-<p>3、<a href="https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb">https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb</a></p>
-]]></content>
-      <categories>
-        <category>BigData</category>
-      </categories>
-      <tags>
-        <tag>avro</tag>
-        <tag>parquet</tag>
-        <tag>orc</tag>
       </tags>
   </entry>
   <entry>
@@ -5577,6 +5577,82 @@ s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class=
       <tags>
         <tag>union-find</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>如何使用 Redis ACL 来控制客户端连接的访问</title>
+    <url>/posts/d94f4269/</url>
+    <content><![CDATA[<p>ACL (Access Control List，访问控制列表) 是 Redis 中用于限制和控制 Redis 服务器访问的一种安全机制。使用 ACL，我们可以控制客户端连接可执行的 keys 和 commands。</p>
+<span id="more"></span>
+<p>接下来，我们将讨论如何通过 ACL 功能来加强 Redis 服务器的安全性。</p>
+<h3 id="acl-作用原理"><a class="markdownIt-Anchor" href="#acl-作用原理"></a> ACL 作用原理</h3>
+<p>通过定义用户的 ACL，当客户端连接访问 Redis CLI 时，必须通过访问控制列表中的用户名(username) 和密码 (password) 进行身份认证。</p>
+<p>身份认证成功后，Redis 会给该连接的用户分配定义的权限。例如，如果客户端以一个只读权限用户进行认证，那么相应的 Redis 连接也会继承该用户的权限。</p>
+<p>NOTE: ACL 需要 Redis 6.0 及以上版本才支持。</p>
+<h3 id="redis-auth-命令"><a class="markdownIt-Anchor" href="#redis-auth-命令"></a> Redis Auth 命令</h3>
+<p>在较新的 Redis 版本中，我们可以使用 <code>auth</code> 命令后面跟用户名（username）和密码（password）来进行身份认证。</p>
+<p>如果只提供密码的话，Redis 将会以默认用户 <code>default</code> 进行身份认证。</p>
+<h3 id="redis-配置-acl"><a class="markdownIt-Anchor" href="#redis-配置-acl"></a> Redis 配置 ACL</h3>
+<p>Redis 一般使用默认用户 <code>default</code>，我们可以使用 <code>acl setuser other_user</code> 来创建出新的用户。要查看当前 ACL 列表，可以使用 <code>acl list</code> 命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; ACL LIST</span><br><span class="line">1) <span class="string">&quot;user default on #5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 ~* +@all&quot;</span></span><br></pre></td></tr></table></figure>
+<p>ACL LIST 命令的输出遵循以下模式：</p>
+<ol>
+<li>第一部分是 <code>user</code> 关键字；</li>
+<li>接着是用户名，如 <code>default</code>；</li>
+<li>第三部分是 <code>on</code> 关键字，<code>on</code> 表示启用该用户认证，相应地，<code>off</code> 则是禁用该用户认证；</li>
+<li>第四部分是用户密码的 <code>sha256</code> hash 格式。如果没有设置密码，则该值为 <code>nopass</code>；</li>
+<li>接着是定义用户可访问的 keys，在上面例子中，<code>~*</code> 表示包含所有 key；</li>
+<li>最后是定义用户可执行的 commands，在上面例子中，<code>+@all</code> 表示可执行所有命令；</li>
+</ol>
+<h3 id="acl-规则"><a class="markdownIt-Anchor" href="#acl-规则"></a> ACL 规则</h3>
+<p>Redis 有一系列可扩展的 ACL 规则，下面我们先列出一些比较重要的规则：</p>
+<ol>
+<li><code>on</code> 启用指定用户，以使客户端能认证该用户名及密码；</li>
+<li><code>off</code> 禁用指定用户，使客户端无法使用该用户名及密码进行身份认证;;</li>
+<li><code>+&lt;command&gt;</code> 向用户可执行的命令列表中添加一条命令。其中多条命令则使用管道符 <code>|</code> 进行分隔，如要向用户添加 <code>set</code> 和 <code>get</code> 命令，则可以使用 <code>+SET|GET</code>；</li>
+<li><code>-&lt;command&gt;</code> 从用户可执行的命令列表中移除一条命令，同样也可以同时移除多条命令；</li>
+<li><code>@all</code> 或 <code>allcommands</code> 允许用户执行所有命令；</li>
+<li><code>~&lt;pattern&gt;</code> 添加符合某一模式的 keys 允许用户访问。如 <code>~*</code> 指定所有的 key；</li>
+<li><code>&gt;&lt;password&gt;</code> 向指定用户添加可进行认证的密码；</li>
+<li><code>&lt;&lt;password&gt;</code> 与上面相反，移除可进行认证的密码；</li>
+<li><code>resetpass</code> 删除所有允许的密码；</li>
+<li><code>nopass</code> 允许用户无密码访问；</li>
+</ol>
+<h3 id="redis-配置-acl-用户"><a class="markdownIt-Anchor" href="#redis-配置-acl-用户"></a> Redis 配置 ACL 用户</h3>
+<p>要向 ACL 列表添加用户，可以使用 <code>ACL SETUSER</code> 命令。对于该命令主要用于给指定用户配置 ACL 规则，如果该定用户名不存在，则会创建出新的用户。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt;acl setuser rovo98</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>然后，可用 <code>acl list</code> 来查看：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; acl list</span><br><span class="line">1) <span class="string">&quot;user default on &lt;HASH&gt; ~* +@all&quot;</span></span><br><span class="line">2) <span class="string">&quot;user rovo98 off -@all&quot;</span></span><br></pre></td></tr></table></figure>
+<p>默认情况下，新添加的用户 <code>rovo98</code> 处于禁用状态，且无法执行任何命令以及访问任何 key。Redis 在创建新用户时会尽可能赋于其最少的权限。</p>
+<p>我们可以使用以下命令来启用用户 <code>rovo98</code> 并指定一个密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; acl setuser rovo98 on &gt;rovo98@redis</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>执行该命令后，我们便启用了 <code>rovo98</code> 用户且指定了一个密码 <code>rovo98@redis</code>。</p>
+<p>要向该用户添加可执行的命令，我们可以:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; acl setuser rovo98 +<span class="built_in">set</span>|get|del</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>并让用户能够访问所有的 key：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; acl setuser rovo98 ~*</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，用户名是大小写敏感的。</p>
+<p>经上面配置后，我们现在大概可获得以下类似的 ACL 列表：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1) &quot;user default on &lt;HASH&gt; ~* +@all&quot;</span><br><span class="line">2) &quot;user rovo98 on &lt;HASH&gt; ~* -@all +set|get|del&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="redis-用户描述"><a class="markdownIt-Anchor" href="#redis-用户描述"></a> Redis 用户描述</h3>
+<p>要获取一个 ACL 用户的描述信息，我们可以执行 <code>acl getuser</code> 命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; acl getuser rovo98</span><br><span class="line">1) <span class="string">&quot;flags&quot;</span></span><br><span class="line">2) 1) <span class="string">&quot;on&quot;</span></span><br><span class="line">2) <span class="string">&quot;allkeys&quot;</span></span><br><span class="line">3) <span class="string">&quot;passwords&quot;</span></span><br><span class="line">4) 1) <span class="string">&quot;&lt;HASH&gt;&quot;</span></span><br><span class="line">5) <span class="string">&quot;commands&quot;</span></span><br><span class="line">6) <span class="string">&quot;-@all +set|get|del&quot;</span></span><br><span class="line">7) <span class="string">&quot;keys&quot;</span></span><br><span class="line">8) 1) <span class="string">&quot;*&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>本文主要描述了关于 Redis  ACL 功能的使用，介绍了如何使用 ACL 来配置规则控制用户对 keys 和 commands 的访问。</p>
+<p>更多的内容建议前往官网的<a href="https://redis.io/docs/manual/security/acl/">文档</a> 进行查看。</p>
+<h3 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h3>
+<ol>
+<li>
+<p><a href="https://redis.io/docs/manual/security/acl/">https://redis.io/docs/manual/security/acl/</a></p>
+</li>
+<li>
+<p><a href="https://linuxhint.com/redis-acl/">https://linuxhint.com/redis-acl/</a></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Redis</category>
+      </categories>
   </entry>
   <entry>
     <title>Singleton Design pattern</title>
