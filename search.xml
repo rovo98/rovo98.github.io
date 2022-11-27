@@ -2709,6 +2709,64 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </categories>
   </entry>
   <entry>
+    <title>SQL - 查找并清除重复的数据行</title>
+    <url>/posts/a264c38d/</url>
+    <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
+<p>接下来，我们谈一谈，如果数据库中已有重复的数据行，我们该如何把它们找出来，并将这些数据行删除。</p>
+<span id="more"></span>
+<h2 id="1-准备"><a class="markdownIt-Anchor" href="#1-准备"></a> 1. 准备</h2>
+<p>为了方便后续进行处理展示，我们将创建一个简单的数据库，仅包含一个数据表，且该表包含重复的数据行。下面是创建测试用的数据库相应的 <code>sql</code> 脚本。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing &#x27;find&amp;remove dupicate rows experiment&#x27;.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> schema IF <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> schema IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line">USE testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="type">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    <span class="keyword">primary</span> key (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">&#x27;Stu1&#x27;</span>, <span class="string">&#x27;stu1@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">&#x27;Stu2&#x27;</span>, <span class="string">&#x27;stu2@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">&#x27;Stu3&#x27;</span>, <span class="string">&#x27;stu3@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="2-查找重复的数据行"><a class="markdownIt-Anchor" href="#2-查找重复的数据行"></a> 2. 查找重复的数据行</h2>
+<p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
+<ol>
+<li>使用自连接 self <code>join</code>:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用子查询:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> name</span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>使用双表查询:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>使用 <code>group by</code>:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, mail</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> name, mail</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">2</span>) <span class="operator">&gt;=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="3-删除重复的数据行"><a class="markdownIt-Anchor" href="#3-删除重复的数据行"></a> 3. 删除重复的数据行</h2>
+<p>要删除重复的数据行，与查找重复数据行的方式类似，使用 <code>delete from</code> 语法即可。</p>
+<blockquote>
+<p>删除重复的 <code>id</code> 字段较大的数据行，保留 <code>id</code> 较小的数据行</p>
+</blockquote>
+<ol>
+<li>使用双表进行删除:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>使用自链接 self join:</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s2</span><br><span class="line"><span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>以上就是关于查找和删除数据库中重复数据行的相关方法，需要说明的是，除了上面提到的 sql 以外，相信还有更多的实现方式。从简单易用的角度来考虑的话，双表以及自链接的实现方式都是不错的选择。</p>
+<p>最后，对于已相关 sql 实现方法，我们并未对 sql 执行的性能进行测试。</p>
+<blockquote>
+<p>References</p>
+<ul>
+<li><a href="https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/">https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/</a></li>
+<li><a href="https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/">https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/</a></li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Dev</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot + Docker + Nginx 负载均衡实现</title>
     <url>/posts/39885a36/</url>
     <content><![CDATA[<p>Nginx 是高性能的 http 服务器，反向代理服务器。结合 Tomcat 一起使用可以很容易实现负载均衡。</p>
@@ -2808,62 +2866,63 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </tags>
   </entry>
   <entry>
-    <title>SQL - 查找并清除重复的数据行</title>
-    <url>/posts/a264c38d/</url>
-    <content><![CDATA[<p>在实际开发场景中，我们需要导入数据库中的数据可能包含重复的行（row）。当然如果在建表时，对数据表中相应的字段进行限制的话，则有可能不会出现这样的问题。</p>
-<p>接下来，我们谈一谈，如果数据库中已有重复的数据行，我们该如何把它们找出来，并将这些数据行删除。</p>
+    <title>ClassNotFoundException vs. NoClassDefFoundError</title>
+    <url>/posts/dc53e26b/</url>
+    <content><![CDATA[<p><code>ClassNotFoundException</code> 和 <code>NoClassDefFoundError</code> 是我们运行 Java 程序时常面对的异常，那么导致它们出现的原因一般是什么呢？本文旨在介绍这两种异常，了解导致它们发生的原因，以及它们之间的区别，以便更好地了解该如何排查和解决相应问题。</p>
 <span id="more"></span>
-<h2 id="1-准备"><a class="markdownIt-Anchor" href="#1-准备"></a> 1. 准备</h2>
-<p>为了方便后续进行处理展示，我们将创建一个简单的数据库，仅包含一个数据表，且该表包含重复的数据行。下面是创建测试用的数据库相应的 <code>sql</code> 脚本。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- NOTICE: noly for testing &#x27;find&amp;remove dupicate rows experiment&#x27;.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> schema IF <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"><span class="keyword">CREATE</span> schema IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> testdb;</span><br><span class="line"></span><br><span class="line">USE testdb;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student</span><br><span class="line">(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">not</span> <span class="keyword">null</span> auto_increment,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">5</span>),</span><br><span class="line">    mail <span class="type">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    <span class="keyword">primary</span> key (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- insert data contains duplicate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">1</span>, <span class="string">&#x27;Stu1&#x27;</span>, <span class="string">&#x27;stu1@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">2</span>, <span class="string">&#x27;Stu2&#x27;</span>, <span class="string">&#x27;stu2@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">3</span>, <span class="string">&#x27;Stu3&#x27;</span>, <span class="string">&#x27;stu3@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">4</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">5</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--  the following are duplcate rows.</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">6</span>, <span class="string">&#x27;Stu4&#x27;</span>, <span class="string">&#x27;stu4@testdb.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span>(<span class="number">7</span>, <span class="string">&#x27;Stu5&#x27;</span>, <span class="string">&#x27;stu5@testdb.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
-<h2 id="2-查找重复的数据行"><a class="markdownIt-Anchor" href="#2-查找重复的数据行"></a> 2. 查找重复的数据行</h2>
-<p>查找重复数据行的业务需求 - 「找到名字<code>name</code>相同的数据行」。</p>
-<ol>
-<li>使用自连接 self <code>join</code>:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">as</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student <span class="keyword">as</span> s2</span><br><span class="line">    <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>使用子查询:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">AS</span> s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> name</span><br><span class="line">    <span class="keyword">FROM</span> student</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> name <span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">1</span>) <span class="operator">&gt;</span> <span class="number">1</span></span><br><span class="line">) <span class="keyword">AS</span> s2 <span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name;</span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>使用双表查询:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.<span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&lt;&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="4">
-<li>使用 <code>group by</code>:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> name, mail</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> name, mail</span><br><span class="line"><span class="keyword">HAVING</span> <span class="built_in">COUNT</span>(<span class="number">2</span>) <span class="operator">&gt;=</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="3-删除重复的数据行"><a class="markdownIt-Anchor" href="#3-删除重复的数据行"></a> 3. 删除重复的数据行</h2>
-<p>要删除重复的数据行，与查找重复数据行的方式类似，使用 <code>delete from</code> 语法即可。</p>
-<blockquote>
-<p>删除重复的 <code>id</code> 字段较大的数据行，保留 <code>id</code> 较小的数据行</p>
-</blockquote>
-<ol>
-<li>使用双表进行删除:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1, student s2</span><br><span class="line"><span class="keyword">WHERE</span> s1.name <span class="operator">=</span> s2.name <span class="keyword">AND</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>使用自链接 self join:</li>
-</ol>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> s1</span><br><span class="line"><span class="keyword">FROM</span> student s1</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s2</span><br><span class="line"><span class="keyword">ON</span> s1.name <span class="operator">=</span> s2.name</span><br><span class="line"><span class="keyword">WHERE</span> s1.id <span class="operator">&gt;</span> s2.id;</span><br></pre></td></tr></table></figure>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>以上就是关于查找和删除数据库中重复数据行的相关方法，需要说明的是，除了上面提到的 sql 以外，相信还有更多的实现方式。从简单易用的角度来考虑的话，双表以及自链接的实现方式都是不错的选择。</p>
-<p>最后，对于已相关 sql 实现方法，我们并未对 sql 执行的性能进行测试。</p>
-<blockquote>
-<p>References</p>
+<p>了解过 Java 类加载机制的朋友，应该知道在 Java 中类定义了一种类型，需经过 classloader 加载后，jvm 运行时才可以使用，其中主要涉及 loading、linking (verification, preparation, resolution)、initialization。</p>
+<p>虽然 <code>ClassNotFoundException</code> 和 <code>NoClassDefFoundError</code> 都表示在运行时找不到特定的类，但它们发生的场景不同，<code>ClassNotFoundException</code> 主要发生在 loading 阶段，而后者主要发生在 linking 以及 initialization 阶段。</p>
+<!-- more -->
+<h2 id="classnotfoundexception"><a class="markdownIt-Anchor" href="#classnotfoundexception"></a> ClassNotFoundException</h2>
+<p>据 JDK 文档说明, <code>ClassNotFoundException</code> 是一个检查型异常（checked Exception），在运行时尝试用 <code>Class.forName()</code> 或 <code>ClassLoader.loadClass()</code> 或 <code>ClassLoader.findSystemClass()</code> 按全称限定名加载特定类，而该类不在类路径时，抛出该异常，即在显式类加载过程中可能发生该异常。</p>
+<p>例如，在不添加相关依赖的情况下尝试加载 JDBC 驱动：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test(expected = ClassNotFoundException.class)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">givenNoDrivers_whenLoadDriverClass_thenClassNotFoundException</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</span><br><span class="line">    Class.forName(<span class="string">&quot;oracle.jdbc.driver.OracleDriver&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="noclassdeffounderror"><a class="markdownIt-Anchor" href="#noclassdeffounderror"></a> NoClassDefFoundError</h2>
+<p><code>NoClassDefFoundError</code> 是一个错误（Error），特定类在编译阶段存在，而运行时丢失时，会导致该错误发生，例如类文件丢失或篡改等。一般在执行以下操作时发生：</p>
 <ul>
-<li><a href="https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/">https://www.dbrnd.com/2015/09/find-duplicate-records-in-mysql/</a></li>
-<li><a href="https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/">https://howtodoinjava.com/sql/how-to-remove-duplicate-rows-in-mysql-without-using-temporary-table/</a></li>
+<li>使用 <code>new</code> 关键字初始化一个类实例；</li>
+<li>一个方法调用触发的类加载（隐式类加载过程）；</li>
 </ul>
-</blockquote>
+<p>通常发生在执行静态代码块或初始化静态字段（Initialization）失败的时候。要触发该错误的发生，我们可以考虑这些场景，如定义两个类 A 和 B，其中 B 依赖于 A，在编译完成后，删除 A 的字节码文件；或者在类初始化静态代码块中引入未检查异常（Unchecked Exception），使类初始化失败，从而导致 <code>NoClassDefFoundError</code> 错误发生。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassWithInitErrors</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> data = <span class="number">1</span> / <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NoClassDefFoundErrorExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ClassWithInitErrors <span class="title">getClassWithInitErrors</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ClassWithInitErrors();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="meta">@Test(expected = NoClassDefFoundError.class)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">givneInitErrorInClass_whenLoadingClass_thenNoClassDefFoundError</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    NoClassDefFoundErrorExample example = <span class="keyword">new</span> NoClassDefFoundErrorExample();</span><br><span class="line">    example.getClassWithInitErrors();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
+<p>因为导致 <code>ClassNotFoundException</code> 以及 <code>NoClassDefFoundError</code> 的主要原因发生在运行时阶段，因此排查这些问题可能会消耗很多时间。在实践中可尝试以下方法：</p>
+<ul>
+<li>确保 classpath 包含所需的类或类所在的 jar 包；</li>
+<li>若 classpath 中存在该类，则很大可能它被覆盖了，需要找出应用真正使用的 classpath；</li>
+<li>若应用使用了多个类加载器，则可能因双亲委派机制的可见性（子类加载器加载的类对其父类加载器不可见），而导致找不到类；</li>
+</ul>
+<p>对 <code>ClassNotFoundException</code> 以及 <code>NoClassDefFoundError</code> 的对比总结：</p>
+<table>
+<thead>
+<tr>
+<th>ClassNotFoundException</th>
+<th>NoClassDefFoundError</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是一个检查型异常，<code>Exception</code> 的子类</td>
+<td>是一个 <code>Error</code></td>
+</tr>
+<tr>
+<td>当应用程序显式地尝试在运行时加载类，而类未在 classpath 时抛出该异常</td>
+<td>类编译阶段存在，而运行时阶段缺失会导致该错误</td>
+</tr>
+<tr>
+<td>由应用程序本身抛出异常，可被以下方法：<code>Class.forName()</code>、<code>ClassLoader.loadClass()</code> 和 <code>ClassLoader.findSystemClass()</code> 抛出</td>
+<td>由 Java 运行时系统抛出错误</td>
+</tr>
+</tbody>
+</table>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
+<p>1、<a href="https://dzone.com/articles/java-classnotfoundexception-vs-noclassdeffounderro">https://dzone.com/articles/java-classnotfoundexception-vs-noclassdeffounderro</a></p>
+<p>2、<a href="https://www.baeldung.com/java-classnotfoundexception-and-noclassdeffounderror">https://www.baeldung.com/java-classnotfoundexception-and-noclassdeffounderror</a></p>
+<p>3、<a href="https://www.geeksforgeeks.org/classnotfoundexception-vs-noclassdeffounderror-java/">https://www.geeksforgeeks.org/classnotfoundexception-vs-noclassdeffounderror-java/</a></p>
 ]]></content>
       <categories>
-        <category>Dev</category>
+        <category>Java</category>
       </categories>
-      <tags>
-        <tag>sql</tag>
-      </tags>
   </entry>
   <entry>
     <title>JVM知识体系(二) | 内存管理</title>
@@ -3626,51 +3685,6 @@ JVM调用<code>main</code>方法时不会创建类的实例，因此将<code>mai
       </tags>
   </entry>
   <entry>
-    <title>Java 泛型 PECS</title>
-    <url>/posts/a3d08d1f/</url>
-    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
-<blockquote>
-<p>Producer extends Consumer super</p>
-</blockquote>
-<span id="more"></span>
-<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
-<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
-<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
-<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
-<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
-<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
-<blockquote>
-<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
-<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
-</blockquote>
-<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
-<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
-<blockquote>
-<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
-<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
-<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
-<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
-<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
-<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
-<ol>
-<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
-<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Java Reflection</title>
     <url>/posts/d897152e/</url>
     <content><![CDATA[<p>简单了解Java反射的基本内容。</p>
@@ -3729,6 +3743,51 @@ method.invoke(对象,参数列表)</li>
       <tags>
         <tag>basic</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Java 泛型 PECS</title>
+    <url>/posts/a3d08d1f/</url>
+    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
+<blockquote>
+<p>Producer extends Consumer super</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
+<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
+<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
+<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
+<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
+<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
+<blockquote>
+<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
+<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
+</blockquote>
+<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
+<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
+<blockquote>
+<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
+<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
+<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
+<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
+<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
+<ol>
+<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
+<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
   </entry>
   <entry>
     <title>JDK, JRE, JVM | 深入了解</title>
@@ -4479,100 +4538,6 @@ loop1: 4, 2, 3, 1 -&gt;<br />
       </tags>
   </entry>
   <entry>
-    <title>大数据文件格式</title>
-    <url>/posts/547465c0/</url>
-    <content><![CDATA[<p>本文旨在介绍常见的大数据文件格式，如 Avro、Parquet 和 ORC，了解它们是如何被开发出来的，以及它们的优点和缺点。</p>
-<p><img data-src="/images/bigdata/parquet-avro-orc-dig.png" alt="" /></p>
-<p>最关键的问题是：<strong>在实践中，为实现最优的性能，我们该如何选择合适的大数据文件格式？</strong></p>
-<span id="more"></span>
-<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
-<p>大数据文件格式时间线：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CSV(1978)-&gt; XML(1996) -&gt; JSON(2001) -&gt; Thrift(2007) -&gt; Protobuf(2008)</span><br><span class="line">	-&gt; Avro(2009) -&gt; RC File(2011) -&gt; Parquet(2013) -&gt; ORC(2016)</span><br></pre></td></tr></table></figure>
-<p>在开始具体讨论 Avro、Parquet 及 ORC 之前，我们需要先建立一个评估框架，站在工程师的角度上考虑如何选择合适的大数据文件格式。该评估框架主要包含四个关键因素：</p>
-<ul>
-<li>Row vs Column: 行式存储 or 列式存储</li>
-<li>Schema management: 模式管理</li>
-<li>Splitability: 分片能力</li>
-<li>Compression: 压缩</li>
-</ul>
-<p>接下来，我们将依次介绍评估框架涉及的四个关键因素，引入一些前置知识，以帮助我们思考如何选择合适的文件格式。</p>
-<h2 id="评估框架-行存储-vs-列存储"><a class="markdownIt-Anchor" href="#评估框架-行存储-vs-列存储"></a> 评估框架 - 行存储 vs 列存储</h2>
-<p>首先，对于行式存储及列式存储的文件格式，需要判断哪种是最适合我们需求的。一般而言，列式存储大多用于执行分析查询，因为这些查询通常只需要从海量数据集中获取部分列的数据。相反地，如果查询需要访问数据行的绝大多数列或全部列，那么行式存储的文件格式将会更加合适。</p>
-<blockquote>
-<p>列式存储：适合从海量数据行中访问部分列数据，如分析查询等。</p>
-<p>行式存储：适合访问数据行绝大多数列或全部列的需求。</p>
-</blockquote>
-<p>行式存储是数据表最简单的形式，在高度结构化的数据库系统，如 MySQL 及 Oracle 等中广泛使用。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Prod1,100.00,2018-04-02;Liam,Prod2,79.99,2018-04-02;Noah,Prod3,19.99,2018-04-01;Olivia,Prod2,79.99,2018-04-03</span><br></pre></td></tr></table></figure>
-<p>数据处理时是从左到右按行读取的。</p>
-<p>不同于行式存储，同样的数据，列式存储形式如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Liam,Noah,Olivia;Prod1,Prod2,Prod3;Prod2;100.00,79.99,19.99,79.99;2018-04-02,2018-04-02,2018-04-01,2018-04-03</span><br></pre></td></tr></table></figure>
-<p>可以看到，数据按列从上到下存储，采用这种列分组存储形式可以更高效地处理特定列数据计算。</p>
-<p>列式存储格式在读取数据时，可以跳过不相关的列，只读取所需的列数据，能够实现高效的计算和压缩。</p>
-<h2 id="评估框架-模式管理"><a class="markdownIt-Anchor" href="#评估框架-模式管理"></a> 评估框架 - 模式管理</h2>
-<p>在数据库中，模式 (schema) 是指数据库的组织形式 - 表、列、视图、主键、关系等等。而当我们讨论单个数据集或数据文件的模式时，则相对要简单得多，此时模式只考虑属性列（attribute）层面，是指存储每个属性及其类型的定义。</p>
-<blockquote>
-<p>The schema stores the definition of each attribute and its type.</p>
-</blockquote>
-<p>在实践中，数据模式会时常发生变动（schema evolution），例如字段变更（修改、增加、删除），字段类型变更。那么如何管理模式演化信息也是我们考虑选择何种文件格式的重要因素之一。</p>
-<p>一些可供参考的评估模式管理能力的问题如下：</p>
-<ul>
-<li>更新模式的难易程度？</li>
-<li>不同模式版本如何交互？</li>
-<li>是否人类可读？</li>
-<li>模式处理的速度？</li>
-<li>是否影响数据的大小？</li>
-</ul>
-<p>我们将会在后文讨论具体文件格式时，尝试回答这些问题。</p>
-<h2 id="评估框架-分片能力"><a class="markdownIt-Anchor" href="#评估框架-分片能力"></a> 评估框架 - 分片能力</h2>
-<p>大数据场景中，数据集通常由成百上千个文件组成，且每个文件可能包含数百万或更多条数据记录。这些基于文件的数据块一般也是持续生成的。要高效地处理这些数据集，需要把作业分成不同的子任务，分配到独立的处理器上并行执行。</p>
-<p>数据文件格式的选择在并行实现上会有非常重要的影响。例如，如果一个数据集中的文件包含的是拥有大量数据记录的 XML 或 JSON 记录，这些文件是不可分片的，意味着该数据集无法划分成独立的小部分进行处理。</p>
-<blockquote>
-<p>Splitability: 分片能力，数据格式是否能拆分成独立的小部分，以支撑并行处理。</p>
-</blockquote>
-<p>在本文中介绍的 Avro、Parquet 及 Orc 均支持分片能力，它们之中大多在 MapReduce 生态系统中扮演着重要的角色，能够将大型的数据块分割成更小更适合处理的数据块。</p>
-<h2 id="评估框架-压缩"><a class="markdownIt-Anchor" href="#评估框架-压缩"></a> 评估框架 - 压缩</h2>
-<p>数据压缩可以降低数据存储和传输的需求，通常能够节省金钱和时间。压缩技术通过对频繁重复出现的数据进行编码来实现。</p>
-<p>相比于行式存储的数据，列式存储数据可以获得更高的压缩率。因为数据值按列存储，同类型数据值放在一起，可以实现更高效地压缩。</p>
-<p>尽管使用压缩技术能够显著地节省存储开销，但我们还需要考虑采用压缩所需的计算资源开销，解压缩同样需要消耗计算资源。因此，考虑压缩时，需要权衡计算资源和存储资源的开销。</p>
-<h2 id="文件格式"><a class="markdownIt-Anchor" href="#文件格式"></a> 文件格式</h2>
-<p>通过上文引入的评估框架，现在我们可以通过框架介绍的四种考量来判断该使用哪种大数据文件格式了。接下来，我们将进一步介绍目前常见的大数据文件格式：Avro、Parquet、ORC。</p>
-<h3 id="avro"><a class="markdownIt-Anchor" href="#avro"></a> Avro</h3>
-<p>Apache Avro 由 Hadoop 工作组于 2009 年发布。它是一种高度可分片的行式存储格式。Avro 的革新和关键特性是模式与数据一起传输，模式以 JSON 格式存储而数据则保持二进制格式，在最小化文件大小的同时最大化处理效率。</p>
-<p>Avro 还支持模式演化，适合存在潜在数据变更需求的场景。借助 Avro 管理模式的能力，在不同时间点，我们都能在低不兼容风险情况下，独立地对组件进行更新。由于 Avro 的模式所有版本均以可读 JSON 格式存储，开发人员可以很容易地了解数据可用的所有字段。不再需要开发人员写 If-else 语句来处理不同的模式版本，也不需要通过看旧的代码来了解旧的模式版本。</p>
-<p>Avro 支持多种编程语言，且由于模式定义以 JSON 格式存储而数据以二进制格式存储，Avro 还算是数据存储和传输场景中相对紧凑的选项。一般地，<strong>Avro 比较适合重数据写的场景，因为它可以很容易地新增数据行。</strong></p>
-<h3 id="parquet"><a class="markdownIt-Anchor" href="#parquet"></a> Parquet</h3>
-<p>2013年，受 Google Dremel Query System 启发，Parquet 由 Cloudera 和 Twitter 开发，作为 Hadoop 上的一种优化列式数据存储而存在。因为数据列式存储，它可高度压缩且支持分片能力。Parquet 通常会和 Impala (Hadoop MPP) 一起使用。</p>
-<p>Parquet 文件中的元数据 (metadata) 存储于文件末尾处，以便快速地进行写入。其中元数据包括数据类型、模式压缩编码、统计数据等信息。</p>
-<p><strong>Parquet 非常适合分析拥有许多列的宽数据集场景。</strong> Parquet 文件包含的二进制数据以 row group (行组)的形式进行组织，对于每一个行组，其中的数据以列的形式组织。面对重数据读取场景时，Parquet 将会是一个非常不错的选择。</p>
-<p>需要注意的是，Parquet 文件虽然支持模式演化，但并不是所有使用 Parquet 文件的系统都能很好地支持模式演化，例如 Impala，因为数据库对于同一张表需要维护至少两个版本的模式，所以 Impala 很难支持模式演化功能。</p>
-<h3 id="orc"><a class="markdownIt-Anchor" href="#orc"></a> ORC</h3>
-<p>ORC (Optimized Row Columnar，优化的行列式存储) 格式由 Hortonworks 开发，用于提升 Hive 的存储及性能。ORC 将行数据以列形式进行存储，这种行-列格式能够实现高效的压缩及存储，允许跨集群并行处理，且这种列式格式能够跳过不需要的列以提高处理和解压缩的速度。<strong>ORC 格式同样比较适合重数据读取的场景</strong>。</p>
-<p>因为 ORC 的索引系统（index system），它支持高级的压缩功能。ORC 文件结构包含数据条（stripes of data），这些数据条作为数据构建块彼此间独立，这意味着，对于任意给定查询，可以直接跳到所需的数据 stripe ，而在具体的 stripe 内，reader 读取数据可以专注于所需的列。footer 文件包含数据 stripe 中每一列的统计信息，如 count，sum，min，max等。</p>
-<p><img data-src="orc-file-structure.png" alt="" /></p>
-<p>与 Parquet 类似，ORC 文件格式同样支持模式演化，但具体效果还取决于实际数据存储（data store）的支持情况，如 Hive，最近引入了一些高级特性，允许新增列（appending columns）、类型转换（type conversion）以及名称映射（name mapping）。</p>
-<h3 id="格式选择"><a class="markdownIt-Anchor" href="#格式选择"></a> 格式选择</h3>
-<p><img data-src="bigdata-formats-comparison.png" alt="" /></p>
-<p>上图是本文介绍的 Avro、Parquet 及 ORC 在评估框架各因素间的比较。在考虑如何选择合适的数据格式时，我们首先面临的问题便是：<strong>数据是适合行式存储？还是更适合列式存储？</strong></p>
-<p>对于事务数据等需要同时处理数据行的许多列的场景，会比较适合按行式存储，那么 Avro 将会最佳选择，它也是面对重数据写场景的典型选择。</p>
-<p>如果数据更适合按列式存储，那么问题就变成了在 Parquet 和 ORC 间作出选择了。除考虑分片能力（Splitability）、压缩（Compression）及模式演化（schema evolution）支持情况外，我们还需将使用的平台的兼容性也纳入考虑，如 Avro 更适合 Kafka, Druid，而 Parquet 则是 Impala，Arrow， Spark 等，ORC 可以在 Hive 中发挥出最大性能表现。可以根据实际使用的系统和对数据格式的熟悉情况来做抉择。 不同于行式存储格式，列式存储更适合于重数据读取场景。</p>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>在本文中，我们了解了大数据的常见数据格式，并简单讨论了它们各自的优缺点，并采用了一个评估框架来权衡它们以帮助我们在实践中选择合适的数据格式。理想情况下，我们可以根据需求选择合适的数据格式，但现实中数据可能以各种形式存储，如 CSV，JSON，XML 等，为使数据处理和存储发挥最大的性能表现，一般需要将数据的原始格式进行转化。</p>
-<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
-<p>1、An Introduction to Big Data Formats - Understanding Avro, Parquet, and ORC —— Nexla</p>
-<p>2、<a href="https://www.datanami.com/2018/05/16/big-data-file-formats-demystified">https://www.datanami.com/2018/05/16/big-data-file-formats-demystified</a></p>
-<p>3、<a href="https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb">https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb</a></p>
-]]></content>
-      <categories>
-        <category>BigData</category>
-      </categories>
-      <tags>
-        <tag>avro</tag>
-        <tag>parquet</tag>
-        <tag>orc</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Dealing with Small Files Problem in Hadoop Distributed File System.</title>
     <url>/posts/defe18ab/</url>
     <content><![CDATA[<blockquote>
@@ -4735,6 +4700,100 @@ Innovation in Engineering and Management, Vol.3, pp. 278-280, July 2014.</li>
       </categories>
       <tags>
         <tag>Hadoop</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大数据文件格式</title>
+    <url>/posts/547465c0/</url>
+    <content><![CDATA[<p>本文旨在介绍常见的大数据文件格式，如 Avro、Parquet 和 ORC，了解它们是如何被开发出来的，以及它们的优点和缺点。</p>
+<p><img data-src="/images/bigdata/parquet-avro-orc-dig.png" alt="" /></p>
+<p>最关键的问题是：<strong>在实践中，为实现最优的性能，我们该如何选择合适的大数据文件格式？</strong></p>
+<span id="more"></span>
+<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>大数据文件格式时间线：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CSV(1978)-&gt; XML(1996) -&gt; JSON(2001) -&gt; Thrift(2007) -&gt; Protobuf(2008)</span><br><span class="line">	-&gt; Avro(2009) -&gt; RC File(2011) -&gt; Parquet(2013) -&gt; ORC(2016)</span><br></pre></td></tr></table></figure>
+<p>在开始具体讨论 Avro、Parquet 及 ORC 之前，我们需要先建立一个评估框架，站在工程师的角度上考虑如何选择合适的大数据文件格式。该评估框架主要包含四个关键因素：</p>
+<ul>
+<li>Row vs Column: 行式存储 or 列式存储</li>
+<li>Schema management: 模式管理</li>
+<li>Splitability: 分片能力</li>
+<li>Compression: 压缩</li>
+</ul>
+<p>接下来，我们将依次介绍评估框架涉及的四个关键因素，引入一些前置知识，以帮助我们思考如何选择合适的文件格式。</p>
+<h2 id="评估框架-行存储-vs-列存储"><a class="markdownIt-Anchor" href="#评估框架-行存储-vs-列存储"></a> 评估框架 - 行存储 vs 列存储</h2>
+<p>首先，对于行式存储及列式存储的文件格式，需要判断哪种是最适合我们需求的。一般而言，列式存储大多用于执行分析查询，因为这些查询通常只需要从海量数据集中获取部分列的数据。相反地，如果查询需要访问数据行的绝大多数列或全部列，那么行式存储的文件格式将会更加合适。</p>
+<blockquote>
+<p>列式存储：适合从海量数据行中访问部分列数据，如分析查询等。</p>
+<p>行式存储：适合访问数据行绝大多数列或全部列的需求。</p>
+</blockquote>
+<p>行式存储是数据表最简单的形式，在高度结构化的数据库系统，如 MySQL 及 Oracle 等中广泛使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Prod1,100.00,2018-04-02;Liam,Prod2,79.99,2018-04-02;Noah,Prod3,19.99,2018-04-01;Olivia,Prod2,79.99,2018-04-03</span><br></pre></td></tr></table></figure>
+<p>数据处理时是从左到右按行读取的。</p>
+<p>不同于行式存储，同样的数据，列式存储形式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Emma,Liam,Noah,Olivia;Prod1,Prod2,Prod3;Prod2;100.00,79.99,19.99,79.99;2018-04-02,2018-04-02,2018-04-01,2018-04-03</span><br></pre></td></tr></table></figure>
+<p>可以看到，数据按列从上到下存储，采用这种列分组存储形式可以更高效地处理特定列数据计算。</p>
+<p>列式存储格式在读取数据时，可以跳过不相关的列，只读取所需的列数据，能够实现高效的计算和压缩。</p>
+<h2 id="评估框架-模式管理"><a class="markdownIt-Anchor" href="#评估框架-模式管理"></a> 评估框架 - 模式管理</h2>
+<p>在数据库中，模式 (schema) 是指数据库的组织形式 - 表、列、视图、主键、关系等等。而当我们讨论单个数据集或数据文件的模式时，则相对要简单得多，此时模式只考虑属性列（attribute）层面，是指存储每个属性及其类型的定义。</p>
+<blockquote>
+<p>The schema stores the definition of each attribute and its type.</p>
+</blockquote>
+<p>在实践中，数据模式会时常发生变动（schema evolution），例如字段变更（修改、增加、删除），字段类型变更。那么如何管理模式演化信息也是我们考虑选择何种文件格式的重要因素之一。</p>
+<p>一些可供参考的评估模式管理能力的问题如下：</p>
+<ul>
+<li>更新模式的难易程度？</li>
+<li>不同模式版本如何交互？</li>
+<li>是否人类可读？</li>
+<li>模式处理的速度？</li>
+<li>是否影响数据的大小？</li>
+</ul>
+<p>我们将会在后文讨论具体文件格式时，尝试回答这些问题。</p>
+<h2 id="评估框架-分片能力"><a class="markdownIt-Anchor" href="#评估框架-分片能力"></a> 评估框架 - 分片能力</h2>
+<p>大数据场景中，数据集通常由成百上千个文件组成，且每个文件可能包含数百万或更多条数据记录。这些基于文件的数据块一般也是持续生成的。要高效地处理这些数据集，需要把作业分成不同的子任务，分配到独立的处理器上并行执行。</p>
+<p>数据文件格式的选择在并行实现上会有非常重要的影响。例如，如果一个数据集中的文件包含的是拥有大量数据记录的 XML 或 JSON 记录，这些文件是不可分片的，意味着该数据集无法划分成独立的小部分进行处理。</p>
+<blockquote>
+<p>Splitability: 分片能力，数据格式是否能拆分成独立的小部分，以支撑并行处理。</p>
+</blockquote>
+<p>在本文中介绍的 Avro、Parquet 及 Orc 均支持分片能力，它们之中大多在 MapReduce 生态系统中扮演着重要的角色，能够将大型的数据块分割成更小更适合处理的数据块。</p>
+<h2 id="评估框架-压缩"><a class="markdownIt-Anchor" href="#评估框架-压缩"></a> 评估框架 - 压缩</h2>
+<p>数据压缩可以降低数据存储和传输的需求，通常能够节省金钱和时间。压缩技术通过对频繁重复出现的数据进行编码来实现。</p>
+<p>相比于行式存储的数据，列式存储数据可以获得更高的压缩率。因为数据值按列存储，同类型数据值放在一起，可以实现更高效地压缩。</p>
+<p>尽管使用压缩技术能够显著地节省存储开销，但我们还需要考虑采用压缩所需的计算资源开销，解压缩同样需要消耗计算资源。因此，考虑压缩时，需要权衡计算资源和存储资源的开销。</p>
+<h2 id="文件格式"><a class="markdownIt-Anchor" href="#文件格式"></a> 文件格式</h2>
+<p>通过上文引入的评估框架，现在我们可以通过框架介绍的四种考量来判断该使用哪种大数据文件格式了。接下来，我们将进一步介绍目前常见的大数据文件格式：Avro、Parquet、ORC。</p>
+<h3 id="avro"><a class="markdownIt-Anchor" href="#avro"></a> Avro</h3>
+<p>Apache Avro 由 Hadoop 工作组于 2009 年发布。它是一种高度可分片的行式存储格式。Avro 的革新和关键特性是模式与数据一起传输，模式以 JSON 格式存储而数据则保持二进制格式，在最小化文件大小的同时最大化处理效率。</p>
+<p>Avro 还支持模式演化，适合存在潜在数据变更需求的场景。借助 Avro 管理模式的能力，在不同时间点，我们都能在低不兼容风险情况下，独立地对组件进行更新。由于 Avro 的模式所有版本均以可读 JSON 格式存储，开发人员可以很容易地了解数据可用的所有字段。不再需要开发人员写 If-else 语句来处理不同的模式版本，也不需要通过看旧的代码来了解旧的模式版本。</p>
+<p>Avro 支持多种编程语言，且由于模式定义以 JSON 格式存储而数据以二进制格式存储，Avro 还算是数据存储和传输场景中相对紧凑的选项。一般地，<strong>Avro 比较适合重数据写的场景，因为它可以很容易地新增数据行。</strong></p>
+<h3 id="parquet"><a class="markdownIt-Anchor" href="#parquet"></a> Parquet</h3>
+<p>2013年，受 Google Dremel Query System 启发，Parquet 由 Cloudera 和 Twitter 开发，作为 Hadoop 上的一种优化列式数据存储而存在。因为数据列式存储，它可高度压缩且支持分片能力。Parquet 通常会和 Impala (Hadoop MPP) 一起使用。</p>
+<p>Parquet 文件中的元数据 (metadata) 存储于文件末尾处，以便快速地进行写入。其中元数据包括数据类型、模式压缩编码、统计数据等信息。</p>
+<p><strong>Parquet 非常适合分析拥有许多列的宽数据集场景。</strong> Parquet 文件包含的二进制数据以 row group (行组)的形式进行组织，对于每一个行组，其中的数据以列的形式组织。面对重数据读取场景时，Parquet 将会是一个非常不错的选择。</p>
+<p>需要注意的是，Parquet 文件虽然支持模式演化，但并不是所有使用 Parquet 文件的系统都能很好地支持模式演化，例如 Impala，因为数据库对于同一张表需要维护至少两个版本的模式，所以 Impala 很难支持模式演化功能。</p>
+<h3 id="orc"><a class="markdownIt-Anchor" href="#orc"></a> ORC</h3>
+<p>ORC (Optimized Row Columnar，优化的行列式存储) 格式由 Hortonworks 开发，用于提升 Hive 的存储及性能。ORC 将行数据以列形式进行存储，这种行-列格式能够实现高效的压缩及存储，允许跨集群并行处理，且这种列式格式能够跳过不需要的列以提高处理和解压缩的速度。<strong>ORC 格式同样比较适合重数据读取的场景</strong>。</p>
+<p>因为 ORC 的索引系统（index system），它支持高级的压缩功能。ORC 文件结构包含数据条（stripes of data），这些数据条作为数据构建块彼此间独立，这意味着，对于任意给定查询，可以直接跳到所需的数据 stripe ，而在具体的 stripe 内，reader 读取数据可以专注于所需的列。footer 文件包含数据 stripe 中每一列的统计信息，如 count，sum，min，max等。</p>
+<p><img data-src="orc-file-structure.png" alt="" /></p>
+<p>与 Parquet 类似，ORC 文件格式同样支持模式演化，但具体效果还取决于实际数据存储（data store）的支持情况，如 Hive，最近引入了一些高级特性，允许新增列（appending columns）、类型转换（type conversion）以及名称映射（name mapping）。</p>
+<h3 id="格式选择"><a class="markdownIt-Anchor" href="#格式选择"></a> 格式选择</h3>
+<p><img data-src="bigdata-formats-comparison.png" alt="" /></p>
+<p>上图是本文介绍的 Avro、Parquet 及 ORC 在评估框架各因素间的比较。在考虑如何选择合适的数据格式时，我们首先面临的问题便是：<strong>数据是适合行式存储？还是更适合列式存储？</strong></p>
+<p>对于事务数据等需要同时处理数据行的许多列的场景，会比较适合按行式存储，那么 Avro 将会最佳选择，它也是面对重数据写场景的典型选择。</p>
+<p>如果数据更适合按列式存储，那么问题就变成了在 Parquet 和 ORC 间作出选择了。除考虑分片能力（Splitability）、压缩（Compression）及模式演化（schema evolution）支持情况外，我们还需将使用的平台的兼容性也纳入考虑，如 Avro 更适合 Kafka, Druid，而 Parquet 则是 Impala，Arrow， Spark 等，ORC 可以在 Hive 中发挥出最大性能表现。可以根据实际使用的系统和对数据格式的熟悉情况来做抉择。 不同于行式存储格式，列式存储更适合于重数据读取场景。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>在本文中，我们了解了大数据的常见数据格式，并简单讨论了它们各自的优缺点，并采用了一个评估框架来权衡它们以帮助我们在实践中选择合适的数据格式。理想情况下，我们可以根据需求选择合适的数据格式，但现实中数据可能以各种形式存储，如 CSV，JSON，XML 等，为使数据处理和存储发挥最大的性能表现，一般需要将数据的原始格式进行转化。</p>
+<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
+<p>1、An Introduction to Big Data Formats - Understanding Avro, Parquet, and ORC —— Nexla</p>
+<p>2、<a href="https://www.datanami.com/2018/05/16/big-data-file-formats-demystified">https://www.datanami.com/2018/05/16/big-data-file-formats-demystified</a></p>
+<p>3、<a href="https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb">https://towardsdatascience.com/demystify-hadoop-data-formats-avro-orc-and-parquet-e428709cf3bb</a></p>
+]]></content>
+      <categories>
+        <category>BigData</category>
+      </categories>
+      <tags>
+        <tag>avro</tag>
+        <tag>parquet</tag>
+        <tag>orc</tag>
       </tags>
   </entry>
   <entry>
