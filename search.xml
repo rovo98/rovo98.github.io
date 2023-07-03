@@ -1050,6 +1050,142 @@ PATCH的好处：节省网络带宽</p>
       </tags>
   </entry>
   <entry>
+    <title>GPG入门使用</title>
+    <url>/posts/7ea77913/</url>
+    <content><![CDATA[<h3 id="引入"><a class="markdownIt-Anchor" href="#引入"></a> 引入</h3>
+<blockquote>
+<p>gpg  is the OpenPGP part of the GNU Privacy Guard (GnuPG). It is a tool to provide digital encryption and signing services using the OpenPGP standard.<br />
+gpg features: complete key management and all the bells and whistles you would expect from a full OpenPGP implementation.</p>
+</blockquote>
+<div class="note info"><p><code>GnuPG</code>(GPG) 是 基于<code>OpenPGP</code>(由 <a href="https://www.ietf.org/rfc/rfc4880.txt">RFC4880</a> 定义,也被称为<code>PGP</code>)的一个完整的和免费的实现.我们可以使用<code>GPG</code>来对我们的数据和通信进行加密（encrypt）和签名（sign）, 它具有通用的密钥管理系统，以及各种公钥目录的访问模块. 我们可以很容易地使用<code>GPG</code>提供的命令行工具(当前它还提供不同平台下的图形界面工具<em>frontends</em>,以及库文件<em>libraries</em>)与其他的应用进行结合.同时还对<code>S/MIME</code>和<code>SSH(Security Shell)</code>提供支持.</p>
+</div>
+<span id="more"></span>
+<p>本文使用环境为 Linux 命令行，掌握命令行，Window （<code>Gpg4win</code>）等<a href="https://www.gnupg.org/download/index.html">其他客户端</a>也很容易掌握。</p>
+<h3 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h3>
+<p><code>GPG</code>有两种安装方式。可以<a href="https://www.gnupg.org/download/index.html">下载源码</a>, 自己编译安装:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>更方便的方式是直接安装编译好的二进制包:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch 环境</span><br><span class="line">sudo pacman -S gnupg</span><br><span class="line"></span><br><span class="line"># Debian / Ubuntu 环境</span><br><span class="line">sudo apt-get install gnupg</span><br><span class="line"></span><br><span class="line"># Fedora 环境</span><br><span class="line">yum install gnupg</span><br></pre></td></tr></table></figure>
+<p>安装完成后，键入下面的命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg --help</span><br></pre></td></tr></table></figure>
+<p>如果屏幕显示 GPG 的帮助信息，就表示安装成功。<br />
+<img data-src="gpg-help.jpg" alt="" /></p>
+<h3 id="密钥管理"><a class="markdownIt-Anchor" href="#密钥管理"></a> 密钥管理</h3>
+<p>在使用<code>GPG</code>进行加密和签名之前，我们应该清楚的知道，它还是一个优秀的密钥管理工具（key Manager）.</p>
+<p>可以使用<code>gpg --list-keys</code>查看当前管理的所有密钥.</p>
+<h4 id="生成密钥对"><a class="markdownIt-Anchor" href="#生成密钥对"></a> 生成密钥对</h4>
+<p>使用<code>gpg --gen-key</code>或<code>gpg --full-gen-key</code>(设置完整的参数配置来生成密钥对)</p>
+<p>以完整的生成密钥对为例,<code>gpg --full-gen-key</code></p>
+<p>(1).选择加密的算法(默认<code>RSA</code>):</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg (GnuPG) 2.2.11; Copyright (C) 2018 Free Software Foundation, Inc.</span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.</span><br><span class="line"></span><br><span class="line">Please select what kind of key you want:</span><br><span class="line">   (1) RSA and RSA (default)</span><br><span class="line">   (2) DSA and Elgamal</span><br><span class="line">   (3) DSA (sign only)</span><br><span class="line">   (4) RSA (sign only)</span><br><span class="line">Your selection? </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>(2).选择密钥的大小(默认 2048 位):</p>
+<div class="note warning"><p>密钥的位数越大，对于防范暴力破解攻击就越安全,但是对于各种用途，使用默认的大小已经足够了，因为绕过加密比试图破解代价反而更少一些。此外，随着密钥大小的增加，加密和解密将变慢，较大的密钥位数可能会影响签名的长度。</p>
+</div>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSA keys may be between 1024 and 4096 bits long.</span><br><span class="line">What keysize do you want? (2048) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>(3). 配置密钥的失效时间(默认 0, 永不失效)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Please specify how long the key should be valid.</span><br><span class="line">         0 = key does not expire</span><br><span class="line">      &lt;n&gt;  = key expires in n days</span><br><span class="line">      &lt;n&gt;w = key expires in n weeks</span><br><span class="line">      &lt;n&gt;m = key expires in n months</span><br><span class="line">      &lt;n&gt;y = key expires in n years</span><br><span class="line">Key is valid for? (0) </span><br><span class="line">Key does not expire at all</span><br><span class="line">Is this correct? (y/N) y</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>(4). 配置用户信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GnuPG needs to construct a user ID to identify your key.</span><br><span class="line"></span><br><span class="line">Real name: alice</span><br><span class="line">Email address: alice@gmail.com</span><br><span class="line">Comment: A Test case</span><br><span class="line">You selected this USER-ID:</span><br><span class="line">    &quot;alice (A Test case) &lt;alice@gmail.com&gt;&quot;</span><br><span class="line"></span><br><span class="line">Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? </span><br><span class="line"></span><br><span class="line"># 最后确认信息，若需要修改可进行更新，按O确认 </span><br></pre></td></tr></table></figure>
+<p>(5). 最后输入加密密码，完成密钥对的生成</p>
+<p><img data-src="gpg-passphrase.png" alt="" /></p>
+<p>查看当前的所有密钥对:</p>
+<p><img data-src="gpg-list-keys.jpg" alt="" /></p>
+<h4 id="密钥的导出和导入"><a class="markdownIt-Anchor" href="#密钥的导出和导入"></a> 密钥的导出和导入</h4>
+<p>导入公钥/私钥:</p>
+<p>公钥和私钥的导入都是使用一样的命令<code>gpg --import</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#导入公钥</span><br><span class="line">gpg --import rovo98.pub</span><br><span class="line"># 导入私钥</span><br><span class="line">gpg --import rovo98.pri</span><br></pre></td></tr></table></figure>
+<p>导入公钥之后，应进行验证。<code>GnuPG</code>提供了功能强大的信任模型，不需要我们亲自验证导入的每一个公钥。但是一些公钥还是需要亲自进行验证的，下面简单了解一下如何对导入的公钥进行验证。</p>
+<div class="note danger"><p>通过验证公钥的指纹，然后签名（Sign）公钥以将其证明为有效公钥来验证密钥。可以使用<code>--fingerprint</code>命令行选项快速查看公钥的指纹，但为了验证公钥，必须对其进行编辑。</p>
+</div>
+<p>编辑公钥示例:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --edit-key blake@cyb.org</span><br><span class="line"></span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">sub  1024g/5C8CBD41  created: 1999-06-04 expires: never     </span><br><span class="line">(1)  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Command&gt; fpr</span><br><span class="line">pub  1024D/9E98BC16 1999-06-04 Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>公钥的指纹验证需要通过公钥的所有者进行验证。可以通过电话或任何其他方式亲自完成，只要能够和公钥的真正所有者进行联系就行。<br />
+<strong>如果获得指纹与公钥所有者的指纹相同，才可以确定我们得到是正确的公钥副本</strong></p>
+</blockquote>
+<p>检查指纹之后，最后进行公钥的签名（Sign）完成验证。由于公钥签名是公钥加密中的一个弱点，因此在进行签名验证之前，必须确保指纹验证是正确的。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt;&gt; sign</span><br><span class="line">             </span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br><span class="line"></span><br><span class="line">     Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Are you really sure that you want to sign this key</span><br><span class="line">with your key: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line"></span><br><span class="line">Really sign?</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>签名之后，可以检查公钥，以列出其上面的签名，并查看我们添加的签名。公钥上的每个用户 ID 都可以具有一个或多个自签名以及已经通过公钥验证的签名。</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt; check</span><br><span class="line">uid  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">sig!       9E98BC16 1999-06-04   [self-signature]</span><br><span class="line">sig!       BB7576AC 1999-06-04   Alice (Judge) &lt;alice@cyb.org&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>导出公钥(Public key)</strong></p>
+<p>要将公钥发送给对应的用户之前，我们需要将密钥对的公钥导出，在<code>GPG</code>中使用<code>gpg --export</code>命令导出</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
+<p>默认导出的文件是以<strong>二进制格式</strong>保存的，非常不方便进行传输，因此<code>GPG</code>还提供了<code>--armor</code>参数来指定以<code>ASCII</code>码形式导出。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --armor --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
+<p><img data-src="gpg-export-pub-key.jpg" alt="" /></p>
+<p><strong>导出私钥（Private key）</strong>:</p>
+<p><code>GPG</code>还支持导出私钥，不过是对所有的私钥进行导出，同样可以二进制格式或<code>ASCII</code>格式导出.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --export-secret-keys --armor</span><br></pre></td></tr></table></figure>
+<h4 id="上传公钥"><a class="markdownIt-Anchor" href="#上传公钥"></a> 上传公钥</h4>
+<p>公钥服务器是网络上专门储存用户公钥的服务器。<code>send-keys</code>参数可以将公钥上传到服务器。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --send-keys [用户ID] --keyserver [服务器域名]</span><br></pre></td></tr></table></figure>
+<p>使用上面的命令，你的公钥就被传到了服务器，然后通过交换机制，所有的公钥服务器最终都会包含你的公钥。</p>
+<p>由于公钥服务器没有检查机制，任何人都可以用你的名义上传公钥，所以没有办法保证服务器上的公钥的可靠性。通常，你可以在网站上公布一个公钥指纹，让其他人核对下载到的公钥是否为真。<code>fingerprint</code>参数生成公钥指纹。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --fingerprint [用户ID]</span><br></pre></td></tr></table></figure>
+<p>从公钥服务器上获取公钥:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --receive-keys</span><br></pre></td></tr></table></figure>
+<p>获取到的公钥需要进行验证,参考上面提到的导入公钥的验证方式。</p>
+<h3 id="加密和解密文件"><a class="markdownIt-Anchor" href="#加密和解密文件"></a> 加密和解密文件</h3>
+<p>在加密和解密文件时，公钥和私钥各自具有特定的作用。</p>
+<blockquote>
+<p>公钥可以被认为是开放式保险箱。当通过公钥加密文件时，该文件被放入保险箱，安全关闭，并且组合锁经过多次旋转和组合。<br />
+相对应的私钥是可以重新打开保险箱并检索文件的组合(组合锁组合)。换句话说，之后持有私钥的人才能恢复和使用相关公钥加密文件。</p>
+</blockquote>
+<div class="note info"><p>因此加解密过程应该是这样的，假设你要给<code>alice</code>发送加密信息，使用<code>alice</code>的公钥对信息进行加密，则<code>alice</code>可以使用她的私钥对加密信息进行解密，而当她向你发送加密信息，加密信息时使用的应该是你的公钥。</p>
+</div>
+<p>加密例子: 使用<code>alice</code>的公钥对<code>sourceListforKali</code>进行加密</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.en --encrypt sourceListforKali --recipient alice@gmail.com</span><br></pre></td></tr></table></figure>
+<p><code>--recipient</code>指定使用的公钥</p>
+<p>解密:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.de --decrypt sourceListforKali.en</span><br></pre></td></tr></table></figure>
+<p>输入之前创建该密钥对的密码就可以对文件进行解密。</p>
+<p><img data-src="gpg-encrypt-decrypt.jpg" alt="" /></p>
+<div class="note warning"><p>我们还可以在不使用公钥的情况下，对文件进行加密，使用的是对称密码（symmetric chiper）。使用<code>--symmetric</code>参数即可</p>
+<p>手动输入加密密码即可。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.gpg --symmetric sourceListforKali</span><br></pre></td></tr></table></figure>
+<h3 id="签名signatures"><a class="markdownIt-Anchor" href="#签名signatures"></a> 签名(signatures)</h3>
+<p>数字签名证明文档并为其加上时间戳。如果随后以任何方式修改了文档，则签名验证将失败。数字签名可以起到与手写签名相同的作用，并具有防篡改的额外好处。</p>
+<p>例如：当你将文件签名并发布后，则接受到该文件的用户可以验证签名来查看文件是否被修改过。</p>
+<h4 id="创建和验证签名"><a class="markdownIt-Anchor" href="#创建和验证签名"></a> 创建和验证签名</h4>
+<p>创建和验证签名使用公/私钥对的方式不同于加解密操作。使用签名者的私钥创建签名，使用相应的公钥验证签名。</p>
+<p>使用数字签名的好处是一般情况下，签名人是确定的，除非签名者的私钥被泄露了。</p>
+<p>使用<code>--sign</code>参数创建数字签名，例:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --sign doc</span><br><span class="line">You need a passphrase to unlock the private key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
+<p>签名的文件在签名之前会被进行压缩处理，并输出一个二进制格式的签名文件。根据给定的签名文件，可以检查签名或检查签名并恢复原始文件。</p>
+<p>检查和验证签名使用<code>--verify</code>参数选项,验证签名并恢复原始文件使用<code>--decrypt</code>选项:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc --decrypt doc.sig</span><br><span class="line">gpg: Signature made Fri Jun  4 12:02:38 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<div class="note danger"><p>一般情况下，数字签名多数应用于对互联网上的帖子 <em>post</em> 以及 <em>email</em> 进行签名。这种情况下，我们一般不希望对需要签名的文件进行压缩处理，因此可以使用<code>--clearsign</code>选项，在不修改文件的情况下，将文件以<code>ASCII</code>的形式包装在签名文件中。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --clearsign doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">-----BEGIN PGP SIGNED MESSAGE-----</span><br><span class="line">Hash: SHA1</span><br><span class="line"></span><br><span class="line">[...]</span><br><span class="line">-----BEGIN PGP SIGNATURE-----</span><br><span class="line">Version: GnuPG v0.9.7 (GNU/Linux)</span><br><span class="line">Comment: For info see http://www.gnupg.org</span><br><span class="line"></span><br><span class="line">iEYEARECAAYFAjdYCQoACgkQJ9S6ULt1dqz6IwCfQ7wP6i/i8HhbcOSKF4ELyQB1</span><br><span class="line">oCoAoOuqpRqEzr4kOkQqHRLE/b8/Rw2k</span><br><span class="line">=y6kj</span><br><span class="line">-----END PGP SIGNATURE-----</span><br></pre></td></tr></table></figure>
+<div class="note primary"><p>分离的、独立的签名文件（<em>Detached signatures</em>）: 一个签名过的文件的用途一般是很少的。</p>
+<p>其他用户必须从签名文件中恢复原始文档，即使使用未压缩处理的签名文件（Clearsigned），也必须编辑签名文档以恢复原始文档。</p>
+<p>因此，<code>GPG</code>还提供用于对文档创建分离签名第三种签名方法，该签名是单独的文件。使用<code>--detach-sig</code>选项创建分离签名。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --detach-sig doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
+<p>通过此方法创建的签名，在验证时就需要同时使用签名和对应原文件:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --verify doc.sig doc</span><br><span class="line"></span><br><span class="line">gpg: Signature made Fri Jun  4 12:38:46 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="更多"><a class="markdownIt-Anchor" href="#更多"></a> 更多</h3>
+<p>以上就是<code>GnuPG</code>的简单入门使用，更多的可以详细阅读<code>GnuPG</code>提供的<a href="https://www.gnupg.org/documentation/index.html">用户手册和文档</a>.</p>
+<p>例如: 我们可以在加密文件的同时对文件进行签名(使用三种签名方法的其中一种)</p>
+<div class="note primary"><p>参考链接:</p>
+<ul>
+<li><a href="https://www.gnupg.org/gph/en/manual.html">https://www.gnupg.org/gph/en/manual.html</a></li>
+<li><a href="https://futureboy.us/pgp.html">https://futureboy.us/pgp.html</a></li>
+</ul>
+</div>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>softwares</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Arch linux系列 安装 haroopad markdown 编辑器</title>
     <url>/posts/63e58ebb/</url>
     <content><![CDATA[<blockquote>
@@ -1360,142 +1496,6 @@ fcitx-rime 则是为 Fcitx 提供了 rime 的支持，本人目前在 linux 平�
       </categories>
       <tags>
         <tag>software</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>GPG入门使用</title>
-    <url>/posts/7ea77913/</url>
-    <content><![CDATA[<h3 id="引入"><a class="markdownIt-Anchor" href="#引入"></a> 引入</h3>
-<blockquote>
-<p>gpg  is the OpenPGP part of the GNU Privacy Guard (GnuPG). It is a tool to provide digital encryption and signing services using the OpenPGP standard.<br />
-gpg features: complete key management and all the bells and whistles you would expect from a full OpenPGP implementation.</p>
-</blockquote>
-<div class="note info"><p><code>GnuPG</code>(GPG) 是 基于<code>OpenPGP</code>(由 <a href="https://www.ietf.org/rfc/rfc4880.txt">RFC4880</a> 定义,也被称为<code>PGP</code>)的一个完整的和免费的实现.我们可以使用<code>GPG</code>来对我们的数据和通信进行加密（encrypt）和签名（sign）, 它具有通用的密钥管理系统，以及各种公钥目录的访问模块. 我们可以很容易地使用<code>GPG</code>提供的命令行工具(当前它还提供不同平台下的图形界面工具<em>frontends</em>,以及库文件<em>libraries</em>)与其他的应用进行结合.同时还对<code>S/MIME</code>和<code>SSH(Security Shell)</code>提供支持.</p>
-</div>
-<span id="more"></span>
-<p>本文使用环境为 Linux 命令行，掌握命令行，Window （<code>Gpg4win</code>）等<a href="https://www.gnupg.org/download/index.html">其他客户端</a>也很容易掌握。</p>
-<h3 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h3>
-<p><code>GPG</code>有两种安装方式。可以<a href="https://www.gnupg.org/download/index.html">下载源码</a>, 自己编译安装:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>更方便的方式是直接安装编译好的二进制包:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch 环境</span><br><span class="line">sudo pacman -S gnupg</span><br><span class="line"></span><br><span class="line"># Debian / Ubuntu 环境</span><br><span class="line">sudo apt-get install gnupg</span><br><span class="line"></span><br><span class="line"># Fedora 环境</span><br><span class="line">yum install gnupg</span><br></pre></td></tr></table></figure>
-<p>安装完成后，键入下面的命令:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg --help</span><br></pre></td></tr></table></figure>
-<p>如果屏幕显示 GPG 的帮助信息，就表示安装成功。<br />
-<img data-src="gpg-help.jpg" alt="" /></p>
-<h3 id="密钥管理"><a class="markdownIt-Anchor" href="#密钥管理"></a> 密钥管理</h3>
-<p>在使用<code>GPG</code>进行加密和签名之前，我们应该清楚的知道，它还是一个优秀的密钥管理工具（key Manager）.</p>
-<p>可以使用<code>gpg --list-keys</code>查看当前管理的所有密钥.</p>
-<h4 id="生成密钥对"><a class="markdownIt-Anchor" href="#生成密钥对"></a> 生成密钥对</h4>
-<p>使用<code>gpg --gen-key</code>或<code>gpg --full-gen-key</code>(设置完整的参数配置来生成密钥对)</p>
-<p>以完整的生成密钥对为例,<code>gpg --full-gen-key</code></p>
-<p>(1).选择加密的算法(默认<code>RSA</code>):</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg (GnuPG) 2.2.11; Copyright (C) 2018 Free Software Foundation, Inc.</span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.</span><br><span class="line"></span><br><span class="line">Please select what kind of key you want:</span><br><span class="line">   (1) RSA and RSA (default)</span><br><span class="line">   (2) DSA and Elgamal</span><br><span class="line">   (3) DSA (sign only)</span><br><span class="line">   (4) RSA (sign only)</span><br><span class="line">Your selection? </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(2).选择密钥的大小(默认 2048 位):</p>
-<div class="note warning"><p>密钥的位数越大，对于防范暴力破解攻击就越安全,但是对于各种用途，使用默认的大小已经足够了，因为绕过加密比试图破解代价反而更少一些。此外，随着密钥大小的增加，加密和解密将变慢，较大的密钥位数可能会影响签名的长度。</p>
-</div>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSA keys may be between 1024 and 4096 bits long.</span><br><span class="line">What keysize do you want? (2048) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(3). 配置密钥的失效时间(默认 0, 永不失效)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Please specify how long the key should be valid.</span><br><span class="line">         0 = key does not expire</span><br><span class="line">      &lt;n&gt;  = key expires in n days</span><br><span class="line">      &lt;n&gt;w = key expires in n weeks</span><br><span class="line">      &lt;n&gt;m = key expires in n months</span><br><span class="line">      &lt;n&gt;y = key expires in n years</span><br><span class="line">Key is valid for? (0) </span><br><span class="line">Key does not expire at all</span><br><span class="line">Is this correct? (y/N) y</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(4). 配置用户信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GnuPG needs to construct a user ID to identify your key.</span><br><span class="line"></span><br><span class="line">Real name: alice</span><br><span class="line">Email address: alice@gmail.com</span><br><span class="line">Comment: A Test case</span><br><span class="line">You selected this USER-ID:</span><br><span class="line">    &quot;alice (A Test case) &lt;alice@gmail.com&gt;&quot;</span><br><span class="line"></span><br><span class="line">Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? </span><br><span class="line"></span><br><span class="line"># 最后确认信息，若需要修改可进行更新，按O确认 </span><br></pre></td></tr></table></figure>
-<p>(5). 最后输入加密密码，完成密钥对的生成</p>
-<p><img data-src="gpg-passphrase.png" alt="" /></p>
-<p>查看当前的所有密钥对:</p>
-<p><img data-src="gpg-list-keys.jpg" alt="" /></p>
-<h4 id="密钥的导出和导入"><a class="markdownIt-Anchor" href="#密钥的导出和导入"></a> 密钥的导出和导入</h4>
-<p>导入公钥/私钥:</p>
-<p>公钥和私钥的导入都是使用一样的命令<code>gpg --import</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#导入公钥</span><br><span class="line">gpg --import rovo98.pub</span><br><span class="line"># 导入私钥</span><br><span class="line">gpg --import rovo98.pri</span><br></pre></td></tr></table></figure>
-<p>导入公钥之后，应进行验证。<code>GnuPG</code>提供了功能强大的信任模型，不需要我们亲自验证导入的每一个公钥。但是一些公钥还是需要亲自进行验证的，下面简单了解一下如何对导入的公钥进行验证。</p>
-<div class="note danger"><p>通过验证公钥的指纹，然后签名（Sign）公钥以将其证明为有效公钥来验证密钥。可以使用<code>--fingerprint</code>命令行选项快速查看公钥的指纹，但为了验证公钥，必须对其进行编辑。</p>
-</div>
-<p>编辑公钥示例:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --edit-key blake@cyb.org</span><br><span class="line"></span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">sub  1024g/5C8CBD41  created: 1999-06-04 expires: never     </span><br><span class="line">(1)  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Command&gt; fpr</span><br><span class="line">pub  1024D/9E98BC16 1999-06-04 Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>公钥的指纹验证需要通过公钥的所有者进行验证。可以通过电话或任何其他方式亲自完成，只要能够和公钥的真正所有者进行联系就行。<br />
-<strong>如果获得指纹与公钥所有者的指纹相同，才可以确定我们得到是正确的公钥副本</strong></p>
-</blockquote>
-<p>检查指纹之后，最后进行公钥的签名（Sign）完成验证。由于公钥签名是公钥加密中的一个弱点，因此在进行签名验证之前，必须确保指纹验证是正确的。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt;&gt; sign</span><br><span class="line">             </span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br><span class="line"></span><br><span class="line">     Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Are you really sure that you want to sign this key</span><br><span class="line">with your key: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line"></span><br><span class="line">Really sign?</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>签名之后，可以检查公钥，以列出其上面的签名，并查看我们添加的签名。公钥上的每个用户 ID 都可以具有一个或多个自签名以及已经通过公钥验证的签名。</p>
-</blockquote>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt; check</span><br><span class="line">uid  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">sig!       9E98BC16 1999-06-04   [self-signature]</span><br><span class="line">sig!       BB7576AC 1999-06-04   Alice (Judge) &lt;alice@cyb.org&gt;</span><br></pre></td></tr></table></figure>
-<p><strong>导出公钥(Public key)</strong></p>
-<p>要将公钥发送给对应的用户之前，我们需要将密钥对的公钥导出，在<code>GPG</code>中使用<code>gpg --export</code>命令导出</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
-<p>默认导出的文件是以<strong>二进制格式</strong>保存的，非常不方便进行传输，因此<code>GPG</code>还提供了<code>--armor</code>参数来指定以<code>ASCII</code>码形式导出。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --armor --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
-<p><img data-src="gpg-export-pub-key.jpg" alt="" /></p>
-<p><strong>导出私钥（Private key）</strong>:</p>
-<p><code>GPG</code>还支持导出私钥，不过是对所有的私钥进行导出，同样可以二进制格式或<code>ASCII</code>格式导出.</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --export-secret-keys --armor</span><br></pre></td></tr></table></figure>
-<h4 id="上传公钥"><a class="markdownIt-Anchor" href="#上传公钥"></a> 上传公钥</h4>
-<p>公钥服务器是网络上专门储存用户公钥的服务器。<code>send-keys</code>参数可以将公钥上传到服务器。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --send-keys [用户ID] --keyserver [服务器域名]</span><br></pre></td></tr></table></figure>
-<p>使用上面的命令，你的公钥就被传到了服务器，然后通过交换机制，所有的公钥服务器最终都会包含你的公钥。</p>
-<p>由于公钥服务器没有检查机制，任何人都可以用你的名义上传公钥，所以没有办法保证服务器上的公钥的可靠性。通常，你可以在网站上公布一个公钥指纹，让其他人核对下载到的公钥是否为真。<code>fingerprint</code>参数生成公钥指纹。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --fingerprint [用户ID]</span><br></pre></td></tr></table></figure>
-<p>从公钥服务器上获取公钥:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --receive-keys</span><br></pre></td></tr></table></figure>
-<p>获取到的公钥需要进行验证,参考上面提到的导入公钥的验证方式。</p>
-<h3 id="加密和解密文件"><a class="markdownIt-Anchor" href="#加密和解密文件"></a> 加密和解密文件</h3>
-<p>在加密和解密文件时，公钥和私钥各自具有特定的作用。</p>
-<blockquote>
-<p>公钥可以被认为是开放式保险箱。当通过公钥加密文件时，该文件被放入保险箱，安全关闭，并且组合锁经过多次旋转和组合。<br />
-相对应的私钥是可以重新打开保险箱并检索文件的组合(组合锁组合)。换句话说，之后持有私钥的人才能恢复和使用相关公钥加密文件。</p>
-</blockquote>
-<div class="note info"><p>因此加解密过程应该是这样的，假设你要给<code>alice</code>发送加密信息，使用<code>alice</code>的公钥对信息进行加密，则<code>alice</code>可以使用她的私钥对加密信息进行解密，而当她向你发送加密信息，加密信息时使用的应该是你的公钥。</p>
-</div>
-<p>加密例子: 使用<code>alice</code>的公钥对<code>sourceListforKali</code>进行加密</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.en --encrypt sourceListforKali --recipient alice@gmail.com</span><br></pre></td></tr></table></figure>
-<p><code>--recipient</code>指定使用的公钥</p>
-<p>解密:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.de --decrypt sourceListforKali.en</span><br></pre></td></tr></table></figure>
-<p>输入之前创建该密钥对的密码就可以对文件进行解密。</p>
-<p><img data-src="gpg-encrypt-decrypt.jpg" alt="" /></p>
-<div class="note warning"><p>我们还可以在不使用公钥的情况下，对文件进行加密，使用的是对称密码（symmetric chiper）。使用<code>--symmetric</code>参数即可</p>
-<p>手动输入加密密码即可。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.gpg --symmetric sourceListforKali</span><br></pre></td></tr></table></figure>
-<h3 id="签名signatures"><a class="markdownIt-Anchor" href="#签名signatures"></a> 签名(signatures)</h3>
-<p>数字签名证明文档并为其加上时间戳。如果随后以任何方式修改了文档，则签名验证将失败。数字签名可以起到与手写签名相同的作用，并具有防篡改的额外好处。</p>
-<p>例如：当你将文件签名并发布后，则接受到该文件的用户可以验证签名来查看文件是否被修改过。</p>
-<h4 id="创建和验证签名"><a class="markdownIt-Anchor" href="#创建和验证签名"></a> 创建和验证签名</h4>
-<p>创建和验证签名使用公/私钥对的方式不同于加解密操作。使用签名者的私钥创建签名，使用相应的公钥验证签名。</p>
-<p>使用数字签名的好处是一般情况下，签名人是确定的，除非签名者的私钥被泄露了。</p>
-<p>使用<code>--sign</code>参数创建数字签名，例:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --sign doc</span><br><span class="line">You need a passphrase to unlock the private key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
-<p>签名的文件在签名之前会被进行压缩处理，并输出一个二进制格式的签名文件。根据给定的签名文件，可以检查签名或检查签名并恢复原始文件。</p>
-<p>检查和验证签名使用<code>--verify</code>参数选项,验证签名并恢复原始文件使用<code>--decrypt</code>选项:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc --decrypt doc.sig</span><br><span class="line">gpg: Signature made Fri Jun  4 12:02:38 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
-<div class="note danger"><p>一般情况下，数字签名多数应用于对互联网上的帖子 <em>post</em> 以及 <em>email</em> 进行签名。这种情况下，我们一般不希望对需要签名的文件进行压缩处理，因此可以使用<code>--clearsign</code>选项，在不修改文件的情况下，将文件以<code>ASCII</code>的形式包装在签名文件中。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --clearsign doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">-----BEGIN PGP SIGNED MESSAGE-----</span><br><span class="line">Hash: SHA1</span><br><span class="line"></span><br><span class="line">[...]</span><br><span class="line">-----BEGIN PGP SIGNATURE-----</span><br><span class="line">Version: GnuPG v0.9.7 (GNU/Linux)</span><br><span class="line">Comment: For info see http://www.gnupg.org</span><br><span class="line"></span><br><span class="line">iEYEARECAAYFAjdYCQoACgkQJ9S6ULt1dqz6IwCfQ7wP6i/i8HhbcOSKF4ELyQB1</span><br><span class="line">oCoAoOuqpRqEzr4kOkQqHRLE/b8/Rw2k</span><br><span class="line">=y6kj</span><br><span class="line">-----END PGP SIGNATURE-----</span><br></pre></td></tr></table></figure>
-<div class="note primary"><p>分离的、独立的签名文件（<em>Detached signatures</em>）: 一个签名过的文件的用途一般是很少的。</p>
-<p>其他用户必须从签名文件中恢复原始文档，即使使用未压缩处理的签名文件（Clearsigned），也必须编辑签名文档以恢复原始文档。</p>
-<p>因此，<code>GPG</code>还提供用于对文档创建分离签名第三种签名方法，该签名是单独的文件。使用<code>--detach-sig</code>选项创建分离签名。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --detach-sig doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
-<p>通过此方法创建的签名，在验证时就需要同时使用签名和对应原文件:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --verify doc.sig doc</span><br><span class="line"></span><br><span class="line">gpg: Signature made Fri Jun  4 12:38:46 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="更多"><a class="markdownIt-Anchor" href="#更多"></a> 更多</h3>
-<p>以上就是<code>GnuPG</code>的简单入门使用，更多的可以详细阅读<code>GnuPG</code>提供的<a href="https://www.gnupg.org/documentation/index.html">用户手册和文档</a>.</p>
-<p>例如: 我们可以在加密文件的同时对文件进行签名(使用三种签名方法的其中一种)</p>
-<div class="note primary"><p>参考链接:</p>
-<ul>
-<li><a href="https://www.gnupg.org/gph/en/manual.html">https://www.gnupg.org/gph/en/manual.html</a></li>
-<li><a href="https://futureboy.us/pgp.html">https://futureboy.us/pgp.html</a></li>
-</ul>
-</div>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>softwares</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -2866,108 +2866,6 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </tags>
   </entry>
   <entry>
-    <title>Java shaded dependencies</title>
-    <url>/posts/99f23fe2/</url>
-    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
-<span id="more"></span>
-<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
-<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
-<p>Relocating classes 示例：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
-<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
-<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
-<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
-<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
-<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
-<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
-<ol>
-<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
-<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
-<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
-<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Maven 项目构建提速</title>
-    <url>/posts/4d39110c/</url>
-    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
-在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
-<span id="more"></span>
-<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
-<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
-<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
-<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
-<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
-<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
-如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
-<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
-<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
-<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
-<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
-<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
-<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
-<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
-<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
-<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
-<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
-<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
-一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
-<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
-<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
-<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
-<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
-<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
-<ul>
-<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
-<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
-<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
-</ul>
-<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
-<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
-<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
-<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
-对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
-当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
-<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
-<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
-<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
-<blockquote>
-<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
-<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
-<ol>
-<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
-<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
-<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
-<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ClassNotFoundException vs. NoClassDefFoundError</title>
     <url>/posts/dc53e26b/</url>
     <content><![CDATA[<p><code>ClassNotFoundException</code> 和 <code>NoClassDefFoundError</code> 是我们运行 Java 程序时常面对的异常，那么导致它们出现的原因一般是什么呢？本文旨在介绍这两种异常，了解导致它们发生的原因，以及它们之间的区别，以便更好地了解该如何排查和解决相应问题。</p>
@@ -3025,302 +2923,6 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       <categories>
         <category>Java</category>
       </categories>
-  </entry>
-  <entry>
-    <title>JVM知识体系(二) | 内存管理</title>
-    <url>/posts/57a6bf72/</url>
-    <content><![CDATA[<p><img data-src="/images/java/basic/run-time-data-areas.png" alt="run-time-data-areas" /><br />
-主要简单的了解JVM的内存区(Memory Area)以及GC(Garbage Collection)垃圾回收机制。</p>
-<span id="more"></span>
-<h2 id="一-内存结构"><a class="markdownIt-Anchor" href="#一-内存结构"></a> 一、内存结构</h2>
-<p>Java虚拟机定义了许多的<strong>运行时数据区(run-time data areas)</strong>, 供程序执行时使用。</p>
-<p>其中，一些数据区域随着JVM的创建而创建，只有在JVM退出时在销毁，即属于JVM。<br />
-而其他的数据区随着进程(<em>Thread</em>)的创建而创建，进程销毁时也随之销毁(每个线程独有)。</p>
-<h3 id="1-逻辑分区"><a class="markdownIt-Anchor" href="#1-逻辑分区"></a> 1. 逻辑分区</h3>
-<p>JVM 内存在应用<strong>逻辑上</strong>可以分为以下区域:</p>
-<h4 id="11pc-register-程序计数器"><a class="markdownIt-Anchor" href="#11pc-register-程序计数器"></a> 1.1.pc Register - 程序计数器</h4>
-<p>存放当前执行语句(JVM instruction)的物理地址，随线程创建而创建。(每个线程均需要一个程序计数器)</p>
-<h4 id="12jvm-stacks-虚拟机栈"><a class="markdownIt-Anchor" href="#12jvm-stacks-虚拟机栈"></a> 1.2.JVM Stacks - 虚拟机栈</h4>
-<p>每个java虚拟机线程都有个私有的java虚拟机栈，与线程同创建。Java虚拟机栈存储<strong>帧(Frame)</strong>, Java虚拟机栈类似于C语言中的栈：它用于保存局部变量(<strong>Thread-local variables</strong>), 并在方法的调用和返回中发挥作用。</p>
-<div class="note warning"><ul>
-<li>java虚拟机栈的内存分配不需要是连续的。</li>
-<li>栈的大小可以是固定或动态扩展/收缩的，JVM允许我们对栈的初始大小进行控制，在动态扩展情况下，可以指定栈允许的最大和最小分配空间(通过<code>-Xss</code>和<code>-Xsx</code>来配置)。</li>
-</ul>
-<p><strong>Notice:</strong></p>
-<ul>
-<li>当线程中的计算需求超出Java虚拟机允许的范围时(线程请求的栈深度超过JVM运行深度), 会抛出<code>StackOverflowError</code>;</li>
-<li>在允许动态扩展栈的大小的情况下，当无法满足一次扩展需求或剩余的内存不足以为一个新线程创建栈时， JVM会抛出<code>OutOfMemoryError</code>。</li>
-</ul>
-</div>
-<h4 id="13heap-堆"><a class="markdownIt-Anchor" href="#13heap-堆"></a> 1.3.Heap - 堆</h4>
-<p>堆作为运行时数据区，为所有的类实例和数组分配内存，属于所有Java线程共享的。<strong>堆在JVM启动时创建，对象的堆存储由自动存储管理系统(GC)来回收</strong>, 对象永远不会被显式的释放。</p>
-<div class="note warning"><ul>
-<li>和线程栈一样，堆的大小是可以固定或动态扩展的，堆的内存不需要是连续的;</li>
-<li>堆的大小动态调整范围指定通过<code>-Xms</code>和<code>-Xmx</code>来指定;</li>
-</ul>
-<p><strong>Notice:</strong></p>
-<ul>
-<li>当堆无法申请到内存时(即GC无法申请到内存时), JVM会抛出<code>OutOfMemoryError</code>。</li>
-</ul>
-</div>
-<h4 id="14method-area-方法区"><a class="markdownIt-Anchor" href="#14method-area-方法区"></a> 1.4.Method Area - 方法区</h4>
-<p>和堆一样，方法区同样是所有线程共享的(随着JVM的启动而创建)。方法区存放每个类的类结构，如运行常量池(run-time constant pool)、字段(<em>field</em>)、构造方法和方法代码(包括类实例化方法)。</p>
-<div class="note warning"><ul>
-<li>虽然方法区在逻辑上是堆的一部分，但是垃圾收集器不会对它进行收集，Java SE8版本的规范没有对方法区的位置和对方法区中已编译代码的管理策略提出强制要求;</li>
-<li>方法区同样是可以是固定大小或动态扩展的，内存也不需要是连续的;</li>
-</ul>
-<p><strong>Notice:</strong></p>
-<ul>
-<li>当方法区的内存无法满足内存申请需求时，JVM会抛出<code>OutOfMemoryError</code>。</li>
-</ul>
-</div>
-<h4 id="15run-time-constant-pool-运行时常量池"><a class="markdownIt-Anchor" href="#15run-time-constant-pool-运行时常量池"></a> 1.5.Run-time Constant Pool - 运行时常量池</h4>
-<p>通过之前对类文件<code>.class</code>格式的了解，我们知道每个类文件中都是有一个<code>constant_pool[constant_count]</code>的表(<em>Table</em>)的, 存放字符串常量，类和接口名称，字段名称以及类文件结构及其结构中引用的其他常量。</p>
-<p>它包含几种常量，从编译时已知的数字字面量(<em>numeric literals</em>)到必须在运行时解析的方法和字段引用。</p>
-<p>每个运行时常量池都是在上文提到的方法区中创建的，当<strong>当JVM创建类或接口时，将创建类或接口的运行常量池</strong>(其实，通过我们已经了解到的类加载机制，知道当类加载时是将类文件以二进制数据的形式加载到方法区中，运行时常量池的创建在类加载过程中完成)。</p>
-<div class="note warning"><p>创建类或接口时，如果创建运行时常量池所需的内存大于方法区中的可用内存，则JVM将抛出<code>OutOfMemoryError</code>。</p>
-</div>
-<h4 id="16-native-method-stacks-本地方法栈"><a class="markdownIt-Anchor" href="#16-native-method-stacks-本地方法栈"></a> 1.6. Native Method Stacks - 本地方法栈</h4>
-<p>JVM实现的传统栈(conventional stack), 也称为&quot;C栈&quot;, 用于支持Java编程语言以外的语言编写的方法。</p>
-<p>本地方法栈也可以供诸如C语言的Java虚拟机指令集解释器的实现来使用。对于无法加载本地方法且本身不依赖于传统栈的Java虚拟机实现来说，并不需要提供本地方法栈。</p>
-<p>如果JVM实现提供了本地方法栈，和线程栈一样，通常也是在创建每个线程时为每个线程分配一个本地方法栈。</p>
-<div class="note warning"><ul>
-<li>本地方法栈可以是固定大小或动态扩展的，当是固定大小时，可以在创建栈时独立选择每个本地方法栈的大小;</li>
-</ul>
-<p><strong>Notice: (和线程栈类似)</strong></p>
-<ul>
-<li>当线程中的计算需求超出Java虚拟机允许的范围时(线程请求的本地方法栈深度超过JVM运行深度), 会抛出<code>StackOverflowError</code>;</li>
-<li>在允许动态扩展栈的大小的情况下，当无法满足一次扩展需求或剩余的内存不足以为一个新线程创建本地方法栈时， JVM会抛出<code>OutOfMemoryError</code>。</li>
-</ul>
-</div>
-<div class="note primary"><p>此部分内容主要参考 JAVA SE 8 Java Virtual Machine Specification</p>
-<ul>
-<li><a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html#jvms-2.5">https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html#jvms-2.5</a><br />
-其他参考链接:</li>
-<li><a href="https://www.geeksforgeeks.org/java-memory-management/">https://www.geeksforgeeks.org/java-memory-management/</a></li>
-<li><a href="https://howtodoinjava.com/java/garbage-collection/jvm-memory-model-structure-and-components/">https://howtodoinjava.com/java/garbage-collection/jvm-memory-model-structure-and-components/</a></li>
-</ul>
-</div>
-<h3 id="2-内存模型"><a class="markdownIt-Anchor" href="#2-内存模型"></a> 2. 内存模型</h3>
-<p>JVM内存由以下的部分组成:</p>
-<ul>
-<li><strong>堆内存(Heap Memory)</strong>: 存放Java对象;</li>
-<li><strong>非堆内存(Non-Heap Memory)</strong>: 用于java程序存储加载的类和其他元数据;</li>
-<li>JVM本身代码，JVM内部结构，加载的探查器(Loaded profiler agent)代码和数据等。</li>
-</ul>
-<p><img data-src="jvm-2-jvm_memory_structure.gif" alt="" /></p>
-<h4 id="21-堆内存"><a class="markdownIt-Anchor" href="#21-堆内存"></a> 2.1 堆内存</h4>
-<p>堆内存是运行时数据区，从中分配所有Java类实例和数组的内存，堆在JVM启动时创建，堆的大小可以是固定的或动态扩展的，堆的大小可以由以下的vm参数来指定:</p>
-<ul>
-<li><code>-Xms&lt;size&gt;</code>: 设置堆的初始大小;</li>
-<li><code>-Xmx&lt;size&gt;</code>: 设置堆的最大内存大小.</li>
-</ul>
-<p>默认情况下，最大堆的大小设置为<code>64Mb</code>。</p>
-<p>JVM 堆内存在物理上分为两个部分: 新生代(<strong>nursery or young generation</strong>)和老年代(<strong>old space or old generation</strong>)。<br />
-新生代是为分配新对象而保留的堆的部分空间。当新生代占满时，通过<strong>Minor GC</strong>对新生代区域执行垃圾回收动作，其中在新生代中生存足够长时间的所有对象(经历过若干次Minor GC后保留下来的对象)将被迁移到老年代, 从而释放新生代的空间以为更多的对象分配空间。</p>
-<p><img data-src="jvm2-jvm-heap-memory-model.png" alt="jvm-heap-memory-model" /></p>
-<p><strong>Minor GC</strong>分为三个部分: <strong>伊甸园(Eden)<strong>区、和两个</strong>幸存区(Survivor) S0(from), S1(to)</strong></p>
-<p><strong>关于新生代内存空间(Young Generation/Nursery):</strong></p>
-<ul>
-<li>大多数对象的创建都是位于<strong>Eden</strong>区的(因为有可能一些比较大的对象是直接在老年代中创建);</li>
-<li>当Eden区填满对象时，执行Minor GC并将所有幸存对象移到其中一个幸存区空间;</li>
-<li>Minor GC还会检查幸存区中的对象，并将幸存的对象移动到另一个幸存区，即幸存区总有一个是空的(即GC算法中的<code>mark-and-copy</code>算法);</li>
-<li>在多次Minor GC中存活下来的对象会被移动到老年代中。至于经过多少次Minor GC能晋升到老年代由JVM决定，控制对象的“年龄阈值(这里的年龄指对象被移动的次数)”.</li>
-</ul>
-<p>Java 最近的版本中的新生代中还包含一个<strong>保留区(reserved)</strong>， 用于保存最近创建的对象，防止对象在Minor GC执行之前被提升。</p>
-<p>关于老年代内存空间(<strong>Old Generation - Tenured</strong>)</p>
-<p>当老年区填满时，老年区同样会执行垃圾收集，称为<strong>Major GC</strong>，老年代中包含那些从多次Minor GC中幸存的对象，通常执行一次Major GC 时间要比较长，因为Minor GC旨在快速找到在新生代中依然存活的对象并将它们移动，所以Minor GC执行的频率和速度都要Major GC的更大。</p>
-<p>根据阈值限制，可以使用<code>-XX:+PrintTenuringDistribution</code>来检查，它按年龄来显示对象，将对象从<strong>Survivor</strong>空间移到<strong>Tenured</strong>空间中。</p>
-<p>我们还有许多其他有用的参数设置，如<code>-XX:InitialTenuringThreshold</code>, <code>-XX:MaxTenuringThreshold</code>和<code>-XX:TargetSurvivorRatio</code>, 可以用它们来最大限度的利用<strong>tenured</strong>和<strong>survivor</strong>空间。<br />
-通过设置<code>-XX:InitialTenuringThreshold</code>和<code>-XX:MaxTenuringThreshold</code>来设置对象的“年龄”的初始值和允许的最大值。</p>
-<p><img data-src="jvm2-jvm-java-memory-architecture.jpg" alt="java-memory-architecture" /></p>
-<h4 id="22-非堆内存"><a class="markdownIt-Anchor" href="#22-非堆内存"></a> 2.2 非堆内存</h4>
-<p>JVM堆以外内存，包含JVM缓存空间，类结构如运行常量池、字段和方法数据，方法构造方法。</p>
-<h5 id="221元空间metaspace"><a class="markdownIt-Anchor" href="#221元空间metaspace"></a> 2.2.1.元空间(Metaspace)</h5>
-<p>在Java8及以上版本已经没有了<strong>Permanent Generation 永久代</strong>这块区域，将不会再有关于<code>java.lang.OutOfMemoryError: PermGen</code>内存问题的存在。与驻留在Java堆中的<strong>Perm Gen</strong>不同，Metaspace 已经不是堆的一部分了。</p>
-<p>类元数据多数情况下都是从本地内存中分配的。默认情况下，Metaspace会自动增加其大小(直接由底层操作系统提供支持), 而Perm Gen始终是有固定的上限的。我们可以是这两个vm参数来指定Metaspace 的大小: <code>-XX:MetaSpaceSize</code>和<code>-XX:MaxMetaspaceSize</code>。</p>
-<p><strong>Metaspace</strong>背后的含义是类的生命周期机器元数据，这与类加载器的生命周期相匹配。也就是说只要类加载器处于活动中，元数据就会在Metaspace中保持活动状态且无法释放。</p>
-<h5 id="222代码缓存code-cache"><a class="markdownIt-Anchor" href="#222代码缓存code-cache"></a> 2.2.2.代码缓存(Code Cache)</h5>
-<p>运行Java程序时，它以分层的方式执行代码。在第一层，使用客户机编译器(C1 compiler)来编译代码。分析数据(<em>profiling data</em>)在服务器编译器的第二层中(C2 compiler)使用，以优化的方式编译该代码。默认情况下，Java7未启用分层编译，但在Java8中启用了分层编译。</p>
-<p>即时编译器(JIT compiler)将编译的代码存储在称为<strong>代码缓存</strong>的区域中，它是一个用于保存已编译代码的特殊堆。如果该区域的大小超过阈值，则该区域将被刷新，且GC不会重新定位这些对象。</p>
-<p>Java8中已经解决了一些性能问题和编译器未重新启用的问题，而在Java7中避免这些问题的方案之一是将代码缓存区域的大小增加到一个永远不会达到的程度。</p>
-<h5 id="223方法区method-area"><a class="markdownIt-Anchor" href="#223方法区method-area"></a> 2.2.3.方法区(Method Area)</h5>
-<p>方法区是Perm Gen 空间的一部分，用于存储类结构(运行时常量池和静态变量)以及方法和构造方法的代码。</p>
-<h5 id="224内存池memory-pool"><a class="markdownIt-Anchor" href="#224内存池memory-pool"></a> 2.2.4.内存池(Memory Pool)</h5>
-<p>内存池由JVM内存管理器创建，用于创建不可变对象池。内存池可以属于Heap或Perm Gen， 具体取决于JVM内存管理器的实现。</p>
-<h5 id="225运行时常量池run-time-constant-pool"><a class="markdownIt-Anchor" href="#225运行时常量池run-time-constant-pool"></a> 2.2.5.运行时常量池(Run-time Constant Pool)</h5>
-<p>运行时常量池，即每个类中的<code>constant_pool</code>表， 它包含类运行时常量和静态方法。运行时常量池是方法区的一部分。</p>
-<h5 id="226java栈-java-stack"><a class="markdownIt-Anchor" href="#226java栈-java-stack"></a> 2.2.6.Java栈 (Java Stack)</h5>
-<p>Java栈内存用于线程的执行。它们包含暂时的方法的特定值(Thread-local variables, 线程局部变量), 以及对从该方法引用的堆中其他对象的引用。</p>
-<h4 id="23-java-堆配置选项"><a class="markdownIt-Anchor" href="#23-java-堆配置选项"></a> 2.3 Java 堆配置选项</h4>
-<p>Java提供了很多关于堆内存的配置选项，我们可以使用它们来设置内存大小及其比例。下面是一些常用的配置项:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">VM Switch</th>
-<th style="text-align:center">VM Switch Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center"><code>-Xms</code></td>
-<td style="text-align:center">用于在JVM启动时设置初始堆大小</td>
-</tr>
-<tr>
-<td style="text-align:center"><code>-Xmx</code></td>
-<td style="text-align:center">用于设置最大堆大小</td>
-</tr>
-<tr>
-<td style="text-align:center"><code>-Xmn</code></td>
-<td style="text-align:center">设置新生代区域的大小，剩下的空间用于老年代</td>
-</tr>
-<tr>
-<td style="text-align:center"><code>-XX:PermGen</code></td>
-<td style="text-align:center">用于设置永久代 Perm Gen 的初始大小</td>
-</tr>
-<tr>
-<td style="text-align:center"><code>-XX:MaxPermGen</code></td>
-<td style="text-align:center">用于设置Perm Gen的最大内存空间</td>
-</tr>
-<tr>
-<td style="text-align:center"><code>-XX:SurvivorRatio</code></td>
-<td style="text-align:center">设置Eden区的比例(Eden/Survivor)，如新生代大小为10M, -XX:SurvivorRatio=2, 则Eden空间将预留5M, Survivor各预留2.5M。默认值是8</td>
-</tr>
-<tr>
-<td style="text-align:center"><code>-XX:NewRatio</code></td>
-<td style="text-align:center">设置老年代Tenured/新生代young Gen的比例，默认是2</td>
-</tr>
-</tbody>
-</table>
-<div class="note primary"><p>参考链接:</p>
-<ul>
-<li><a href="https://betsol.com/2017/06/java-memory-management-for-java-virtual-machine-jvm/">https://betsol.com/2017/06/java-memory-management-for-java-virtual-machine-jvm/</a></li>
-<li><a href="https://dzone.com/articles/java-8-permgen-metaspace">https://dzone.com/articles/java-8-permgen-metaspace</a></li>
-</ul>
-</div>
-<h2 id="二-垃圾回收"><a class="markdownIt-Anchor" href="#二-垃圾回收"></a> 二、垃圾回收</h2>
-<h3 id="1-垃圾回收机制"><a class="markdownIt-Anchor" href="#1-垃圾回收机制"></a> 1. 垃圾回收机制</h3>
-<h4 id="11-流程"><a class="markdownIt-Anchor" href="#11-流程"></a> 1.1 流程</h4>
-<p>垃圾回收一个释放堆内空间以创建新对象的过程。Java的最佳特性之一就是垃圾自动收集，垃圾收集器是JVM管理的进程，它可以查看内存中的所有对象，并找出程序中任何部分都没有引用的对象，删除并回收空间以分配给其他新创建的对象。通过垃圾收集有以下步骤:</p>
-<ul>
-<li><strong>Marking 标记</strong>: 标记哪些对象是可达对象(live objects)，哪些是不可达对象(dead objects), 垃圾收集器会以一个GC root开始遍历对象图(Object Graph)， 此过程会引起&quot;Stop the World Pause&quot;(将当前所有运行的线程挂起，直到对象图遍历完毕);<br />
-<img data-src="jvm-1-gc-mark.png" alt="jvm-gc-marking" /></li>
-<li><strong>Normal Deletion 普通删除</strong>: 删除不可达对象并回收分配给其他对象的空闲空间;<br />
-<img data-src="jvm-1-gc-mark-sweep.png" alt="jvm-gc-mark-sweep" /></li>
-<li><strong>Deletion with compacting</strong>: 性能考虑，在删除不可达对象之后，会将所有幸存对象移动到一起，腾出整段空闲的空间(内存碎片处理);<br />
-<img data-src="jvm-1-gc-mark-sweep-compact.png" alt="jvm-gc-mark-sweep-compact" /></li>
-<li><strong>Copy 复制</strong>: 将堆内存分成两个相等大小的分区，每次只使用一个区域，当完成标记后，直接将幸存对象复制到另一个分区即可。(例如Young Gen 中两个Survivor区)<br />
-<img data-src="jvm-1-gc-mark-copy.png" alt="jvm-gc-mark-copy" /></li>
-</ul>
-<p>上面给出步骤涉及的内容其实就是Java垃圾收集中使用的算法。</p>
-<div class="note danger"><p>自JDK 1发布以来，Java垃圾收集从未使用过<strong>引用计数算法 References Counting</strong>, 因为会出现”循环引用“，即对象<code>A</code>引用对象<code>B</code>, 而对象<code>B</code>引用对象<code>A</code>， 使得它们永远无法被垃圾收集器回收。</p>
-<p>关于<strong>Stop the World Pause</strong>:<br />
-所有的垃圾收集都会引起&quot;Stop the World Pause&quot;，即应用中的所有线程都要被挂起，直到对象图遍历完成。(因为如果对象图发生变化的话，对象图将无法正确的遍历)。</p>
-<p>对于新生代而言，由于存放的是短期对象，所以Minor GC过程非常快，应用程序可以说几乎不受它引起的&quot;Stop the World Pause&quot;的影响。</p>
-<p>但是，Major GC 就需要很长时间了，它会检查所有的活动对象。我们应该尽量让Major GC最少执行，因为它会使应用程序持续很长时间没有响应。</p>
-</div>
-<h4 id="12-策略"><a class="markdownIt-Anchor" href="#12-策略"></a> 1.2 策略</h4>
-<p>虚拟机栈、本地方法栈和程序计数器在编译完毕后已经可以确定所需内存空间，程序执行完毕后也会自动释放所有内存空间，所以不需要进行动态回收优化。JVM内存调优主要是针对堆和方法区的两大区域的内存。</p>
-<p>通常对象分为<strong>Strong</strong>、<strong>Soft</strong>、<strong>weak</strong>、<strong>phantom</strong>四种类型，强引用不会被回收，软引用在内存达到溢出边界时回收，弱引用在每次回收周期时回收，虚引用专门被标记为回收对象，具体回收策略如下:</p>
-<ul>
-<li>对象优先在Eden区中分配;</li>
-<li>新生对象回收策略Minor GC(频繁);</li>
-<li>老年代(Tenured)对象回收策略Full GC/Major GC(慢);</li>
-<li>大对象直接进入老年年代；超过<code>3m</code>的对象直接进入老年代 - <code>-XX:PretenuredSizeThreshold=3145728</code>(3M);</li>
-<li>长期存活对象进入老年代(经过若干次Minor GC的对象): Survivor中的对象经过一次Minor GC后，年龄会增加一岁，超过15岁进入老年代 - <code>:XX:MaxTenuringThreshold=15</code>;</li>
-<li>动态对象年龄判定: 设置Survivor区对象占用一般空间以上的对象进入老年代。</li>
-</ul>
-<h3 id="2-垃圾回收器"><a class="markdownIt-Anchor" href="#2-垃圾回收器"></a> 2. 垃圾回收器</h3>
-<p>我们可以在应用程序中使用五种垃圾收集类型。只需要在执行JVM参数来启用相应的垃圾收集策略即可。</p>
-<ol>
-<li><strong>Serial GC(串行GC)</strong> - <code>-XX:UseSerialGC</code>: 串行GC使用简单的<code>mark-sweep-compact</code>算法，可以用于新生代和老年代的垃圾收集，例如Minor GC和 Major GC;</li>
-<li><strong>Parallel GC(并行GC)</strong> - <code>-XX:UseParallelGC</code>: 并行GC和串行GC相同，不同之处在于它为新生代垃圾收集生成N个线程，其中N是系统中的CPU核心数。我们还可以使用<code>-XX:ParallelGCThreads=n</code>来控制线程数;</li>
-<li><strong>Parallel Old GC(并行旧GC)</strong> - <code>-XX:UseParallelOldGC</code>: 这与并行GC相同，只不过它除了为新生代生成多个线程以外，同时也对老年代生成多个线程;</li>
-<li><strong>Concurrent Mark Sweep(并发标记扫描, CMS)</strong> - <code>-XX:UseConcMarkSweepGC</code>: CMS也称为并发低暂停收集器。它为老年代做垃圾收集。CMS垃圾收集器尝试通过在应用程序线程呃逆同时执行大多数垃圾收集工作来最小化由于垃圾收集导致的暂停。年轻一代的CMS收集器使用与并行GC相同的算法，我们可以使用<code>-XX:ParallelCMSThreads=n</code>参数来控制CMS收集器的线程数;</li>
-<li><strong>G1 Garbage Collector(G1垃圾收集器)</strong> - <code>-XX:+UseG1GC</code>: G1从长远来看是要替换CMS收集器的。G1收集器是并行，并发和递增紧凑的低暂停垃圾收集器。G1不像其他收集器那样工作，并且没有新生代和老年代的概念，它将堆空间划分为多个大小相同的堆区域。当调用垃圾收集器时，它首先收集具有较少实时数据的区域，因此称为&quot;Garbage First&quot;, 即G1。</li>
-</ol>
-<p>更多关于G1GC的内容可以<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/G1.html">查看Oracle给出的文档</a>。</p>
-<div class="note primary"><p>参考链接:</p>
-<ul>
-<li><a href="https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/">https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/</a></li>
-<li><a href="https://plumbr.io/handbook/garbage-collection-algorithms">https://plumbr.io/handbook/garbage-collection-algorithms</a></li>
-<li><a href="https://dzone.com/articles/java-memory-architecture-model-garbage-collection">https://dzone.com/articles/java-memory-architecture-model-garbage-collection</a></li>
-<li><a href="https://www.journaldev.com/2856/java-jvm-memory-model-memory-management-in-java#memory-management-in-java-8211-old-generation">https://www.journaldev.com/2856/java-jvm-memory-model-memory-management-in-java#memory-management-in-java-8211-old-generation</a></li>
-</ul>
-</div>
-<div class="note info"><p><strong>Related posts:</strong></p>
-<ul>
-<li><a href="/posts/4661f621/">JVM知识体系 (一) | 类的装载</a></li>
-<li><a href="/posts/12448424/">JDK, JRE, JVM | 深入了解</a></li>
-</ul>
-</div>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>JVM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java Reflection</title>
-    <url>/posts/d897152e/</url>
-    <content><![CDATA[<p>简单了解Java反射的基本内容。</p>
-<span id="more"></span>
-<h3 id="java反射"><a class="markdownIt-Anchor" href="#java反射"></a> Java反射</h3>
-<h4 id="class类的使用"><a class="markdownIt-Anchor" href="#class类的使用"></a> Class类的使用</h4>
-<ul>
-<li>A class named Class</li>
-<li>1)在面向对象的世界里，万事万物皆对象。</li>
-<li>类是对象，类是java.lang.Class类的实例对象</li>
-<li>2)任何一个类都是Class的实例对象，这个实例对象有三种表示方式：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  		<span class="comment">//Foo的实例对象如何表示</span></span><br><span class="line">  		Foo foo1 = <span class="keyword">new</span> Foo() ;<span class="comment">// foo1就表示出来了.</span></span><br><span class="line">  		<span class="comment">//Foo这个类本身 也是一个实例对象，Class类的实例对象</span></span><br><span class="line">  		<span class="comment">// 第一种表示方式 --&gt; 任何一个类都有一个隐含的静态成员变量class</span></span><br><span class="line">  		Class c1 = Foo.class;</span><br><span class="line">  		<span class="comment">//第二种表示方式 --&gt; 已经知道该类的对象通过getClass()方法</span></span><br><span class="line">  		Class c2 = foo1.getClass() ;</span><br><span class="line">  		<span class="comment">/* c1,c2 表示了Foo类的类类型(class type)*/</span></span><br><span class="line">  		<span class="comment">// 不管c1 or c2 都代表了Foo类的类类型，一个类只可能是Class类的一个实例对象</span></span><br><span class="line">  		<span class="comment">// 第三种表达方式</span></span><br><span class="line">  		Class c3 = <span class="keyword">null</span> ;</span><br><span class="line">  		c3 = Class.forName(<span class="string">&quot;com.rovo98.Foo&quot;</span>);</span><br><span class="line">  		<span class="comment">// 我们完全可以通过类的类类型创建该类的对象实例</span></span><br><span class="line">  		Foo foo = (Foo)c1.newInstance() ;<span class="comment">//需要有无参构造方法</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="java动态加载类"><a class="markdownIt-Anchor" href="#java动态加载类"></a> Java动态加载类</h4>
-<ul>
-<li>Class.forName(“类的名称”)
-<ul>
-<li>不仅表示了类的类类型，还代表了动态加载类</li>
-<li>编译时刻加载类是静态加载类、运行时刻加载类是动态加载类</li>
-</ul>
-</li>
-<li>使用：当有多个功能模块(具体由类实现)时，使用动态加载</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//动态加载实例</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">OfficeAble</span>  // 指定接口标准</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Word</span> <span class="keyword">implements</span> <span class="title">OfficeAble</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	System.out.println(<span class="string">&quot;Start the Word&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Office</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">  		<span class="keyword">try</span>&#123;</span><br><span class="line">  			<span class="comment">//实现动态加载，运行时加载类</span></span><br><span class="line">  			Class c = Class.forName(args[<span class="number">0</span>]) ;</span><br><span class="line">  			OfficeAble oa = c.newInstance() ;</span><br><span class="line">  			oa.start() ;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">  			e.printStackTrace() ;</span><br><span class="line">		&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="通过反射获取方法信息"><a class="markdownIt-Anchor" href="#通过反射获取方法信息"></a> 通过反射获取方法信息</h4>
-<ul>
-<li>getMethods()  获取所有public 方法，包括父类继承而来的</li>
-<li>getDeclaredMethods() 获取所有自定义的方法，不包含访问权限</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo2</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">  	 </span><br><span class="line">  	 Class c1 = <span class="keyword">int</span>.class; <span class="comment">// int 的类类型</span></span><br><span class="line">  	 Class c2 = String.class; <span class="comment">//String的类类型</span></span><br><span class="line">  	 Class c3 = <span class="keyword">double</span>.class ;</span><br><span class="line">  	 Class c4 = Double.class ;</span><br><span class="line">  	 Class c5 = <span class="keyword">void</span>.class ;</span><br><span class="line">  	 System.out.println(c1.getName()) ;</span><br><span class="line">  	 System.out.println(c3.getSimpleName()) ;<span class="comment">//打印不包含包名的类信息</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>案例：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.feflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassUtil</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  *打印类的信息，包括类的成员变量，成员方法</span></span><br><span class="line"><span class="comment">  *<span class="doctag">@param</span> obj 该对象所属类的信息</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  	<span class="comment">//要获取类的信息 首先要获取类的类类型</span></span><br><span class="line">  	Class c = obj.getClass() ;<span class="comment">//传递的是哪个子类的对象 c就是该子类的类类型</span></span><br><span class="line">  	<span class="comment">// 获取类名称</span></span><br><span class="line">  	System.out.println(<span class="string">&quot;类的名称：&quot;</span>+c.getName()) ;</span><br><span class="line">  	<span class="comment">/*</span></span><br><span class="line"><span class="comment">  	*Method类 ，方法对象</span></span><br><span class="line"><span class="comment">  	*一个成员方法就是一个Method对象</span></span><br><span class="line"><span class="comment">  	*getMethods()方法获取的是所有public的函数，包括父类继承而来的</span></span><br><span class="line"><span class="comment">  	*getDeclaredMethods()获取的是所有该类自己声明的方法，不包含访问权限</span></span><br><span class="line"><span class="comment">  	*/</span></span><br><span class="line">  	Method[] ms = c.getMethods() ;<span class="comment">//c.getDeclaredMethods()</span></span><br><span class="line">  	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;ms.length; i++) &#123;</span><br><span class="line">        <span class="comment">// 得到方法的返回值类型的类类型</span></span><br><span class="line">        Class returnType = ms[i].getReturnType() ;</span><br><span class="line">        System.out.print(returnType.getName()+<span class="string">&quot; &quot;</span>) ;</span><br><span class="line">        <span class="comment">//得到方法的名称</span></span><br><span class="line">        System.out.print(ms[i].getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">        <span class="comment">//获取参数类型 --&gt; 得到的是参数列表的类型的类类型</span></span><br><span class="line">        <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">  			System.out.print(class1.getName()+<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">	 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="成员变量和构造方法信息的获取"><a class="markdownIt-Anchor" href="#成员变量和构造方法信息的获取"></a> 成员变量和构造方法信息的获取</h4>
-<ul>
-<li>getField()方法获取的是所有的public的成员变量的信息</li>
-<li>getDeclaredField()获取的是该类自己声明的成员变量的信息</li>
-<li>getConstructors获取所有的public的构造方法</li>
-<li>getDeclaredConstructors得到所有的构造方法</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassFieldMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">*成员变量也是对象</span></span><br><span class="line"><span class="comment">*java.lang.reflect.Field</span></span><br><span class="line"><span class="comment">*Field类封装了关于成员变量的操作</span></span><br><span class="line"><span class="comment">*getField()方法获取的是所有的public的成员变量的信息</span></span><br><span class="line"><span class="comment">*getDeclaredField()获取的是该类自己声明的成员变量的信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//Field[] fs = c.getDeclaredFields();</span></span><br><span class="line">Filed[] fs = c.getDeclaredFields();</span><br><span class="line"><span class="keyword">for</span> (Field field:fs) &#123;</span><br><span class="line">  <span class="comment">//得到成员变量的类型的类类型</span></span><br><span class="line">  Class fieldType = field.getType();</span><br><span class="line">  String typeName = fieldType.getName();</span><br><span class="line">  <span class="comment">//得到成员变量的名称</span></span><br><span class="line">  String fieldName = field.getName();</span><br><span class="line">  System.out.println(typeName+<span class="string">&quot; &quot;</span>+fieldName) ;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*打印对象的构造函数的信息</span></span><br><span class="line"><span class="comment">*<span class="doctag">@param</span> obj</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printConMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  Class c = obj.getClass();</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  *构造方法也是对象</span></span><br><span class="line"><span class="comment">  *java.lang.Constructor中封装了构造方法的信息</span></span><br><span class="line"><span class="comment">  *getConstructors获取所有的public的构造方法</span></span><br><span class="line"><span class="comment">  *getDeclaredConstructors得到所有的构造方法</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">//Constructor[] cs = c.getConstructors();</span></span><br><span class="line">  Construtor() cs = c.getDeclaredConstructors();</span><br><span class="line">  <span class="keyword">for</span> (Constructor constructor : cs) &#123;</span><br><span class="line">    <span class="comment">//打印构造方法信息</span></span><br><span class="line">    System.out.print(constructor.getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">    Class[] paramTypes = constructor.getParameterTypes();</span><br><span class="line">    <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">       System.out.print(class1.getName+<span class="string">&quot; &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="java方法反射的基本操作"><a class="markdownIt-Anchor" href="#java方法反射的基本操作"></a> java方法反射的基本操作</h3>
-<h4 id="方法的反射"><a class="markdownIt-Anchor" href="#方法的反射"></a> 方法的反射</h4>
-<ul>
-<li>1)如何获取某个方法<br />
-方法的名称和方法的参数列表才能唯一决定某个方法</li>
-<li>2)方法反射的操作<br />
-method.invoke(对象,参数列表)</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo1</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    <span class="comment">//要获取print(int, int)方法</span></span><br><span class="line">    <span class="comment">//1.要先获取类的类类类型</span></span><br><span class="line">    <span class="comment">//2.获取类的信息</span></span><br><span class="line">    A a1 = <span class="keyword">new</span> A() ;</span><br><span class="line">    Class c = a1.getClass() ;</span><br><span class="line">    <span class="comment">// 3.获取方法 名称和参数列表决定</span></span><br><span class="line">    <span class="comment">//getMethod获取的是public的方法</span></span><br><span class="line">    <span class="comment">//getDeclaredMethod自己的声明的方法</span></span><br><span class="line">    <span class="comment">//c.getMethod(name,parameterTypes);</span></span><br><span class="line">    <span class="comment">//Method m = c.getMethod(&quot;print&quot;,new Class[]&#123;int.class,int.class&#125;);</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 获取print(int,int)方法</span></span><br><span class="line">      Method m = c.getMethod(<span class="string">&quot;print&quot;</span>,<span class="keyword">int</span>.class,<span class="keyword">int</span>.class);</span><br><span class="line">      <span class="comment">//方法的反射操作</span></span><br><span class="line">      <span class="comment">//使用m对象来进行方法调用 和a1对象调用一样</span></span><br><span class="line">      <span class="comment">//方法如果没有返回值返回null,有则返回具体返回值</span></span><br><span class="line">      <span class="comment">//本来是a1.print(10,20);</span></span><br><span class="line">      Object o = m.invoke(a1,<span class="keyword">new</span> Object[]&#123;<span class="number">10</span>,<span class="number">20</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> vodi <span class="title">print</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a + b) ;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String a, String b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a.toUpperCase()+<span class="string">&quot;,&quot;</span>+b.tolowerCase()) ;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="通过反射了解集合泛型的本质"><a class="markdownIt-Anchor" href="#通过反射了解集合泛型的本质"></a> 通过反射了解集合泛型的本质</h4>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo4</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    ArrayList list = <span class="keyword">new</span> ArrayList() ;</span><br><span class="line">    ArrayList&lt;String&gt; list1 = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">    list1.add(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    <span class="comment">//list1.add(20);  错误的</span></span><br><span class="line">    </span><br><span class="line">    Class c1 = list.getClass() ;</span><br><span class="line">    Class c2 = list1.getClass() ;</span><br><span class="line">    System.out.println(c1 == c2) ;</span><br><span class="line">    <span class="comment">//反射的操作都是编译之后的操作</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    *c1 == c2 结果返回true说明编译之后集合的泛型是去泛型化的</span></span><br><span class="line"><span class="comment">    *java中集合的泛型，是防止错误输入的，只在编译阶段有效</span></span><br><span class="line"><span class="comment">    *验证：可以通过方法的反射操作，绕过编译</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">       Method m = c1.getMethod(<span class="string">&quot;add&quot;</span>,Object.class) ;</span><br><span class="line">       <span class="comment">// 绕过编译操作，绕过了泛型</span></span><br><span class="line">       Object o = c1.invoke(list1,<span class="number">20</span>) ;</span><br><span class="line">       System.out.println(list1.size()) ;</span><br><span class="line">       <span class="comment">// list1.size --&gt; 2</span></span><br><span class="line">       <span class="comment">// list1 -- &gt; [&quot;hello&quot;,20]</span></span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>basic</tag>
-      </tags>
   </entry>
   <entry>
     <title>JVM知识体系 (一) | 类的装载</title>
@@ -3847,6 +3449,302 @@ JVM调用<code>main</code>方法时不会创建类的实例，因此将<code>mai
       </tags>
   </entry>
   <entry>
+    <title>JVM知识体系(二) | 内存管理</title>
+    <url>/posts/57a6bf72/</url>
+    <content><![CDATA[<p><img data-src="/images/java/basic/run-time-data-areas.png" alt="run-time-data-areas" /><br />
+主要简单的了解JVM的内存区(Memory Area)以及GC(Garbage Collection)垃圾回收机制。</p>
+<span id="more"></span>
+<h2 id="一-内存结构"><a class="markdownIt-Anchor" href="#一-内存结构"></a> 一、内存结构</h2>
+<p>Java虚拟机定义了许多的<strong>运行时数据区(run-time data areas)</strong>, 供程序执行时使用。</p>
+<p>其中，一些数据区域随着JVM的创建而创建，只有在JVM退出时在销毁，即属于JVM。<br />
+而其他的数据区随着进程(<em>Thread</em>)的创建而创建，进程销毁时也随之销毁(每个线程独有)。</p>
+<h3 id="1-逻辑分区"><a class="markdownIt-Anchor" href="#1-逻辑分区"></a> 1. 逻辑分区</h3>
+<p>JVM 内存在应用<strong>逻辑上</strong>可以分为以下区域:</p>
+<h4 id="11pc-register-程序计数器"><a class="markdownIt-Anchor" href="#11pc-register-程序计数器"></a> 1.1.pc Register - 程序计数器</h4>
+<p>存放当前执行语句(JVM instruction)的物理地址，随线程创建而创建。(每个线程均需要一个程序计数器)</p>
+<h4 id="12jvm-stacks-虚拟机栈"><a class="markdownIt-Anchor" href="#12jvm-stacks-虚拟机栈"></a> 1.2.JVM Stacks - 虚拟机栈</h4>
+<p>每个java虚拟机线程都有个私有的java虚拟机栈，与线程同创建。Java虚拟机栈存储<strong>帧(Frame)</strong>, Java虚拟机栈类似于C语言中的栈：它用于保存局部变量(<strong>Thread-local variables</strong>), 并在方法的调用和返回中发挥作用。</p>
+<div class="note warning"><ul>
+<li>java虚拟机栈的内存分配不需要是连续的。</li>
+<li>栈的大小可以是固定或动态扩展/收缩的，JVM允许我们对栈的初始大小进行控制，在动态扩展情况下，可以指定栈允许的最大和最小分配空间(通过<code>-Xss</code>和<code>-Xsx</code>来配置)。</li>
+</ul>
+<p><strong>Notice:</strong></p>
+<ul>
+<li>当线程中的计算需求超出Java虚拟机允许的范围时(线程请求的栈深度超过JVM运行深度), 会抛出<code>StackOverflowError</code>;</li>
+<li>在允许动态扩展栈的大小的情况下，当无法满足一次扩展需求或剩余的内存不足以为一个新线程创建栈时， JVM会抛出<code>OutOfMemoryError</code>。</li>
+</ul>
+</div>
+<h4 id="13heap-堆"><a class="markdownIt-Anchor" href="#13heap-堆"></a> 1.3.Heap - 堆</h4>
+<p>堆作为运行时数据区，为所有的类实例和数组分配内存，属于所有Java线程共享的。<strong>堆在JVM启动时创建，对象的堆存储由自动存储管理系统(GC)来回收</strong>, 对象永远不会被显式的释放。</p>
+<div class="note warning"><ul>
+<li>和线程栈一样，堆的大小是可以固定或动态扩展的，堆的内存不需要是连续的;</li>
+<li>堆的大小动态调整范围指定通过<code>-Xms</code>和<code>-Xmx</code>来指定;</li>
+</ul>
+<p><strong>Notice:</strong></p>
+<ul>
+<li>当堆无法申请到内存时(即GC无法申请到内存时), JVM会抛出<code>OutOfMemoryError</code>。</li>
+</ul>
+</div>
+<h4 id="14method-area-方法区"><a class="markdownIt-Anchor" href="#14method-area-方法区"></a> 1.4.Method Area - 方法区</h4>
+<p>和堆一样，方法区同样是所有线程共享的(随着JVM的启动而创建)。方法区存放每个类的类结构，如运行常量池(run-time constant pool)、字段(<em>field</em>)、构造方法和方法代码(包括类实例化方法)。</p>
+<div class="note warning"><ul>
+<li>虽然方法区在逻辑上是堆的一部分，但是垃圾收集器不会对它进行收集，Java SE8版本的规范没有对方法区的位置和对方法区中已编译代码的管理策略提出强制要求;</li>
+<li>方法区同样是可以是固定大小或动态扩展的，内存也不需要是连续的;</li>
+</ul>
+<p><strong>Notice:</strong></p>
+<ul>
+<li>当方法区的内存无法满足内存申请需求时，JVM会抛出<code>OutOfMemoryError</code>。</li>
+</ul>
+</div>
+<h4 id="15run-time-constant-pool-运行时常量池"><a class="markdownIt-Anchor" href="#15run-time-constant-pool-运行时常量池"></a> 1.5.Run-time Constant Pool - 运行时常量池</h4>
+<p>通过之前对类文件<code>.class</code>格式的了解，我们知道每个类文件中都是有一个<code>constant_pool[constant_count]</code>的表(<em>Table</em>)的, 存放字符串常量，类和接口名称，字段名称以及类文件结构及其结构中引用的其他常量。</p>
+<p>它包含几种常量，从编译时已知的数字字面量(<em>numeric literals</em>)到必须在运行时解析的方法和字段引用。</p>
+<p>每个运行时常量池都是在上文提到的方法区中创建的，当<strong>当JVM创建类或接口时，将创建类或接口的运行常量池</strong>(其实，通过我们已经了解到的类加载机制，知道当类加载时是将类文件以二进制数据的形式加载到方法区中，运行时常量池的创建在类加载过程中完成)。</p>
+<div class="note warning"><p>创建类或接口时，如果创建运行时常量池所需的内存大于方法区中的可用内存，则JVM将抛出<code>OutOfMemoryError</code>。</p>
+</div>
+<h4 id="16-native-method-stacks-本地方法栈"><a class="markdownIt-Anchor" href="#16-native-method-stacks-本地方法栈"></a> 1.6. Native Method Stacks - 本地方法栈</h4>
+<p>JVM实现的传统栈(conventional stack), 也称为&quot;C栈&quot;, 用于支持Java编程语言以外的语言编写的方法。</p>
+<p>本地方法栈也可以供诸如C语言的Java虚拟机指令集解释器的实现来使用。对于无法加载本地方法且本身不依赖于传统栈的Java虚拟机实现来说，并不需要提供本地方法栈。</p>
+<p>如果JVM实现提供了本地方法栈，和线程栈一样，通常也是在创建每个线程时为每个线程分配一个本地方法栈。</p>
+<div class="note warning"><ul>
+<li>本地方法栈可以是固定大小或动态扩展的，当是固定大小时，可以在创建栈时独立选择每个本地方法栈的大小;</li>
+</ul>
+<p><strong>Notice: (和线程栈类似)</strong></p>
+<ul>
+<li>当线程中的计算需求超出Java虚拟机允许的范围时(线程请求的本地方法栈深度超过JVM运行深度), 会抛出<code>StackOverflowError</code>;</li>
+<li>在允许动态扩展栈的大小的情况下，当无法满足一次扩展需求或剩余的内存不足以为一个新线程创建本地方法栈时， JVM会抛出<code>OutOfMemoryError</code>。</li>
+</ul>
+</div>
+<div class="note primary"><p>此部分内容主要参考 JAVA SE 8 Java Virtual Machine Specification</p>
+<ul>
+<li><a href="https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html#jvms-2.5">https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html#jvms-2.5</a><br />
+其他参考链接:</li>
+<li><a href="https://www.geeksforgeeks.org/java-memory-management/">https://www.geeksforgeeks.org/java-memory-management/</a></li>
+<li><a href="https://howtodoinjava.com/java/garbage-collection/jvm-memory-model-structure-and-components/">https://howtodoinjava.com/java/garbage-collection/jvm-memory-model-structure-and-components/</a></li>
+</ul>
+</div>
+<h3 id="2-内存模型"><a class="markdownIt-Anchor" href="#2-内存模型"></a> 2. 内存模型</h3>
+<p>JVM内存由以下的部分组成:</p>
+<ul>
+<li><strong>堆内存(Heap Memory)</strong>: 存放Java对象;</li>
+<li><strong>非堆内存(Non-Heap Memory)</strong>: 用于java程序存储加载的类和其他元数据;</li>
+<li>JVM本身代码，JVM内部结构，加载的探查器(Loaded profiler agent)代码和数据等。</li>
+</ul>
+<p><img data-src="jvm-2-jvm_memory_structure.gif" alt="" /></p>
+<h4 id="21-堆内存"><a class="markdownIt-Anchor" href="#21-堆内存"></a> 2.1 堆内存</h4>
+<p>堆内存是运行时数据区，从中分配所有Java类实例和数组的内存，堆在JVM启动时创建，堆的大小可以是固定的或动态扩展的，堆的大小可以由以下的vm参数来指定:</p>
+<ul>
+<li><code>-Xms&lt;size&gt;</code>: 设置堆的初始大小;</li>
+<li><code>-Xmx&lt;size&gt;</code>: 设置堆的最大内存大小.</li>
+</ul>
+<p>默认情况下，最大堆的大小设置为<code>64Mb</code>。</p>
+<p>JVM 堆内存在物理上分为两个部分: 新生代(<strong>nursery or young generation</strong>)和老年代(<strong>old space or old generation</strong>)。<br />
+新生代是为分配新对象而保留的堆的部分空间。当新生代占满时，通过<strong>Minor GC</strong>对新生代区域执行垃圾回收动作，其中在新生代中生存足够长时间的所有对象(经历过若干次Minor GC后保留下来的对象)将被迁移到老年代, 从而释放新生代的空间以为更多的对象分配空间。</p>
+<p><img data-src="jvm2-jvm-heap-memory-model.png" alt="jvm-heap-memory-model" /></p>
+<p><strong>Minor GC</strong>分为三个部分: <strong>伊甸园(Eden)<strong>区、和两个</strong>幸存区(Survivor) S0(from), S1(to)</strong></p>
+<p><strong>关于新生代内存空间(Young Generation/Nursery):</strong></p>
+<ul>
+<li>大多数对象的创建都是位于<strong>Eden</strong>区的(因为有可能一些比较大的对象是直接在老年代中创建);</li>
+<li>当Eden区填满对象时，执行Minor GC并将所有幸存对象移到其中一个幸存区空间;</li>
+<li>Minor GC还会检查幸存区中的对象，并将幸存的对象移动到另一个幸存区，即幸存区总有一个是空的(即GC算法中的<code>mark-and-copy</code>算法);</li>
+<li>在多次Minor GC中存活下来的对象会被移动到老年代中。至于经过多少次Minor GC能晋升到老年代由JVM决定，控制对象的“年龄阈值(这里的年龄指对象被移动的次数)”.</li>
+</ul>
+<p>Java 最近的版本中的新生代中还包含一个<strong>保留区(reserved)</strong>， 用于保存最近创建的对象，防止对象在Minor GC执行之前被提升。</p>
+<p>关于老年代内存空间(<strong>Old Generation - Tenured</strong>)</p>
+<p>当老年区填满时，老年区同样会执行垃圾收集，称为<strong>Major GC</strong>，老年代中包含那些从多次Minor GC中幸存的对象，通常执行一次Major GC 时间要比较长，因为Minor GC旨在快速找到在新生代中依然存活的对象并将它们移动，所以Minor GC执行的频率和速度都要Major GC的更大。</p>
+<p>根据阈值限制，可以使用<code>-XX:+PrintTenuringDistribution</code>来检查，它按年龄来显示对象，将对象从<strong>Survivor</strong>空间移到<strong>Tenured</strong>空间中。</p>
+<p>我们还有许多其他有用的参数设置，如<code>-XX:InitialTenuringThreshold</code>, <code>-XX:MaxTenuringThreshold</code>和<code>-XX:TargetSurvivorRatio</code>, 可以用它们来最大限度的利用<strong>tenured</strong>和<strong>survivor</strong>空间。<br />
+通过设置<code>-XX:InitialTenuringThreshold</code>和<code>-XX:MaxTenuringThreshold</code>来设置对象的“年龄”的初始值和允许的最大值。</p>
+<p><img data-src="jvm2-jvm-java-memory-architecture.jpg" alt="java-memory-architecture" /></p>
+<h4 id="22-非堆内存"><a class="markdownIt-Anchor" href="#22-非堆内存"></a> 2.2 非堆内存</h4>
+<p>JVM堆以外内存，包含JVM缓存空间，类结构如运行常量池、字段和方法数据，方法构造方法。</p>
+<h5 id="221元空间metaspace"><a class="markdownIt-Anchor" href="#221元空间metaspace"></a> 2.2.1.元空间(Metaspace)</h5>
+<p>在Java8及以上版本已经没有了<strong>Permanent Generation 永久代</strong>这块区域，将不会再有关于<code>java.lang.OutOfMemoryError: PermGen</code>内存问题的存在。与驻留在Java堆中的<strong>Perm Gen</strong>不同，Metaspace 已经不是堆的一部分了。</p>
+<p>类元数据多数情况下都是从本地内存中分配的。默认情况下，Metaspace会自动增加其大小(直接由底层操作系统提供支持), 而Perm Gen始终是有固定的上限的。我们可以是这两个vm参数来指定Metaspace 的大小: <code>-XX:MetaSpaceSize</code>和<code>-XX:MaxMetaspaceSize</code>。</p>
+<p><strong>Metaspace</strong>背后的含义是类的生命周期机器元数据，这与类加载器的生命周期相匹配。也就是说只要类加载器处于活动中，元数据就会在Metaspace中保持活动状态且无法释放。</p>
+<h5 id="222代码缓存code-cache"><a class="markdownIt-Anchor" href="#222代码缓存code-cache"></a> 2.2.2.代码缓存(Code Cache)</h5>
+<p>运行Java程序时，它以分层的方式执行代码。在第一层，使用客户机编译器(C1 compiler)来编译代码。分析数据(<em>profiling data</em>)在服务器编译器的第二层中(C2 compiler)使用，以优化的方式编译该代码。默认情况下，Java7未启用分层编译，但在Java8中启用了分层编译。</p>
+<p>即时编译器(JIT compiler)将编译的代码存储在称为<strong>代码缓存</strong>的区域中，它是一个用于保存已编译代码的特殊堆。如果该区域的大小超过阈值，则该区域将被刷新，且GC不会重新定位这些对象。</p>
+<p>Java8中已经解决了一些性能问题和编译器未重新启用的问题，而在Java7中避免这些问题的方案之一是将代码缓存区域的大小增加到一个永远不会达到的程度。</p>
+<h5 id="223方法区method-area"><a class="markdownIt-Anchor" href="#223方法区method-area"></a> 2.2.3.方法区(Method Area)</h5>
+<p>方法区是Perm Gen 空间的一部分，用于存储类结构(运行时常量池和静态变量)以及方法和构造方法的代码。</p>
+<h5 id="224内存池memory-pool"><a class="markdownIt-Anchor" href="#224内存池memory-pool"></a> 2.2.4.内存池(Memory Pool)</h5>
+<p>内存池由JVM内存管理器创建，用于创建不可变对象池。内存池可以属于Heap或Perm Gen， 具体取决于JVM内存管理器的实现。</p>
+<h5 id="225运行时常量池run-time-constant-pool"><a class="markdownIt-Anchor" href="#225运行时常量池run-time-constant-pool"></a> 2.2.5.运行时常量池(Run-time Constant Pool)</h5>
+<p>运行时常量池，即每个类中的<code>constant_pool</code>表， 它包含类运行时常量和静态方法。运行时常量池是方法区的一部分。</p>
+<h5 id="226java栈-java-stack"><a class="markdownIt-Anchor" href="#226java栈-java-stack"></a> 2.2.6.Java栈 (Java Stack)</h5>
+<p>Java栈内存用于线程的执行。它们包含暂时的方法的特定值(Thread-local variables, 线程局部变量), 以及对从该方法引用的堆中其他对象的引用。</p>
+<h4 id="23-java-堆配置选项"><a class="markdownIt-Anchor" href="#23-java-堆配置选项"></a> 2.3 Java 堆配置选项</h4>
+<p>Java提供了很多关于堆内存的配置选项，我们可以使用它们来设置内存大小及其比例。下面是一些常用的配置项:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">VM Switch</th>
+<th style="text-align:center">VM Switch Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>-Xms</code></td>
+<td style="text-align:center">用于在JVM启动时设置初始堆大小</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-Xmx</code></td>
+<td style="text-align:center">用于设置最大堆大小</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-Xmn</code></td>
+<td style="text-align:center">设置新生代区域的大小，剩下的空间用于老年代</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-XX:PermGen</code></td>
+<td style="text-align:center">用于设置永久代 Perm Gen 的初始大小</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-XX:MaxPermGen</code></td>
+<td style="text-align:center">用于设置Perm Gen的最大内存空间</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-XX:SurvivorRatio</code></td>
+<td style="text-align:center">设置Eden区的比例(Eden/Survivor)，如新生代大小为10M, -XX:SurvivorRatio=2, 则Eden空间将预留5M, Survivor各预留2.5M。默认值是8</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-XX:NewRatio</code></td>
+<td style="text-align:center">设置老年代Tenured/新生代young Gen的比例，默认是2</td>
+</tr>
+</tbody>
+</table>
+<div class="note primary"><p>参考链接:</p>
+<ul>
+<li><a href="https://betsol.com/2017/06/java-memory-management-for-java-virtual-machine-jvm/">https://betsol.com/2017/06/java-memory-management-for-java-virtual-machine-jvm/</a></li>
+<li><a href="https://dzone.com/articles/java-8-permgen-metaspace">https://dzone.com/articles/java-8-permgen-metaspace</a></li>
+</ul>
+</div>
+<h2 id="二-垃圾回收"><a class="markdownIt-Anchor" href="#二-垃圾回收"></a> 二、垃圾回收</h2>
+<h3 id="1-垃圾回收机制"><a class="markdownIt-Anchor" href="#1-垃圾回收机制"></a> 1. 垃圾回收机制</h3>
+<h4 id="11-流程"><a class="markdownIt-Anchor" href="#11-流程"></a> 1.1 流程</h4>
+<p>垃圾回收一个释放堆内空间以创建新对象的过程。Java的最佳特性之一就是垃圾自动收集，垃圾收集器是JVM管理的进程，它可以查看内存中的所有对象，并找出程序中任何部分都没有引用的对象，删除并回收空间以分配给其他新创建的对象。通过垃圾收集有以下步骤:</p>
+<ul>
+<li><strong>Marking 标记</strong>: 标记哪些对象是可达对象(live objects)，哪些是不可达对象(dead objects), 垃圾收集器会以一个GC root开始遍历对象图(Object Graph)， 此过程会引起&quot;Stop the World Pause&quot;(将当前所有运行的线程挂起，直到对象图遍历完毕);<br />
+<img data-src="jvm-1-gc-mark.png" alt="jvm-gc-marking" /></li>
+<li><strong>Normal Deletion 普通删除</strong>: 删除不可达对象并回收分配给其他对象的空闲空间;<br />
+<img data-src="jvm-1-gc-mark-sweep.png" alt="jvm-gc-mark-sweep" /></li>
+<li><strong>Deletion with compacting</strong>: 性能考虑，在删除不可达对象之后，会将所有幸存对象移动到一起，腾出整段空闲的空间(内存碎片处理);<br />
+<img data-src="jvm-1-gc-mark-sweep-compact.png" alt="jvm-gc-mark-sweep-compact" /></li>
+<li><strong>Copy 复制</strong>: 将堆内存分成两个相等大小的分区，每次只使用一个区域，当完成标记后，直接将幸存对象复制到另一个分区即可。(例如Young Gen 中两个Survivor区)<br />
+<img data-src="jvm-1-gc-mark-copy.png" alt="jvm-gc-mark-copy" /></li>
+</ul>
+<p>上面给出步骤涉及的内容其实就是Java垃圾收集中使用的算法。</p>
+<div class="note danger"><p>自JDK 1发布以来，Java垃圾收集从未使用过<strong>引用计数算法 References Counting</strong>, 因为会出现”循环引用“，即对象<code>A</code>引用对象<code>B</code>, 而对象<code>B</code>引用对象<code>A</code>， 使得它们永远无法被垃圾收集器回收。</p>
+<p>关于<strong>Stop the World Pause</strong>:<br />
+所有的垃圾收集都会引起&quot;Stop the World Pause&quot;，即应用中的所有线程都要被挂起，直到对象图遍历完成。(因为如果对象图发生变化的话，对象图将无法正确的遍历)。</p>
+<p>对于新生代而言，由于存放的是短期对象，所以Minor GC过程非常快，应用程序可以说几乎不受它引起的&quot;Stop the World Pause&quot;的影响。</p>
+<p>但是，Major GC 就需要很长时间了，它会检查所有的活动对象。我们应该尽量让Major GC最少执行，因为它会使应用程序持续很长时间没有响应。</p>
+</div>
+<h4 id="12-策略"><a class="markdownIt-Anchor" href="#12-策略"></a> 1.2 策略</h4>
+<p>虚拟机栈、本地方法栈和程序计数器在编译完毕后已经可以确定所需内存空间，程序执行完毕后也会自动释放所有内存空间，所以不需要进行动态回收优化。JVM内存调优主要是针对堆和方法区的两大区域的内存。</p>
+<p>通常对象分为<strong>Strong</strong>、<strong>Soft</strong>、<strong>weak</strong>、<strong>phantom</strong>四种类型，强引用不会被回收，软引用在内存达到溢出边界时回收，弱引用在每次回收周期时回收，虚引用专门被标记为回收对象，具体回收策略如下:</p>
+<ul>
+<li>对象优先在Eden区中分配;</li>
+<li>新生对象回收策略Minor GC(频繁);</li>
+<li>老年代(Tenured)对象回收策略Full GC/Major GC(慢);</li>
+<li>大对象直接进入老年年代；超过<code>3m</code>的对象直接进入老年代 - <code>-XX:PretenuredSizeThreshold=3145728</code>(3M);</li>
+<li>长期存活对象进入老年代(经过若干次Minor GC的对象): Survivor中的对象经过一次Minor GC后，年龄会增加一岁，超过15岁进入老年代 - <code>:XX:MaxTenuringThreshold=15</code>;</li>
+<li>动态对象年龄判定: 设置Survivor区对象占用一般空间以上的对象进入老年代。</li>
+</ul>
+<h3 id="2-垃圾回收器"><a class="markdownIt-Anchor" href="#2-垃圾回收器"></a> 2. 垃圾回收器</h3>
+<p>我们可以在应用程序中使用五种垃圾收集类型。只需要在执行JVM参数来启用相应的垃圾收集策略即可。</p>
+<ol>
+<li><strong>Serial GC(串行GC)</strong> - <code>-XX:UseSerialGC</code>: 串行GC使用简单的<code>mark-sweep-compact</code>算法，可以用于新生代和老年代的垃圾收集，例如Minor GC和 Major GC;</li>
+<li><strong>Parallel GC(并行GC)</strong> - <code>-XX:UseParallelGC</code>: 并行GC和串行GC相同，不同之处在于它为新生代垃圾收集生成N个线程，其中N是系统中的CPU核心数。我们还可以使用<code>-XX:ParallelGCThreads=n</code>来控制线程数;</li>
+<li><strong>Parallel Old GC(并行旧GC)</strong> - <code>-XX:UseParallelOldGC</code>: 这与并行GC相同，只不过它除了为新生代生成多个线程以外，同时也对老年代生成多个线程;</li>
+<li><strong>Concurrent Mark Sweep(并发标记扫描, CMS)</strong> - <code>-XX:UseConcMarkSweepGC</code>: CMS也称为并发低暂停收集器。它为老年代做垃圾收集。CMS垃圾收集器尝试通过在应用程序线程呃逆同时执行大多数垃圾收集工作来最小化由于垃圾收集导致的暂停。年轻一代的CMS收集器使用与并行GC相同的算法，我们可以使用<code>-XX:ParallelCMSThreads=n</code>参数来控制CMS收集器的线程数;</li>
+<li><strong>G1 Garbage Collector(G1垃圾收集器)</strong> - <code>-XX:+UseG1GC</code>: G1从长远来看是要替换CMS收集器的。G1收集器是并行，并发和递增紧凑的低暂停垃圾收集器。G1不像其他收集器那样工作，并且没有新生代和老年代的概念，它将堆空间划分为多个大小相同的堆区域。当调用垃圾收集器时，它首先收集具有较少实时数据的区域，因此称为&quot;Garbage First&quot;, 即G1。</li>
+</ol>
+<p>更多关于G1GC的内容可以<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/G1.html">查看Oracle给出的文档</a>。</p>
+<div class="note primary"><p>参考链接:</p>
+<ul>
+<li><a href="https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/">https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/</a></li>
+<li><a href="https://plumbr.io/handbook/garbage-collection-algorithms">https://plumbr.io/handbook/garbage-collection-algorithms</a></li>
+<li><a href="https://dzone.com/articles/java-memory-architecture-model-garbage-collection">https://dzone.com/articles/java-memory-architecture-model-garbage-collection</a></li>
+<li><a href="https://www.journaldev.com/2856/java-jvm-memory-model-memory-management-in-java#memory-management-in-java-8211-old-generation">https://www.journaldev.com/2856/java-jvm-memory-model-memory-management-in-java#memory-management-in-java-8211-old-generation</a></li>
+</ul>
+</div>
+<div class="note info"><p><strong>Related posts:</strong></p>
+<ul>
+<li><a href="/posts/4661f621/">JVM知识体系 (一) | 类的装载</a></li>
+<li><a href="/posts/12448424/">JDK, JRE, JVM | 深入了解</a></li>
+</ul>
+</div>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>JVM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java Reflection</title>
+    <url>/posts/d897152e/</url>
+    <content><![CDATA[<p>简单了解Java反射的基本内容。</p>
+<span id="more"></span>
+<h3 id="java反射"><a class="markdownIt-Anchor" href="#java反射"></a> Java反射</h3>
+<h4 id="class类的使用"><a class="markdownIt-Anchor" href="#class类的使用"></a> Class类的使用</h4>
+<ul>
+<li>A class named Class</li>
+<li>1)在面向对象的世界里，万事万物皆对象。</li>
+<li>类是对象，类是java.lang.Class类的实例对象</li>
+<li>2)任何一个类都是Class的实例对象，这个实例对象有三种表示方式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">  		<span class="comment">//Foo的实例对象如何表示</span></span><br><span class="line">  		Foo foo1 = <span class="keyword">new</span> Foo() ;<span class="comment">// foo1就表示出来了.</span></span><br><span class="line">  		<span class="comment">//Foo这个类本身 也是一个实例对象，Class类的实例对象</span></span><br><span class="line">  		<span class="comment">// 第一种表示方式 --&gt; 任何一个类都有一个隐含的静态成员变量class</span></span><br><span class="line">  		Class c1 = Foo.class;</span><br><span class="line">  		<span class="comment">//第二种表示方式 --&gt; 已经知道该类的对象通过getClass()方法</span></span><br><span class="line">  		Class c2 = foo1.getClass() ;</span><br><span class="line">  		<span class="comment">/* c1,c2 表示了Foo类的类类型(class type)*/</span></span><br><span class="line">  		<span class="comment">// 不管c1 or c2 都代表了Foo类的类类型，一个类只可能是Class类的一个实例对象</span></span><br><span class="line">  		<span class="comment">// 第三种表达方式</span></span><br><span class="line">  		Class c3 = <span class="keyword">null</span> ;</span><br><span class="line">  		c3 = Class.forName(<span class="string">&quot;com.rovo98.Foo&quot;</span>);</span><br><span class="line">  		<span class="comment">// 我们完全可以通过类的类类型创建该类的对象实例</span></span><br><span class="line">  		Foo foo = (Foo)c1.newInstance() ;<span class="comment">//需要有无参构造方法</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="java动态加载类"><a class="markdownIt-Anchor" href="#java动态加载类"></a> Java动态加载类</h4>
+<ul>
+<li>Class.forName(“类的名称”)
+<ul>
+<li>不仅表示了类的类类型，还代表了动态加载类</li>
+<li>编译时刻加载类是静态加载类、运行时刻加载类是动态加载类</li>
+</ul>
+</li>
+<li>使用：当有多个功能模块(具体由类实现)时，使用动态加载</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//动态加载实例</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">OfficeAble</span>  // 指定接口标准</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Word</span> <span class="keyword">implements</span> <span class="title">OfficeAble</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  	System.out.println(<span class="string">&quot;Start the Word&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Office</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">  		<span class="keyword">try</span>&#123;</span><br><span class="line">  			<span class="comment">//实现动态加载，运行时加载类</span></span><br><span class="line">  			Class c = Class.forName(args[<span class="number">0</span>]) ;</span><br><span class="line">  			OfficeAble oa = c.newInstance() ;</span><br><span class="line">  			oa.start() ;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">  			e.printStackTrace() ;</span><br><span class="line">		&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="通过反射获取方法信息"><a class="markdownIt-Anchor" href="#通过反射获取方法信息"></a> 通过反射获取方法信息</h4>
+<ul>
+<li>getMethods()  获取所有public 方法，包括父类继承而来的</li>
+<li>getDeclaredMethods() 获取所有自定义的方法，不包含访问权限</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassDemo2</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;</span><br><span class="line">  	 </span><br><span class="line">  	 Class c1 = <span class="keyword">int</span>.class; <span class="comment">// int 的类类型</span></span><br><span class="line">  	 Class c2 = String.class; <span class="comment">//String的类类型</span></span><br><span class="line">  	 Class c3 = <span class="keyword">double</span>.class ;</span><br><span class="line">  	 Class c4 = Double.class ;</span><br><span class="line">  	 Class c5 = <span class="keyword">void</span>.class ;</span><br><span class="line">  	 System.out.println(c1.getName()) ;</span><br><span class="line">  	 System.out.println(c3.getSimpleName()) ;<span class="comment">//打印不包含包名的类信息</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>案例：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.feflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassUtil</span> </span>&#123;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  *打印类的信息，包括类的成员变量，成员方法</span></span><br><span class="line"><span class="comment">  *<span class="doctag">@param</span> obj 该对象所属类的信息</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  	<span class="comment">//要获取类的信息 首先要获取类的类类型</span></span><br><span class="line">  	Class c = obj.getClass() ;<span class="comment">//传递的是哪个子类的对象 c就是该子类的类类型</span></span><br><span class="line">  	<span class="comment">// 获取类名称</span></span><br><span class="line">  	System.out.println(<span class="string">&quot;类的名称：&quot;</span>+c.getName()) ;</span><br><span class="line">  	<span class="comment">/*</span></span><br><span class="line"><span class="comment">  	*Method类 ，方法对象</span></span><br><span class="line"><span class="comment">  	*一个成员方法就是一个Method对象</span></span><br><span class="line"><span class="comment">  	*getMethods()方法获取的是所有public的函数，包括父类继承而来的</span></span><br><span class="line"><span class="comment">  	*getDeclaredMethods()获取的是所有该类自己声明的方法，不包含访问权限</span></span><br><span class="line"><span class="comment">  	*/</span></span><br><span class="line">  	Method[] ms = c.getMethods() ;<span class="comment">//c.getDeclaredMethods()</span></span><br><span class="line">  	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;ms.length; i++) &#123;</span><br><span class="line">        <span class="comment">// 得到方法的返回值类型的类类型</span></span><br><span class="line">        Class returnType = ms[i].getReturnType() ;</span><br><span class="line">        System.out.print(returnType.getName()+<span class="string">&quot; &quot;</span>) ;</span><br><span class="line">        <span class="comment">//得到方法的名称</span></span><br><span class="line">        System.out.print(ms[i].getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">        <span class="comment">//获取参数类型 --&gt; 得到的是参数列表的类型的类类型</span></span><br><span class="line">        <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">  			System.out.print(class1.getName()+<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">	 &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="成员变量和构造方法信息的获取"><a class="markdownIt-Anchor" href="#成员变量和构造方法信息的获取"></a> 成员变量和构造方法信息的获取</h4>
+<ul>
+<li>getField()方法获取的是所有的public的成员变量的信息</li>
+<li>getDeclaredField()获取的是该类自己声明的成员变量的信息</li>
+<li>getConstructors获取所有的public的构造方法</li>
+<li>getDeclaredConstructors得到所有的构造方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printClassFieldMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">*成员变量也是对象</span></span><br><span class="line"><span class="comment">*java.lang.reflect.Field</span></span><br><span class="line"><span class="comment">*Field类封装了关于成员变量的操作</span></span><br><span class="line"><span class="comment">*getField()方法获取的是所有的public的成员变量的信息</span></span><br><span class="line"><span class="comment">*getDeclaredField()获取的是该类自己声明的成员变量的信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//Field[] fs = c.getDeclaredFields();</span></span><br><span class="line">Filed[] fs = c.getDeclaredFields();</span><br><span class="line"><span class="keyword">for</span> (Field field:fs) &#123;</span><br><span class="line">  <span class="comment">//得到成员变量的类型的类类型</span></span><br><span class="line">  Class fieldType = field.getType();</span><br><span class="line">  String typeName = fieldType.getName();</span><br><span class="line">  <span class="comment">//得到成员变量的名称</span></span><br><span class="line">  String fieldName = field.getName();</span><br><span class="line">  System.out.println(typeName+<span class="string">&quot; &quot;</span>+fieldName) ;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*打印对象的构造函数的信息</span></span><br><span class="line"><span class="comment">*<span class="doctag">@param</span> obj</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printConMessage</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">  Class c = obj.getClass();</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">  *构造方法也是对象</span></span><br><span class="line"><span class="comment">  *java.lang.Constructor中封装了构造方法的信息</span></span><br><span class="line"><span class="comment">  *getConstructors获取所有的public的构造方法</span></span><br><span class="line"><span class="comment">  *getDeclaredConstructors得到所有的构造方法</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">//Constructor[] cs = c.getConstructors();</span></span><br><span class="line">  Construtor() cs = c.getDeclaredConstructors();</span><br><span class="line">  <span class="keyword">for</span> (Constructor constructor : cs) &#123;</span><br><span class="line">    <span class="comment">//打印构造方法信息</span></span><br><span class="line">    System.out.print(constructor.getName()+<span class="string">&quot;(&quot;</span>);</span><br><span class="line">    Class[] paramTypes = constructor.getParameterTypes();</span><br><span class="line">    <span class="keyword">for</span> (Class class1 : paramTypes) &#123;</span><br><span class="line">       System.out.print(class1.getName+<span class="string">&quot; &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="java方法反射的基本操作"><a class="markdownIt-Anchor" href="#java方法反射的基本操作"></a> java方法反射的基本操作</h3>
+<h4 id="方法的反射"><a class="markdownIt-Anchor" href="#方法的反射"></a> 方法的反射</h4>
+<ul>
+<li>1)如何获取某个方法<br />
+方法的名称和方法的参数列表才能唯一决定某个方法</li>
+<li>2)方法反射的操作<br />
+method.invoke(对象,参数列表)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo1</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    <span class="comment">//要获取print(int, int)方法</span></span><br><span class="line">    <span class="comment">//1.要先获取类的类类类型</span></span><br><span class="line">    <span class="comment">//2.获取类的信息</span></span><br><span class="line">    A a1 = <span class="keyword">new</span> A() ;</span><br><span class="line">    Class c = a1.getClass() ;</span><br><span class="line">    <span class="comment">// 3.获取方法 名称和参数列表决定</span></span><br><span class="line">    <span class="comment">//getMethod获取的是public的方法</span></span><br><span class="line">    <span class="comment">//getDeclaredMethod自己的声明的方法</span></span><br><span class="line">    <span class="comment">//c.getMethod(name,parameterTypes);</span></span><br><span class="line">    <span class="comment">//Method m = c.getMethod(&quot;print&quot;,new Class[]&#123;int.class,int.class&#125;);</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 获取print(int,int)方法</span></span><br><span class="line">      Method m = c.getMethod(<span class="string">&quot;print&quot;</span>,<span class="keyword">int</span>.class,<span class="keyword">int</span>.class);</span><br><span class="line">      <span class="comment">//方法的反射操作</span></span><br><span class="line">      <span class="comment">//使用m对象来进行方法调用 和a1对象调用一样</span></span><br><span class="line">      <span class="comment">//方法如果没有返回值返回null,有则返回具体返回值</span></span><br><span class="line">      <span class="comment">//本来是a1.print(10,20);</span></span><br><span class="line">      Object o = m.invoke(a1,<span class="keyword">new</span> Object[]&#123;<span class="number">10</span>,<span class="number">20</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">   &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> vodi <span class="title">print</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a + b) ;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(String a, String b)</span> </span>&#123;</span><br><span class="line">    System.out.println(a.toUpperCase()+<span class="string">&quot;,&quot;</span>+b.tolowerCase()) ;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="通过反射了解集合泛型的本质"><a class="markdownIt-Anchor" href="#通过反射了解集合泛型的本质"></a> 通过反射了解集合泛型的本质</h4>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rovo98.reflect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodDemo4</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">    ArrayList list = <span class="keyword">new</span> ArrayList() ;</span><br><span class="line">    ArrayList&lt;String&gt; list1 = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">    list1.add(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    <span class="comment">//list1.add(20);  错误的</span></span><br><span class="line">    </span><br><span class="line">    Class c1 = list.getClass() ;</span><br><span class="line">    Class c2 = list1.getClass() ;</span><br><span class="line">    System.out.println(c1 == c2) ;</span><br><span class="line">    <span class="comment">//反射的操作都是编译之后的操作</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    *c1 == c2 结果返回true说明编译之后集合的泛型是去泛型化的</span></span><br><span class="line"><span class="comment">    *java中集合的泛型，是防止错误输入的，只在编译阶段有效</span></span><br><span class="line"><span class="comment">    *验证：可以通过方法的反射操作，绕过编译</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">       Method m = c1.getMethod(<span class="string">&quot;add&quot;</span>,Object.class) ;</span><br><span class="line">       <span class="comment">// 绕过编译操作，绕过了泛型</span></span><br><span class="line">       Object o = c1.invoke(list1,<span class="number">20</span>) ;</span><br><span class="line">       System.out.println(list1.size()) ;</span><br><span class="line">       <span class="comment">// list1.size --&gt; 2</span></span><br><span class="line">       <span class="comment">// list1 -- &gt; [&quot;hello&quot;,20]</span></span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>basic</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java 泛型 PECS</title>
     <url>/posts/a3d08d1f/</url>
     <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
@@ -4105,6 +4003,108 @@ JDK = JRE + tools to develop Java application.</p>
         <tag>JVM</tag>
         <tag>JRE</tag>
         <tag>JDK</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java shaded dependencies</title>
+    <url>/posts/99f23fe2/</url>
+    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
+<span id="more"></span>
+<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
+<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
+<p>Relocating classes 示例：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
+<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
+<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
+<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
+<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
+<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
+<ol>
+<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
+<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
+<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
+<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maven 项目构建提速</title>
+    <url>/posts/4d39110c/</url>
+    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
+在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
+<span id="more"></span>
+<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
+<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
+<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
+<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
+<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
+<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
+如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
+<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
+<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
+<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
+<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
+<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
+<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
+<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
+<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
+<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
+<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
+<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
+一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
+<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
+<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
+<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
+<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
+<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
+<ul>
+<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
+<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
+<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
+</ul>
+<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
+<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
+<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
+<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
+对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
+当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
+<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
+<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
+<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
+<blockquote>
+<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
+<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
+<ol>
+<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
+<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
+<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
+<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
       </tags>
   </entry>
   <entry>
