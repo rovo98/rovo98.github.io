@@ -1050,142 +1050,6 @@ PATCH的好处：节省网络带宽</p>
       </tags>
   </entry>
   <entry>
-    <title>GPG入门使用</title>
-    <url>/posts/7ea77913/</url>
-    <content><![CDATA[<h3 id="引入"><a class="markdownIt-Anchor" href="#引入"></a> 引入</h3>
-<blockquote>
-<p>gpg  is the OpenPGP part of the GNU Privacy Guard (GnuPG). It is a tool to provide digital encryption and signing services using the OpenPGP standard.<br />
-gpg features: complete key management and all the bells and whistles you would expect from a full OpenPGP implementation.</p>
-</blockquote>
-<div class="note info"><p><code>GnuPG</code>(GPG) 是 基于<code>OpenPGP</code>(由 <a href="https://www.ietf.org/rfc/rfc4880.txt">RFC4880</a> 定义,也被称为<code>PGP</code>)的一个完整的和免费的实现.我们可以使用<code>GPG</code>来对我们的数据和通信进行加密（encrypt）和签名（sign）, 它具有通用的密钥管理系统，以及各种公钥目录的访问模块. 我们可以很容易地使用<code>GPG</code>提供的命令行工具(当前它还提供不同平台下的图形界面工具<em>frontends</em>,以及库文件<em>libraries</em>)与其他的应用进行结合.同时还对<code>S/MIME</code>和<code>SSH(Security Shell)</code>提供支持.</p>
-</div>
-<span id="more"></span>
-<p>本文使用环境为 Linux 命令行，掌握命令行，Window （<code>Gpg4win</code>）等<a href="https://www.gnupg.org/download/index.html">其他客户端</a>也很容易掌握。</p>
-<h3 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h3>
-<p><code>GPG</code>有两种安装方式。可以<a href="https://www.gnupg.org/download/index.html">下载源码</a>, 自己编译安装:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>更方便的方式是直接安装编译好的二进制包:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch 环境</span><br><span class="line">sudo pacman -S gnupg</span><br><span class="line"></span><br><span class="line"># Debian / Ubuntu 环境</span><br><span class="line">sudo apt-get install gnupg</span><br><span class="line"></span><br><span class="line"># Fedora 环境</span><br><span class="line">yum install gnupg</span><br></pre></td></tr></table></figure>
-<p>安装完成后，键入下面的命令:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg --help</span><br></pre></td></tr></table></figure>
-<p>如果屏幕显示 GPG 的帮助信息，就表示安装成功。<br />
-<img data-src="gpg-help.jpg" alt="" /></p>
-<h3 id="密钥管理"><a class="markdownIt-Anchor" href="#密钥管理"></a> 密钥管理</h3>
-<p>在使用<code>GPG</code>进行加密和签名之前，我们应该清楚的知道，它还是一个优秀的密钥管理工具（key Manager）.</p>
-<p>可以使用<code>gpg --list-keys</code>查看当前管理的所有密钥.</p>
-<h4 id="生成密钥对"><a class="markdownIt-Anchor" href="#生成密钥对"></a> 生成密钥对</h4>
-<p>使用<code>gpg --gen-key</code>或<code>gpg --full-gen-key</code>(设置完整的参数配置来生成密钥对)</p>
-<p>以完整的生成密钥对为例,<code>gpg --full-gen-key</code></p>
-<p>(1).选择加密的算法(默认<code>RSA</code>):</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg (GnuPG) 2.2.11; Copyright (C) 2018 Free Software Foundation, Inc.</span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.</span><br><span class="line"></span><br><span class="line">Please select what kind of key you want:</span><br><span class="line">   (1) RSA and RSA (default)</span><br><span class="line">   (2) DSA and Elgamal</span><br><span class="line">   (3) DSA (sign only)</span><br><span class="line">   (4) RSA (sign only)</span><br><span class="line">Your selection? </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(2).选择密钥的大小(默认 2048 位):</p>
-<div class="note warning"><p>密钥的位数越大，对于防范暴力破解攻击就越安全,但是对于各种用途，使用默认的大小已经足够了，因为绕过加密比试图破解代价反而更少一些。此外，随着密钥大小的增加，加密和解密将变慢，较大的密钥位数可能会影响签名的长度。</p>
-</div>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSA keys may be between 1024 and 4096 bits long.</span><br><span class="line">What keysize do you want? (2048) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(3). 配置密钥的失效时间(默认 0, 永不失效)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Please specify how long the key should be valid.</span><br><span class="line">         0 = key does not expire</span><br><span class="line">      &lt;n&gt;  = key expires in n days</span><br><span class="line">      &lt;n&gt;w = key expires in n weeks</span><br><span class="line">      &lt;n&gt;m = key expires in n months</span><br><span class="line">      &lt;n&gt;y = key expires in n years</span><br><span class="line">Key is valid for? (0) </span><br><span class="line">Key does not expire at all</span><br><span class="line">Is this correct? (y/N) y</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(4). 配置用户信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GnuPG needs to construct a user ID to identify your key.</span><br><span class="line"></span><br><span class="line">Real name: alice</span><br><span class="line">Email address: alice@gmail.com</span><br><span class="line">Comment: A Test case</span><br><span class="line">You selected this USER-ID:</span><br><span class="line">    &quot;alice (A Test case) &lt;alice@gmail.com&gt;&quot;</span><br><span class="line"></span><br><span class="line">Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? </span><br><span class="line"></span><br><span class="line"># 最后确认信息，若需要修改可进行更新，按O确认 </span><br></pre></td></tr></table></figure>
-<p>(5). 最后输入加密密码，完成密钥对的生成</p>
-<p><img data-src="gpg-passphrase.png" alt="" /></p>
-<p>查看当前的所有密钥对:</p>
-<p><img data-src="gpg-list-keys.jpg" alt="" /></p>
-<h4 id="密钥的导出和导入"><a class="markdownIt-Anchor" href="#密钥的导出和导入"></a> 密钥的导出和导入</h4>
-<p>导入公钥/私钥:</p>
-<p>公钥和私钥的导入都是使用一样的命令<code>gpg --import</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#导入公钥</span><br><span class="line">gpg --import rovo98.pub</span><br><span class="line"># 导入私钥</span><br><span class="line">gpg --import rovo98.pri</span><br></pre></td></tr></table></figure>
-<p>导入公钥之后，应进行验证。<code>GnuPG</code>提供了功能强大的信任模型，不需要我们亲自验证导入的每一个公钥。但是一些公钥还是需要亲自进行验证的，下面简单了解一下如何对导入的公钥进行验证。</p>
-<div class="note danger"><p>通过验证公钥的指纹，然后签名（Sign）公钥以将其证明为有效公钥来验证密钥。可以使用<code>--fingerprint</code>命令行选项快速查看公钥的指纹，但为了验证公钥，必须对其进行编辑。</p>
-</div>
-<p>编辑公钥示例:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --edit-key blake@cyb.org</span><br><span class="line"></span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">sub  1024g/5C8CBD41  created: 1999-06-04 expires: never     </span><br><span class="line">(1)  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Command&gt; fpr</span><br><span class="line">pub  1024D/9E98BC16 1999-06-04 Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>公钥的指纹验证需要通过公钥的所有者进行验证。可以通过电话或任何其他方式亲自完成，只要能够和公钥的真正所有者进行联系就行。<br />
-<strong>如果获得指纹与公钥所有者的指纹相同，才可以确定我们得到是正确的公钥副本</strong></p>
-</blockquote>
-<p>检查指纹之后，最后进行公钥的签名（Sign）完成验证。由于公钥签名是公钥加密中的一个弱点，因此在进行签名验证之前，必须确保指纹验证是正确的。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt;&gt; sign</span><br><span class="line">             </span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br><span class="line"></span><br><span class="line">     Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Are you really sure that you want to sign this key</span><br><span class="line">with your key: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line"></span><br><span class="line">Really sign?</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>签名之后，可以检查公钥，以列出其上面的签名，并查看我们添加的签名。公钥上的每个用户 ID 都可以具有一个或多个自签名以及已经通过公钥验证的签名。</p>
-</blockquote>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt; check</span><br><span class="line">uid  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">sig!       9E98BC16 1999-06-04   [self-signature]</span><br><span class="line">sig!       BB7576AC 1999-06-04   Alice (Judge) &lt;alice@cyb.org&gt;</span><br></pre></td></tr></table></figure>
-<p><strong>导出公钥(Public key)</strong></p>
-<p>要将公钥发送给对应的用户之前，我们需要将密钥对的公钥导出，在<code>GPG</code>中使用<code>gpg --export</code>命令导出</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
-<p>默认导出的文件是以<strong>二进制格式</strong>保存的，非常不方便进行传输，因此<code>GPG</code>还提供了<code>--armor</code>参数来指定以<code>ASCII</code>码形式导出。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --armor --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
-<p><img data-src="gpg-export-pub-key.jpg" alt="" /></p>
-<p><strong>导出私钥（Private key）</strong>:</p>
-<p><code>GPG</code>还支持导出私钥，不过是对所有的私钥进行导出，同样可以二进制格式或<code>ASCII</code>格式导出.</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --export-secret-keys --armor</span><br></pre></td></tr></table></figure>
-<h4 id="上传公钥"><a class="markdownIt-Anchor" href="#上传公钥"></a> 上传公钥</h4>
-<p>公钥服务器是网络上专门储存用户公钥的服务器。<code>send-keys</code>参数可以将公钥上传到服务器。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --send-keys [用户ID] --keyserver [服务器域名]</span><br></pre></td></tr></table></figure>
-<p>使用上面的命令，你的公钥就被传到了服务器，然后通过交换机制，所有的公钥服务器最终都会包含你的公钥。</p>
-<p>由于公钥服务器没有检查机制，任何人都可以用你的名义上传公钥，所以没有办法保证服务器上的公钥的可靠性。通常，你可以在网站上公布一个公钥指纹，让其他人核对下载到的公钥是否为真。<code>fingerprint</code>参数生成公钥指纹。</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --fingerprint [用户ID]</span><br></pre></td></tr></table></figure>
-<p>从公钥服务器上获取公钥:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --receive-keys</span><br></pre></td></tr></table></figure>
-<p>获取到的公钥需要进行验证,参考上面提到的导入公钥的验证方式。</p>
-<h3 id="加密和解密文件"><a class="markdownIt-Anchor" href="#加密和解密文件"></a> 加密和解密文件</h3>
-<p>在加密和解密文件时，公钥和私钥各自具有特定的作用。</p>
-<blockquote>
-<p>公钥可以被认为是开放式保险箱。当通过公钥加密文件时，该文件被放入保险箱，安全关闭，并且组合锁经过多次旋转和组合。<br />
-相对应的私钥是可以重新打开保险箱并检索文件的组合(组合锁组合)。换句话说，之后持有私钥的人才能恢复和使用相关公钥加密文件。</p>
-</blockquote>
-<div class="note info"><p>因此加解密过程应该是这样的，假设你要给<code>alice</code>发送加密信息，使用<code>alice</code>的公钥对信息进行加密，则<code>alice</code>可以使用她的私钥对加密信息进行解密，而当她向你发送加密信息，加密信息时使用的应该是你的公钥。</p>
-</div>
-<p>加密例子: 使用<code>alice</code>的公钥对<code>sourceListforKali</code>进行加密</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.en --encrypt sourceListforKali --recipient alice@gmail.com</span><br></pre></td></tr></table></figure>
-<p><code>--recipient</code>指定使用的公钥</p>
-<p>解密:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.de --decrypt sourceListforKali.en</span><br></pre></td></tr></table></figure>
-<p>输入之前创建该密钥对的密码就可以对文件进行解密。</p>
-<p><img data-src="gpg-encrypt-decrypt.jpg" alt="" /></p>
-<div class="note warning"><p>我们还可以在不使用公钥的情况下，对文件进行加密，使用的是对称密码（symmetric chiper）。使用<code>--symmetric</code>参数即可</p>
-<p>手动输入加密密码即可。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.gpg --symmetric sourceListforKali</span><br></pre></td></tr></table></figure>
-<h3 id="签名signatures"><a class="markdownIt-Anchor" href="#签名signatures"></a> 签名(signatures)</h3>
-<p>数字签名证明文档并为其加上时间戳。如果随后以任何方式修改了文档，则签名验证将失败。数字签名可以起到与手写签名相同的作用，并具有防篡改的额外好处。</p>
-<p>例如：当你将文件签名并发布后，则接受到该文件的用户可以验证签名来查看文件是否被修改过。</p>
-<h4 id="创建和验证签名"><a class="markdownIt-Anchor" href="#创建和验证签名"></a> 创建和验证签名</h4>
-<p>创建和验证签名使用公/私钥对的方式不同于加解密操作。使用签名者的私钥创建签名，使用相应的公钥验证签名。</p>
-<p>使用数字签名的好处是一般情况下，签名人是确定的，除非签名者的私钥被泄露了。</p>
-<p>使用<code>--sign</code>参数创建数字签名，例:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --sign doc</span><br><span class="line">You need a passphrase to unlock the private key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
-<p>签名的文件在签名之前会被进行压缩处理，并输出一个二进制格式的签名文件。根据给定的签名文件，可以检查签名或检查签名并恢复原始文件。</p>
-<p>检查和验证签名使用<code>--verify</code>参数选项,验证签名并恢复原始文件使用<code>--decrypt</code>选项:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc --decrypt doc.sig</span><br><span class="line">gpg: Signature made Fri Jun  4 12:02:38 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
-<div class="note danger"><p>一般情况下，数字签名多数应用于对互联网上的帖子 <em>post</em> 以及 <em>email</em> 进行签名。这种情况下，我们一般不希望对需要签名的文件进行压缩处理，因此可以使用<code>--clearsign</code>选项，在不修改文件的情况下，将文件以<code>ASCII</code>的形式包装在签名文件中。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --clearsign doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">-----BEGIN PGP SIGNED MESSAGE-----</span><br><span class="line">Hash: SHA1</span><br><span class="line"></span><br><span class="line">[...]</span><br><span class="line">-----BEGIN PGP SIGNATURE-----</span><br><span class="line">Version: GnuPG v0.9.7 (GNU/Linux)</span><br><span class="line">Comment: For info see http://www.gnupg.org</span><br><span class="line"></span><br><span class="line">iEYEARECAAYFAjdYCQoACgkQJ9S6ULt1dqz6IwCfQ7wP6i/i8HhbcOSKF4ELyQB1</span><br><span class="line">oCoAoOuqpRqEzr4kOkQqHRLE/b8/Rw2k</span><br><span class="line">=y6kj</span><br><span class="line">-----END PGP SIGNATURE-----</span><br></pre></td></tr></table></figure>
-<div class="note primary"><p>分离的、独立的签名文件（<em>Detached signatures</em>）: 一个签名过的文件的用途一般是很少的。</p>
-<p>其他用户必须从签名文件中恢复原始文档，即使使用未压缩处理的签名文件（Clearsigned），也必须编辑签名文档以恢复原始文档。</p>
-<p>因此，<code>GPG</code>还提供用于对文档创建分离签名第三种签名方法，该签名是单独的文件。使用<code>--detach-sig</code>选项创建分离签名。</p>
-</div>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --detach-sig doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
-<p>通过此方法创建的签名，在验证时就需要同时使用签名和对应原文件:</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --verify doc.sig doc</span><br><span class="line"></span><br><span class="line">gpg: Signature made Fri Jun  4 12:38:46 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="更多"><a class="markdownIt-Anchor" href="#更多"></a> 更多</h3>
-<p>以上就是<code>GnuPG</code>的简单入门使用，更多的可以详细阅读<code>GnuPG</code>提供的<a href="https://www.gnupg.org/documentation/index.html">用户手册和文档</a>.</p>
-<p>例如: 我们可以在加密文件的同时对文件进行签名(使用三种签名方法的其中一种)</p>
-<div class="note primary"><p>参考链接:</p>
-<ul>
-<li><a href="https://www.gnupg.org/gph/en/manual.html">https://www.gnupg.org/gph/en/manual.html</a></li>
-<li><a href="https://futureboy.us/pgp.html">https://futureboy.us/pgp.html</a></li>
-</ul>
-</div>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>softwares</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Arch linux系列 安装 haroopad markdown 编辑器</title>
     <url>/posts/63e58ebb/</url>
     <content><![CDATA[<blockquote>
@@ -1417,6 +1281,32 @@ zsh 主题可以自行按个人喜好配置，当然也可以随机(每次打开
       </tags>
   </entry>
   <entry>
+    <title>fcitx5-rime 小鹤音形隐藏打字候选窗</title>
+    <url>/posts/a0c2ec7f/</url>
+    <content><![CDATA[<p>对于使用小鹤音形的用户来说，除使用通配符、查看部件、小字这几种常用情况外，打字时的候选窗通常是没有必要的。对于 Android 和 Windows 系统，小鹤音形官网提供了他们的输入法软件，使用户在隐藏打字候选窗的情况下，当用户使用通配符或查看部件及字根时，候选窗则会自动显示出来。<br />
+对于其他平台(Linux或Mac)的小鹤音形用户，一般是借助 rime 来实现小鹤音形的挂接，此时要隐藏候选窗便要 rime 及其相应的输入法框架提供支持。本文将以 <strong>fcitx5-rime</strong> 为例介绍如何快速地隐藏和开启打字候选窗。</p>
+  <span id="more"></span>
+<h2 id="1-前言"><a class="markdownIt-Anchor" href="#1-前言"></a> 1、前言</h2>
+<p>之前在「<a href="/posts/2f1de6fa/">fcitx5-rime 挂接小鹤音形</a> 」文中便有对fcitx5-rime 小鹤音形的使用进行过介绍，文末当时说了「不太好配置隐藏候选窗」，这倒是真的。在使用 fcitx5 之前，我用的是 fcitx(fcitx4)，我也不太记得 fcitx4-configtool 能否对打字候选窗进行配置了，唯一能确定的是，候选窗主题色是能配置的。在我使用小鹤音形一段时间后，特别是把 Windows 及 Android 系统下小鹤音形输入法配置成隐藏打字候选窗后，我便开始了把我笔记本 Manjaro 里的 rime 小鹤音形也隐藏候选窗的想法。然后在网上搜索了相关关键字后，发现有人居然是通过将候选窗背景等配色调透明来实现的，经过一番思索后，且不说方案在 Linux 下 fcitx5-rime 中能否可行，我觉得它并不适合我。即便不好做到如同小鹤音形官网提供的输入法那般，但也最好要做到能快速进行候选窗开关切换，因此便有了本文的方法🤔。</p>
+<h2 id="2-fcitx5-隐藏候选窗实现思路"><a class="markdownIt-Anchor" href="#2-fcitx5-隐藏候选窗实现思路"></a> 2、fcitx5 隐藏候选窗实现思路</h2>
+<p>从 <code>fcitx5-configtool</code> 中，我们是可以配置插件的(Configure addons)，不难发现，UI 下的 <strong>Classic User Interface</strong> 便用于配置程序的用户界面的，如更改主题色等，当然也直接选择将该插件关闭或打开，从而实现输入法候选窗的开关。<br />
+因此，我先是在 <code>fcitx5-configtool</code> 启用和禁用 <strong>Classic User Interface</strong> ，然后观察 fcitx5 的配置文件(位于 <code>./config/fcitx5</code>)变化情况，发现当禁用 <strong>Classic User Interface</strong> 插件时，<code>./config/fcitx5/config</code> 配置文件中增加了以下配置：</p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Behavior/DisabledAddons]</span><br><span class="line">0=classicui</span><br></pre></td></tr></table></figure>
+<p>那么该插件的名称便是 <code>classicui</code>，再根据 <code>fcitx5 --help</code>:</p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Usage: fcitx5 [Option]</span><br><span class="line">  --disable &lt;addon names&gt;       A comma separated list of addons to be disabled.</span><br><span class="line">                                &quot;all&quot; can be used to disable all addons.</span><br><span class="line">  --enable &lt;addon names&gt;        A comma separated list of addons to be enabled.</span><br><span class="line">                                &quot;all&quot; can be used to enable all addons.</span><br><span class="line">                                This value will override the value in the flag --disable.</span><br><span class="line">  --verbose &lt;logging rule&gt;      Set the logging rule for displaying message.</span><br><span class="line">                                Syntax: category1=level1,category2=level2, ...</span><br><span class="line">                                E.g. default=4,key_trace=5</span><br><span class="line">                                Levels are numbers ranging from 0 to 5.</span><br><span class="line">                                        0 - NoLog</span><br><span class="line">                                        1 - Fatal</span><br><span class="line">                                        2 - Error</span><br><span class="line">                                        3 - Warn</span><br><span class="line">                                        4 - Info (default)</span><br><span class="line">                                        5 - Debug</span><br><span class="line">                                Some built-in categories are:</span><br><span class="line">                                        default - miscellaneous category used by fcitx own library.</span><br><span class="line">                                        key_trace - print the key event received by fcitx.</span><br><span class="line">                                        &quot;*&quot; may be used to represent all logging category.</span><br><span class="line">  -u, --ui &lt;addon name&gt;         Set the UI addon to be used.</span><br><span class="line">  -d                            Run as a daemon.</span><br><span class="line">  -D                            Do not run as a daemon (default).</span><br><span class="line">  -s &lt;seconds&gt;                  Number of seconds to wait before start.</span><br><span class="line">  -k, --keep                    Keep running even the main display is disconnected.</span><br><span class="line">  -r, --replace                 Replace the existing instance.</span><br><span class="line">  -v, --version                 Show version and quit.</span><br><span class="line">  -h, --help                    Show this help message and quit.</span><br></pre></td></tr></table></figure>
+<p>因此，我们可以借助一个文本配置文件记录当前打字候选窗禁用状态(0未禁用/1已禁用)，结合 <code>fcitx5 --enable/--disable classicui -r</code> 来快速地启用或禁用打字候选窗。</p>
+<h2 id="3-最后"><a class="markdownIt-Anchor" href="#3-最后"></a> 3、最后</h2>
+<p>基于以上思路，我简单地写了一个脚本，可至 「<a href="https://github.com/rovo98/fcitx5-classicui-switcher">fcitx5-classicui-switcher</a> 」进行安装及使用，更多定制化功能也可自行修改。采用我的实现方案，效果大致如下：<br />
+<img data-src="fcitx5-hidden-typing-windows-demo.gif" alt="" /></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>software</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>fcitx5-rime 挂接小鹤音形</title>
     <url>/posts/2f1de6fa/</url>
     <content><![CDATA[<p>近几天，在看 Github explore 时意外看到了 <a href="https://github.com/hosxy/Fcitx5-Material-Color">fcitx5-material-color</a>，提供了更好看的主题色，并支持单行候选窗显示，于是决定将用了近一年的 fcitx 换成 fcitx5。<br />
@@ -1473,29 +1363,139 @@ fcitx-rime 则是为 Fcitx 提供了 rime 的支持，本人目前在 linux 平�
       </tags>
   </entry>
   <entry>
-    <title>fcitx5-rime 小鹤音形隐藏打字候选窗</title>
-    <url>/posts/a0c2ec7f/</url>
-    <content><![CDATA[<p>对于使用小鹤音形的用户来说，除使用通配符、查看部件、小字这几种常用情况外，打字时的候选窗通常是没有必要的。对于 Android 和 Windows 系统，小鹤音形官网提供了他们的输入法软件，使用户在隐藏打字候选窗的情况下，当用户使用通配符或查看部件及字根时，候选窗则会自动显示出来。<br />
-对于其他平台(Linux或Mac)的小鹤音形用户，一般是借助 rime 来实现小鹤音形的挂接，此时要隐藏候选窗便要 rime 及其相应的输入法框架提供支持。本文将以 <strong>fcitx5-rime</strong> 为例介绍如何快速地隐藏和开启打字候选窗。</p>
-  <span id="more"></span>
-<h2 id="1-前言"><a class="markdownIt-Anchor" href="#1-前言"></a> 1、前言</h2>
-<p>之前在「<a href="/posts/2f1de6fa/">fcitx5-rime 挂接小鹤音形</a> 」文中便有对fcitx5-rime 小鹤音形的使用进行过介绍，文末当时说了「不太好配置隐藏候选窗」，这倒是真的。在使用 fcitx5 之前，我用的是 fcitx(fcitx4)，我也不太记得 fcitx4-configtool 能否对打字候选窗进行配置了，唯一能确定的是，候选窗主题色是能配置的。在我使用小鹤音形一段时间后，特别是把 Windows 及 Android 系统下小鹤音形输入法配置成隐藏打字候选窗后，我便开始了把我笔记本 Manjaro 里的 rime 小鹤音形也隐藏候选窗的想法。然后在网上搜索了相关关键字后，发现有人居然是通过将候选窗背景等配色调透明来实现的，经过一番思索后，且不说方案在 Linux 下 fcitx5-rime 中能否可行，我觉得它并不适合我。即便不好做到如同小鹤音形官网提供的输入法那般，但也最好要做到能快速进行候选窗开关切换，因此便有了本文的方法🤔。</p>
-<h2 id="2-fcitx5-隐藏候选窗实现思路"><a class="markdownIt-Anchor" href="#2-fcitx5-隐藏候选窗实现思路"></a> 2、fcitx5 隐藏候选窗实现思路</h2>
-<p>从 <code>fcitx5-configtool</code> 中，我们是可以配置插件的(Configure addons)，不难发现，UI 下的 <strong>Classic User Interface</strong> 便用于配置程序的用户界面的，如更改主题色等，当然也直接选择将该插件关闭或打开，从而实现输入法候选窗的开关。<br />
-因此，我先是在 <code>fcitx5-configtool</code> 启用和禁用 <strong>Classic User Interface</strong> ，然后观察 fcitx5 的配置文件(位于 <code>./config/fcitx5</code>)变化情况，发现当禁用 <strong>Classic User Interface</strong> 插件时，<code>./config/fcitx5/config</code> 配置文件中增加了以下配置：</p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Behavior/DisabledAddons]</span><br><span class="line">0=classicui</span><br></pre></td></tr></table></figure>
-<p>那么该插件的名称便是 <code>classicui</code>，再根据 <code>fcitx5 --help</code>:</p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Usage: fcitx5 [Option]</span><br><span class="line">  --disable &lt;addon names&gt;       A comma separated list of addons to be disabled.</span><br><span class="line">                                &quot;all&quot; can be used to disable all addons.</span><br><span class="line">  --enable &lt;addon names&gt;        A comma separated list of addons to be enabled.</span><br><span class="line">                                &quot;all&quot; can be used to enable all addons.</span><br><span class="line">                                This value will override the value in the flag --disable.</span><br><span class="line">  --verbose &lt;logging rule&gt;      Set the logging rule for displaying message.</span><br><span class="line">                                Syntax: category1=level1,category2=level2, ...</span><br><span class="line">                                E.g. default=4,key_trace=5</span><br><span class="line">                                Levels are numbers ranging from 0 to 5.</span><br><span class="line">                                        0 - NoLog</span><br><span class="line">                                        1 - Fatal</span><br><span class="line">                                        2 - Error</span><br><span class="line">                                        3 - Warn</span><br><span class="line">                                        4 - Info (default)</span><br><span class="line">                                        5 - Debug</span><br><span class="line">                                Some built-in categories are:</span><br><span class="line">                                        default - miscellaneous category used by fcitx own library.</span><br><span class="line">                                        key_trace - print the key event received by fcitx.</span><br><span class="line">                                        &quot;*&quot; may be used to represent all logging category.</span><br><span class="line">  -u, --ui &lt;addon name&gt;         Set the UI addon to be used.</span><br><span class="line">  -d                            Run as a daemon.</span><br><span class="line">  -D                            Do not run as a daemon (default).</span><br><span class="line">  -s &lt;seconds&gt;                  Number of seconds to wait before start.</span><br><span class="line">  -k, --keep                    Keep running even the main display is disconnected.</span><br><span class="line">  -r, --replace                 Replace the existing instance.</span><br><span class="line">  -v, --version                 Show version and quit.</span><br><span class="line">  -h, --help                    Show this help message and quit.</span><br></pre></td></tr></table></figure>
-<p>因此，我们可以借助一个文本配置文件记录当前打字候选窗禁用状态(0未禁用/1已禁用)，结合 <code>fcitx5 --enable/--disable classicui -r</code> 来快速地启用或禁用打字候选窗。</p>
-<h2 id="3-最后"><a class="markdownIt-Anchor" href="#3-最后"></a> 3、最后</h2>
-<p>基于以上思路，我简单地写了一个脚本，可至 「<a href="https://github.com/rovo98/fcitx5-classicui-switcher">fcitx5-classicui-switcher</a> 」进行安装及使用，更多定制化功能也可自行修改。采用我的实现方案，效果大致如下：<br />
-<img data-src="fcitx5-hidden-typing-windows-demo.gif" alt="" /></p>
+    <title>GPG入门使用</title>
+    <url>/posts/7ea77913/</url>
+    <content><![CDATA[<h3 id="引入"><a class="markdownIt-Anchor" href="#引入"></a> 引入</h3>
+<blockquote>
+<p>gpg  is the OpenPGP part of the GNU Privacy Guard (GnuPG). It is a tool to provide digital encryption and signing services using the OpenPGP standard.<br />
+gpg features: complete key management and all the bells and whistles you would expect from a full OpenPGP implementation.</p>
+</blockquote>
+<div class="note info"><p><code>GnuPG</code>(GPG) 是 基于<code>OpenPGP</code>(由 <a href="https://www.ietf.org/rfc/rfc4880.txt">RFC4880</a> 定义,也被称为<code>PGP</code>)的一个完整的和免费的实现.我们可以使用<code>GPG</code>来对我们的数据和通信进行加密（encrypt）和签名（sign）, 它具有通用的密钥管理系统，以及各种公钥目录的访问模块. 我们可以很容易地使用<code>GPG</code>提供的命令行工具(当前它还提供不同平台下的图形界面工具<em>frontends</em>,以及库文件<em>libraries</em>)与其他的应用进行结合.同时还对<code>S/MIME</code>和<code>SSH(Security Shell)</code>提供支持.</p>
+</div>
+<span id="more"></span>
+<p>本文使用环境为 Linux 命令行，掌握命令行，Window （<code>Gpg4win</code>）等<a href="https://www.gnupg.org/download/index.html">其他客户端</a>也很容易掌握。</p>
+<h3 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h3>
+<p><code>GPG</code>有两种安装方式。可以<a href="https://www.gnupg.org/download/index.html">下载源码</a>, 自己编译安装:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>更方便的方式是直接安装编译好的二进制包:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch 环境</span><br><span class="line">sudo pacman -S gnupg</span><br><span class="line"></span><br><span class="line"># Debian / Ubuntu 环境</span><br><span class="line">sudo apt-get install gnupg</span><br><span class="line"></span><br><span class="line"># Fedora 环境</span><br><span class="line">yum install gnupg</span><br></pre></td></tr></table></figure>
+<p>安装完成后，键入下面的命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg --help</span><br></pre></td></tr></table></figure>
+<p>如果屏幕显示 GPG 的帮助信息，就表示安装成功。<br />
+<img data-src="gpg-help.jpg" alt="" /></p>
+<h3 id="密钥管理"><a class="markdownIt-Anchor" href="#密钥管理"></a> 密钥管理</h3>
+<p>在使用<code>GPG</code>进行加密和签名之前，我们应该清楚的知道，它还是一个优秀的密钥管理工具（key Manager）.</p>
+<p>可以使用<code>gpg --list-keys</code>查看当前管理的所有密钥.</p>
+<h4 id="生成密钥对"><a class="markdownIt-Anchor" href="#生成密钥对"></a> 生成密钥对</h4>
+<p>使用<code>gpg --gen-key</code>或<code>gpg --full-gen-key</code>(设置完整的参数配置来生成密钥对)</p>
+<p>以完整的生成密钥对为例,<code>gpg --full-gen-key</code></p>
+<p>(1).选择加密的算法(默认<code>RSA</code>):</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gpg (GnuPG) 2.2.11; Copyright (C) 2018 Free Software Foundation, Inc.</span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.</span><br><span class="line"></span><br><span class="line">Please select what kind of key you want:</span><br><span class="line">   (1) RSA and RSA (default)</span><br><span class="line">   (2) DSA and Elgamal</span><br><span class="line">   (3) DSA (sign only)</span><br><span class="line">   (4) RSA (sign only)</span><br><span class="line">Your selection? </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>(2).选择密钥的大小(默认 2048 位):</p>
+<div class="note warning"><p>密钥的位数越大，对于防范暴力破解攻击就越安全,但是对于各种用途，使用默认的大小已经足够了，因为绕过加密比试图破解代价反而更少一些。此外，随着密钥大小的增加，加密和解密将变慢，较大的密钥位数可能会影响签名的长度。</p>
+</div>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSA keys may be between 1024 and 4096 bits long.</span><br><span class="line">What keysize do you want? (2048) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>(3). 配置密钥的失效时间(默认 0, 永不失效)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Please specify how long the key should be valid.</span><br><span class="line">         0 = key does not expire</span><br><span class="line">      &lt;n&gt;  = key expires in n days</span><br><span class="line">      &lt;n&gt;w = key expires in n weeks</span><br><span class="line">      &lt;n&gt;m = key expires in n months</span><br><span class="line">      &lt;n&gt;y = key expires in n years</span><br><span class="line">Key is valid for? (0) </span><br><span class="line">Key does not expire at all</span><br><span class="line">Is this correct? (y/N) y</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>(4). 配置用户信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GnuPG needs to construct a user ID to identify your key.</span><br><span class="line"></span><br><span class="line">Real name: alice</span><br><span class="line">Email address: alice@gmail.com</span><br><span class="line">Comment: A Test case</span><br><span class="line">You selected this USER-ID:</span><br><span class="line">    &quot;alice (A Test case) &lt;alice@gmail.com&gt;&quot;</span><br><span class="line"></span><br><span class="line">Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? </span><br><span class="line"></span><br><span class="line"># 最后确认信息，若需要修改可进行更新，按O确认 </span><br></pre></td></tr></table></figure>
+<p>(5). 最后输入加密密码，完成密钥对的生成</p>
+<p><img data-src="gpg-passphrase.png" alt="" /></p>
+<p>查看当前的所有密钥对:</p>
+<p><img data-src="gpg-list-keys.jpg" alt="" /></p>
+<h4 id="密钥的导出和导入"><a class="markdownIt-Anchor" href="#密钥的导出和导入"></a> 密钥的导出和导入</h4>
+<p>导入公钥/私钥:</p>
+<p>公钥和私钥的导入都是使用一样的命令<code>gpg --import</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#导入公钥</span><br><span class="line">gpg --import rovo98.pub</span><br><span class="line"># 导入私钥</span><br><span class="line">gpg --import rovo98.pri</span><br></pre></td></tr></table></figure>
+<p>导入公钥之后，应进行验证。<code>GnuPG</code>提供了功能强大的信任模型，不需要我们亲自验证导入的每一个公钥。但是一些公钥还是需要亲自进行验证的，下面简单了解一下如何对导入的公钥进行验证。</p>
+<div class="note danger"><p>通过验证公钥的指纹，然后签名（Sign）公钥以将其证明为有效公钥来验证密钥。可以使用<code>--fingerprint</code>命令行选项快速查看公钥的指纹，但为了验证公钥，必须对其进行编辑。</p>
+</div>
+<p>编辑公钥示例:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --edit-key blake@cyb.org</span><br><span class="line"></span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">sub  1024g/5C8CBD41  created: 1999-06-04 expires: never     </span><br><span class="line">(1)  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Command&gt; fpr</span><br><span class="line">pub  1024D/9E98BC16 1999-06-04 Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>公钥的指纹验证需要通过公钥的所有者进行验证。可以通过电话或任何其他方式亲自完成，只要能够和公钥的真正所有者进行联系就行。<br />
+<strong>如果获得指纹与公钥所有者的指纹相同，才可以确定我们得到是正确的公钥副本</strong></p>
+</blockquote>
+<p>检查指纹之后，最后进行公钥的签名（Sign）完成验证。由于公钥签名是公钥加密中的一个弱点，因此在进行签名验证之前，必须确保指纹验证是正确的。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt;&gt; sign</span><br><span class="line">             </span><br><span class="line">pub  1024D/9E98BC16  created: 1999-06-04 expires: never      trust: -/q</span><br><span class="line">             Fingerprint: 268F 448F CCD7 AF34 183E  52D8 9BDE 1A08 9E98 BC16</span><br><span class="line"></span><br><span class="line">     Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line"></span><br><span class="line">Are you really sure that you want to sign this key</span><br><span class="line">with your key: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line"></span><br><span class="line">Really sign?</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>签名之后，可以检查公钥，以列出其上面的签名，并查看我们添加的签名。公钥上的每个用户 ID 都可以具有一个或多个自签名以及已经通过公钥验证的签名。</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">Command&gt; check</span><br><span class="line">uid  Blake (Executioner) &lt;blake@cyb.org&gt;</span><br><span class="line">sig!       9E98BC16 1999-06-04   [self-signature]</span><br><span class="line">sig!       BB7576AC 1999-06-04   Alice (Judge) &lt;alice@cyb.org&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>导出公钥(Public key)</strong></p>
+<p>要将公钥发送给对应的用户之前，我们需要将密钥对的公钥导出，在<code>GPG</code>中使用<code>gpg --export</code>命令导出</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
+<p>默认导出的文件是以<strong>二进制格式</strong>保存的，非常不方便进行传输，因此<code>GPG</code>还提供了<code>--armor</code>参数来指定以<code>ASCII</code>码形式导出。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --armor --output alice.gpg --<span class="built_in">export</span> alice@gmail.com</span><br></pre></td></tr></table></figure>
+<p><img data-src="gpg-export-pub-key.jpg" alt="" /></p>
+<p><strong>导出私钥（Private key）</strong>:</p>
+<p><code>GPG</code>还支持导出私钥，不过是对所有的私钥进行导出，同样可以二进制格式或<code>ASCII</code>格式导出.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --export-secret-keys --armor</span><br></pre></td></tr></table></figure>
+<h4 id="上传公钥"><a class="markdownIt-Anchor" href="#上传公钥"></a> 上传公钥</h4>
+<p>公钥服务器是网络上专门储存用户公钥的服务器。<code>send-keys</code>参数可以将公钥上传到服务器。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --send-keys [用户ID] --keyserver [服务器域名]</span><br></pre></td></tr></table></figure>
+<p>使用上面的命令，你的公钥就被传到了服务器，然后通过交换机制，所有的公钥服务器最终都会包含你的公钥。</p>
+<p>由于公钥服务器没有检查机制，任何人都可以用你的名义上传公钥，所以没有办法保证服务器上的公钥的可靠性。通常，你可以在网站上公布一个公钥指纹，让其他人核对下载到的公钥是否为真。<code>fingerprint</code>参数生成公钥指纹。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --fingerprint [用户ID]</span><br></pre></td></tr></table></figure>
+<p>从公钥服务器上获取公钥:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --receive-keys</span><br></pre></td></tr></table></figure>
+<p>获取到的公钥需要进行验证,参考上面提到的导入公钥的验证方式。</p>
+<h3 id="加密和解密文件"><a class="markdownIt-Anchor" href="#加密和解密文件"></a> 加密和解密文件</h3>
+<p>在加密和解密文件时，公钥和私钥各自具有特定的作用。</p>
+<blockquote>
+<p>公钥可以被认为是开放式保险箱。当通过公钥加密文件时，该文件被放入保险箱，安全关闭，并且组合锁经过多次旋转和组合。<br />
+相对应的私钥是可以重新打开保险箱并检索文件的组合(组合锁组合)。换句话说，之后持有私钥的人才能恢复和使用相关公钥加密文件。</p>
+</blockquote>
+<div class="note info"><p>因此加解密过程应该是这样的，假设你要给<code>alice</code>发送加密信息，使用<code>alice</code>的公钥对信息进行加密，则<code>alice</code>可以使用她的私钥对加密信息进行解密，而当她向你发送加密信息，加密信息时使用的应该是你的公钥。</p>
+</div>
+<p>加密例子: 使用<code>alice</code>的公钥对<code>sourceListforKali</code>进行加密</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.en --encrypt sourceListforKali --recipient alice@gmail.com</span><br></pre></td></tr></table></figure>
+<p><code>--recipient</code>指定使用的公钥</p>
+<p>解密:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.de --decrypt sourceListforKali.en</span><br></pre></td></tr></table></figure>
+<p>输入之前创建该密钥对的密码就可以对文件进行解密。</p>
+<p><img data-src="gpg-encrypt-decrypt.jpg" alt="" /></p>
+<div class="note warning"><p>我们还可以在不使用公钥的情况下，对文件进行加密，使用的是对称密码（symmetric chiper）。使用<code>--symmetric</code>参数即可</p>
+<p>手动输入加密密码即可。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output sourceListforKali.gpg --symmetric sourceListforKali</span><br></pre></td></tr></table></figure>
+<h3 id="签名signatures"><a class="markdownIt-Anchor" href="#签名signatures"></a> 签名(signatures)</h3>
+<p>数字签名证明文档并为其加上时间戳。如果随后以任何方式修改了文档，则签名验证将失败。数字签名可以起到与手写签名相同的作用，并具有防篡改的额外好处。</p>
+<p>例如：当你将文件签名并发布后，则接受到该文件的用户可以验证签名来查看文件是否被修改过。</p>
+<h4 id="创建和验证签名"><a class="markdownIt-Anchor" href="#创建和验证签名"></a> 创建和验证签名</h4>
+<p>创建和验证签名使用公/私钥对的方式不同于加解密操作。使用签名者的私钥创建签名，使用相应的公钥验证签名。</p>
+<p>使用数字签名的好处是一般情况下，签名人是确定的，除非签名者的私钥被泄露了。</p>
+<p>使用<code>--sign</code>参数创建数字签名，例:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --sign doc</span><br><span class="line">You need a passphrase to unlock the private key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
+<p>签名的文件在签名之前会被进行压缩处理，并输出一个二进制格式的签名文件。根据给定的签名文件，可以检查签名或检查签名并恢复原始文件。</p>
+<p>检查和验证签名使用<code>--verify</code>参数选项,验证签名并恢复原始文件使用<code>--decrypt</code>选项:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc --decrypt doc.sig</span><br><span class="line">gpg: Signature made Fri Jun  4 12:02:38 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<div class="note danger"><p>一般情况下，数字签名多数应用于对互联网上的帖子 <em>post</em> 以及 <em>email</em> 进行签名。这种情况下，我们一般不希望对需要签名的文件进行压缩处理，因此可以使用<code>--clearsign</code>选项，在不修改文件的情况下，将文件以<code>ASCII</code>的形式包装在签名文件中。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --clearsign doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">-----BEGIN PGP SIGNED MESSAGE-----</span><br><span class="line">Hash: SHA1</span><br><span class="line"></span><br><span class="line">[...]</span><br><span class="line">-----BEGIN PGP SIGNATURE-----</span><br><span class="line">Version: GnuPG v0.9.7 (GNU/Linux)</span><br><span class="line">Comment: For info see http://www.gnupg.org</span><br><span class="line"></span><br><span class="line">iEYEARECAAYFAjdYCQoACgkQJ9S6ULt1dqz6IwCfQ7wP6i/i8HhbcOSKF4ELyQB1</span><br><span class="line">oCoAoOuqpRqEzr4kOkQqHRLE/b8/Rw2k</span><br><span class="line">=y6kj</span><br><span class="line">-----END PGP SIGNATURE-----</span><br></pre></td></tr></table></figure>
+<div class="note primary"><p>分离的、独立的签名文件（<em>Detached signatures</em>）: 一个签名过的文件的用途一般是很少的。</p>
+<p>其他用户必须从签名文件中恢复原始文档，即使使用未压缩处理的签名文件（Clearsigned），也必须编辑签名文档以恢复原始文档。</p>
+<p>因此，<code>GPG</code>还提供用于对文档创建分离签名第三种签名方法，该签名是单独的文件。使用<code>--detach-sig</code>选项创建分离签名。</p>
+</div>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --output doc.sig --detach-sig doc</span><br><span class="line"></span><br><span class="line">You need a passphrase to unlock the secret key <span class="keyword">for</span></span><br><span class="line">user: <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br><span class="line">1024-bit DSA key, ID BB7576AC, created 1999-06-04</span><br><span class="line"></span><br><span class="line">Enter passphrase: </span><br></pre></td></tr></table></figure>
+<p>通过此方法创建的签名，在验证时就需要同时使用签名和对应原文件:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">gpg --verify doc.sig doc</span><br><span class="line"></span><br><span class="line">gpg: Signature made Fri Jun  4 12:38:46 1999 CDT using DSA key ID BB7576AC</span><br><span class="line">gpg: Good signature from <span class="string">&quot;Alice (Judge) &lt;alice@cyb.org&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="更多"><a class="markdownIt-Anchor" href="#更多"></a> 更多</h3>
+<p>以上就是<code>GnuPG</code>的简单入门使用，更多的可以详细阅读<code>GnuPG</code>提供的<a href="https://www.gnupg.org/documentation/index.html">用户手册和文档</a>.</p>
+<p>例如: 我们可以在加密文件的同时对文件进行签名(使用三种签名方法的其中一种)</p>
+<div class="note primary"><p>参考链接:</p>
+<ul>
+<li><a href="https://www.gnupg.org/gph/en/manual.html">https://www.gnupg.org/gph/en/manual.html</a></li>
+<li><a href="https://futureboy.us/pgp.html">https://futureboy.us/pgp.html</a></li>
+</ul>
+</div>
 ]]></content>
       <categories>
         <category>Linux</category>
+        <category>softwares</category>
       </categories>
       <tags>
-        <tag>software</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -2866,6 +2866,108 @@ Oracle 在 docker-image 库中给出相关 <a href="http://README.md">README.md<
       </tags>
   </entry>
   <entry>
+    <title>Java shaded dependencies</title>
+    <url>/posts/99f23fe2/</url>
+    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
+<span id="more"></span>
+<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
+<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
+<p>Relocating classes 示例：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
+<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
+<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
+<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
+<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
+<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
+<ol>
+<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
+<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
+<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
+<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maven 项目构建提速</title>
+    <url>/posts/4d39110c/</url>
+    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
+在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
+<span id="more"></span>
+<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
+<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
+<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
+<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
+<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
+<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
+如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
+<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
+<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
+<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
+<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
+<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
+<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
+<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
+<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
+<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
+<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
+<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
+一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
+<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
+<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
+<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
+<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
+<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
+<ul>
+<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
+<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
+<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
+</ul>
+<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
+<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
+<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
+<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
+对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
+当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
+<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
+<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
+<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
+<blockquote>
+<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
+<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
+<ol>
+<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
+<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
+<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
+<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>maven</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ClassNotFoundException vs. NoClassDefFoundError</title>
     <url>/posts/dc53e26b/</url>
     <content><![CDATA[<p><code>ClassNotFoundException</code> 和 <code>NoClassDefFoundError</code> 是我们运行 Java 程序时常面对的异常，那么导致它们出现的原因一般是什么呢？本文旨在介绍这两种异常，了解导致它们发生的原因，以及它们之间的区别，以便更好地了解该如何排查和解决相应问题。</p>
@@ -3219,51 +3321,6 @@ method.invoke(对象,参数列表)</li>
       <tags>
         <tag>basic</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Java 泛型 PECS</title>
-    <url>/posts/a3d08d1f/</url>
-    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
-<blockquote>
-<p>Producer extends Consumer super</p>
-</blockquote>
-<span id="more"></span>
-<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
-<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
-<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
-<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
-<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
-<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
-<blockquote>
-<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
-<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
-</blockquote>
-<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
-<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
-<blockquote>
-<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
-<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
-<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
-<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
-<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
-<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
-<ol>
-<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
-<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
   </entry>
   <entry>
     <title>JVM知识体系 (一) | 类的装载</title>
@@ -3790,6 +3847,51 @@ JVM调用<code>main</code>方法时不会创建类的实例，因此将<code>mai
       </tags>
   </entry>
   <entry>
+    <title>Java 泛型 PECS</title>
+    <url>/posts/a3d08d1f/</url>
+    <content><![CDATA[<p>在 Java 的泛型集合使用中，我们经常可以看到这样的语法：<code>&lt;? super T&gt;</code> 、<code>&lt;? extends T&gt;</code>。例如</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? <span class="keyword">super</span> T&gt; c, T... elements)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>上面的两个方法，前一个是负责将集合 <code>c</code> 中的元素添加到当前实例集合中，而后一个方法是将 <code>elements</code> 添加到指定集合 <code>c</code> 中。这一使用方式通常称为 <strong>PECS</strong> (由 Joshua Bloch 在 Effective Java 一书中首次提到)。</p>
+<blockquote>
+<p>Producer extends Consumer super</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="为什么使用泛型通配符"><a class="markdownIt-Anchor" href="#为什么使用泛型通配符"></a> 为什么使用泛型通配符？</h2>
+<p>Java 的泛型用于提供类型安全（type safety）和不变性（invariant）支持。例如 <code>List&lt;Integer&gt;</code> ，此时 Java 便能确保该集合中的元素都是 <code>Integer</code>。</p>
+<p>但在许多时候，我们可能面对这样的场景：需要将子类型或超类型作为参数传递给一个方法，以完成具体的任务。此时，我们需要引入协变（covariance，限制引用）及逆变（contra-variance，扩展引用）。</p>
+<h2 id="理解-extends-t"><a class="markdownIt-Anchor" href="#理解-extends-t"></a> 理解 &lt;? extends T&gt;</h2>
+<p>我们可以联系现实，考虑这样一个例子，假设有一篮子水果，我们需要从篮子中取出水果，且必须确保取出的东西一定是水果。</p>
+<p>那么在该例子，我们便可以用 <code>List&lt;? extends Fruit&gt;</code> 来定义水果集合：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerExtendsExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of fruits.</span></span><br><span class="line">        <span class="comment">// because apple is subtype of fruit</span></span><br><span class="line">        List&lt;? extends Fruit&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Here we know that in basket there is nothing but fruit only</span></span><br><span class="line">        <span class="keyword">for</span> (Fruit fruit : basket) &#123;</span><br><span class="line">            System.out.println(fruit);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// basket.add(new Apple()); // Compile time error</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面例子上看，<code>basket</code> 篮子中我们能够确保其中的所有元素均是 <code>Fruit</code>。在最后两行代码，我们尝试向该篮子添加一个 <code>Apple</code> 和 <code>Fruit</code> ，此时 Java 编程器并不允许，这是因为 <code>&lt;? extends Fruit&gt;</code> 仅告诉了编译器要处理 <code>Fruit</code> 的子类型，但它并不知道具体的实际子类型是什么，因此无法向 <code>basket</code> 中添加元素。</p>
+<blockquote>
+<p>在上面例子中，<code>List&lt;? extends Fruit&gt; baskset</code> 可以看作是一个生产者，负责产出水果。</p>
+<p>因此，当我们只需要从一个集合中检索元素时，可以把该集合当作是一个生产者，并使用 <code>&lt;? extends T&gt;</code> 语法。</p>
+</blockquote>
+<h2 id="理解-super-t"><a class="markdownIt-Anchor" href="#理解-super-t"></a> 理解 &lt;? super T&gt;</h2>
+<p>对于 <code>&lt;? super T&gt;</code> ，我们对上述例子进行简单修改，考虑将不同的水果添加到篮子中，此时篮子可以看作是一个消费者：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     	<span class="keyword">return</span> <span class="string">&quot;I am a Fruit !!&quot;</span>;   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Apple</span> <span class="keyword">extends</span> <span class="title">Fruit</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;I am an Apple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AsianApple</span> <span class="keyword">extends</span> <span class="title">Apple</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;I am an AsianApple !!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerSuperExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// List of apples</span></span><br><span class="line">        List&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// We can assign a list of apples to a basket of apples.</span></span><br><span class="line">        List&lt;? <span class="keyword">super</span> Apple&gt; basket = apples;</span><br><span class="line">        </span><br><span class="line">        basket.add(<span class="keyword">new</span> Apple()); <span class="comment">// Successful</span></span><br><span class="line">        basket.add(<span class="keyword">new</span> AsianApple()); <span class="comment">// Successful</span></span><br><span class="line">        <span class="comment">// basket.add(new Fruit()); // Compile time error</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们能够把 <code>Apple</code> 以及  <code>AsianApple</code> 放入到 <code>basket</code> 篮子中，而 <code>Fruit</code> 则不行。这是因为 <code>List&lt;? super Apple&gt;</code> 期望包含的对象引用应该是 <code>Apple</code> 的超类，尽管我们不知道具体的超类是什么，但通过李氏原则，在 Java 中，我们永远可以将子类型赋予其超类型，因此，我们可以把 <code>Apple</code> 和 <code>AsianApple</code> 放入到 <code>basket</code> 中，因为它们都是 <code>? super Apple</code> 的子类型。</p>
+<blockquote>
+<p>在上述例子可以了解到，集合 <code>List&lt;? super Apple&gt; basket</code> 负责消费元素，i.e 苹果。</p>
+<p>因此，当我们仅需要向某一集合中添加元素时，可以考虑把该集合当作是一个消费者，使用 <code>&lt;? super T&gt;</code> 语法来处理。</p>
+</blockquote>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>基于上述例子，对于 PECS 原则，我们可以做以下总结：</p>
+<p>1、当需要从一个集合中检索类型 T 的对象时，使用 <code>&lt;? extends T&gt;</code> 通配符语法；</p>
+<p>2、当需要将类型 T 的对象添加到某一集合中时，使用 <code>&lt;? super T&gt;</code> 通配符语法；</p>
+<p>3、如果需要同时处理两种语义时，则不应该使用通配符；</p>
+<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> Refs</h2>
+<ol>
+<li><a href="https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/">https://howtodoinjava.com/java/generics/java-generics-what-is-pecs-producer-extends-consumer-super/</a></li>
+<li><a href="https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super">https://stackoverflow.com/questions/2723397/what-is-pecs-producer-extends-consumer-super</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+  </entry>
+  <entry>
     <title>JDK, JRE, JVM | 深入了解</title>
     <url>/posts/12448424/</url>
     <content><![CDATA[<p>了解<strong>JDK, JRE, JVM之间的区别</strong>，<strong>JVM</strong>是如何工作的？什么是<strong>类加载器</strong>(<em>class loaders</em>), <strong>解释器</strong>(<em>interpreter</em>)和<strong>及时编译器</strong>(<em>JIT compilers</em>)</p>
@@ -4006,108 +4108,6 @@ JDK = JRE + tools to develop Java application.</p>
       </tags>
   </entry>
   <entry>
-    <title>Java shaded dependencies</title>
-    <url>/posts/99f23fe2/</url>
-    <content><![CDATA[<p>Shade ，译为遮蔽、掩盖。我最早接触到该词是在使用 maven-shade-plugin 打包 uber-jar 时，从 Maven 官网对该插件的描述可了解到，shade 插件有两大功能，一是可用于在项目打包时将其打包成一个包含所有依赖的 uber-jar，以及<strong>shade</strong> - i.e. rename the packages of some dependencies (重命名一些依赖的包名)。</p>
-<span id="more"></span>
-<h2 id="shade-relocating-classes"><a class="markdownIt-Anchor" href="#shade-relocating-classes"></a> Shade - Relocating classes</h2>
-<p>从 Maven 官网给出的 Relocting Classes 使用示例介绍来看，在 uber jar 重用其他项目作为依赖时，直接包含引用依赖的类可能会导致类加载冲突问题（如classpath 类重复），为解决该问题，我们可以将 shaded artifact 包含的依赖中的类进行重新安置，以创建出依赖相应的私有备份，从而避免了 classpath 类加载冲突问题。</p>
-<p>Relocating classes 示例：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">relocations</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                          <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.Xpp3Dom<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>org.codehaus.plexus.util.xml.pull.*<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">relocations</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>可以看到，通过 shade 插件配置，我们可以将 <code>org.codehaus.plexus.util</code> 包中的所有类移至 <code>org.shaded.plexus.util</code> 包下， <code>Xpp3Dom</code> 类和 <code>pull.*</code> 包除外。当然也可以使用 <code>include</code> 标签来限制要重新安置的类，如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">relocation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>org.codehaus.plexus.util<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">shadedPattern</span>&gt;</span>org.shaded.plexus.util<span class="tag">&lt;/<span class="name">shadedPattern</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">include</span>&gt;</span>org.codehaud.plexus.util.io.*<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">relocation</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>具体 shade 插件的使用请自行移步至 <a href="https://maven.apache.org/plugins/maven-shade-plugin/">maven-shade-plugin</a> 查看，这里不再赘述。</p>
-<h2 id="summary"><a class="markdownIt-Anchor" href="#summary"></a> Summary</h2>
-<p>至此，我们便了解清楚了什么是 dependency shading，以及为什么使用它 - 处理 Java 项目中的依赖版本冲突问题。这一技术方案在实际开源项目中也有许多应用，例如 <a href="https://github.com/apache/flink-shaded">flink-shaded</a> 等，好在项目的发布包中提供独立的一份依赖，这样便可以不暴露依赖给下游用户 - 用户可使用其他版本相应依赖，而不会产生冲突问题。</p>
-<p><img data-src="java-shaded-dependency-ex-flink.png" alt="" /></p>
-<p>dependency shading 是处理 Java class shadowing （类掩盖）的一种实现方式，处理类掩盖的目的便是解决冲突问题 （Java class 由 class loader 从 classpath 进行加载，按全程限定名 FQN 进行区分, 因此当 classpath 中出现多个拥有相同 FQN 的类时，若这些类不是完全相同的，那么将会出现版本冲突问题）。依赖冲突问题出现的形式和解决方法有许多种，可以参考 <a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a> 进一步了解。</p>
-<p>在执行 shading 时，我们需要考虑依赖的传递依赖问题，且 shading 也非银弹，使用它也会带来一些问题，如增加了最终 jar 包的大小、使涉及 shaded classess 的调试工作更难等。</p>
-<h2 id="refs"><a class="markdownIt-Anchor" href="#refs"></a> refs</h2>
-<ol>
-<li><a href="https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency">https://softwareengineering.stackexchange.com/questions/297276/what-is-a-shaded-java-dependency</a></li>
-<li><a href="https://maven.apache.org/plugins/maven-shade-plugin/">https://maven.apache.org/plugins/maven-shade-plugin/</a></li>
-<li><a href="https://yauaa.basjes.nl/developer/shadingdependencies/">https://yauaa.basjes.nl/developer/shadingdependencies/</a></li>
-<li><a href="https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13">https://medium.com/@akhaku/java-class-shadowing-and-shading-9439b0eacb13</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Maven 项目构建提速</title>
-    <url>/posts/4d39110c/</url>
-    <content><![CDATA[<p>Maven 作为 Java 项目的一个常用构建工具，它很容易上手使用，但若不对其进行深入了解，则往往会在我们后续使用过程中留下一些隐患。<br />
-在日常开发环境中，我们很容易遇到较大代码规模的项目，涉及多种不同语言及技术，此时，在使用 Maven 作为主构建工具进行本地项目编译及构建时，则有可能会遇到项目构建速度慢的问题。为提升开发体验，本文将讨论 Maven 项目构建速度优化相关技巧。</p>
-<span id="more"></span>
-<h2 id="影响构建速度的因素"><a class="markdownIt-Anchor" href="#影响构建速度的因素"></a> 影响构建速度的因素</h2>
-<p>在 Maven 项目中，影响项目构建速度的因素有很多，常见的有以下几个因素：</p>
-<h3 id="1-没有充分利用-cpu-等资源"><a class="markdownIt-Anchor" href="#1-没有充分利用-cpu-等资源"></a> 1、没有充分利用 CPU 等资源</h3>
-<p>正常情况下，Maven 构建项目模块是按顺序执行的，然而，在大多项目中我们其实并不需要按序构建模块。理论上来说，Maven 可以通过依赖图来分析项目，并尽可能地并行构建项目模块。</p>
-<h3 id="2-项目构建时包含许多无效的阶段和步骤"><a class="markdownIt-Anchor" href="#2-项目构建时包含许多无效的阶段和步骤"></a> 2、项目构建时包含许多无效的阶段和步骤</h3>
-<p>Maven 项目的构建由特定生命周期（Lifecycle）进行描述，一个生命周期一般包含多个阶段（phase），而一个阶段还可包含多个步骤（steps）。当执行某特定 phase 时，这过程中包含了一些隐性开销，为执行某一生命周期的特定阶段，Maven 需要先执行完该阶段之前的所有阶段。<br />
-如，对于 Maven 提供的默认生命周期（default，不与任何插件相关联），它包含的所有阶段如下：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">phases</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>validate<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>initialize<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-sources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>generate-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-resources<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test-compile<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>process-test-classes<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>prepare-package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>pre-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>post-integration-test<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>verify<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>install<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phase</span>&gt;</span>deploy<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phases</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>因此，当我们执行 <code>mvn install</code> 命令时，Maven 需要先执行 <code>install</code> 阶段之前的所有阶段后，才能执行该 <code>install</code> 阶段。</p>
-<h3 id="3-网络访问影响"><a class="markdownIt-Anchor" href="#3-网络访问影响"></a> 3、网络访问影响</h3>
-<p>和其他大部分构建系统一样，如 npm、gradle、sbt等，项目在构建时，往往需要连网去下载项目的依赖以及传递依赖。而当我们明确本地仓库缓存已经存在项目构建需要的所有依赖及传递依赖时，可选择让 maven 以离线方式运行。</p>
-<h3 id="4-maven-进程的启动速度"><a class="markdownIt-Anchor" href="#4-maven-进程的启动速度"></a> 4、Maven 进程的启动速度</h3>
-<p>Maven 作为一个构建工具，也是一个运行在 JVM 上的 Java 程序，因此，它也可以通过对 JVM 进行优化配置，从而提升 Maven 的启动速度。</p>
-<h2 id="提升构建速度的技巧"><a class="markdownIt-Anchor" href="#提升构建速度的技巧"></a> 提升构建速度的技巧</h2>
-<p>针对上述提到的影响 Maven 项目构建速度的因素，可以使用以下技巧进行处理。</p>
-<h3 id="1-maven-并行构建"><a class="markdownIt-Anchor" href="#1-maven-并行构建"></a> 1、Maven 并行构建</h3>
-<p>为能在项目构建时充分的利用 CPU 资源， 我们可指定 maven 构建项目时使用的线程数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn -T num <span class="comment"># 指定 maven 构建项目时使用的具体线程数</span></span><br><span class="line">mvn -T numC <span class="comment"># 指定 maven 构建项目时使用的线程数，每个 CPU num 个线程</span></span><br></pre></td></tr></table></figure>
-<p>虽然项目尽管可能不容易进行并行构建，但值得尝试，因为它可以大大地提升项目构建的速度。设置<strong>每个 CPU 核使用一个线程是一个比较好的默认配置</strong>。</p>
-<h3 id="2-跳过测试或并行执行测试"><a class="markdownIt-Anchor" href="#2-跳过测试或并行执行测试"></a> 2、跳过测试或并行执行测试</h3>
-<p>从构建层面上来讲，测试可能是影响项目构建速度的最大因素。因此，我们通常会在构建工件时选择跳过测试，大多数插件可通过指定 <code>-DskipTests=true</code> 来跳过测试，但一般情况下，我们不推荐使用这种非常规的工程实践方案，仅在明确需要跳过测试时使用，很明显，这可以大大地提高项目构建的速度。<br />
-一般我们讨论的并行技术作用于模块级别，例如，当项目使用插件（如 surefire 等）来运行测试时，我们可以配置它在模块内进行并行执行。需要注意的是，使用并行技术来执行测试虽然可以大大提高项目构建的速度，但这一过程有可能导致一些副作用，但实际实践中，我们应该尽可能地尝试并行运行测试，在遇到错误时再进行相应处理即可。</p>
-<h3 id="3-只构建必要的模块"><a class="markdownIt-Anchor" href="#3-只构建必要的模块"></a> 3、只构建必要的模块</h3>
-<p>大多数人在构建项目时，可能会直接使用以下默认命令:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean install</span><br></pre></td></tr></table></figure>
-<p>但正如上文提到的，但在执行 install 时，需要先之前该阶段前的所有阶段，当 Maven 执行 clean 时，会将所有生成的 artifacts 及临时文件等（除VCS管理的文件外）都清理掉。clean 在遇到奇怪的缓存或bug时很有用。</p>
-<p>然而，每次项目修改后，都执行一次 clean，然后再 install 的速度并不理想，大多数情况下，我们应该是增量地构建项目，即仅构建变化的部分。举个例子，假设我们有一个多模块的项目，其中一些通用的核心模块几乎是不变的，则可以通过以下命令来只构建变动的模块：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn install -pl <span class="variable">$moduleName</span> -am</span><br></pre></td></tr></table></figure>
-<p>首先，可以看到，因为项目很少需要清理，该命令移除了 <code>clean</code> 阶段，其他的 mvn 命令选项如下：</p>
-<ul>
-<li><code>-pl</code>，<code>--projects</code> : 由逗号分隔的项目列表，项目可由 <code>[groupId]:artifactId</code> 或相对目录表示。指定 Maven 需构建的模块，而不是构建整个项目。</li>
-<li><code>-am</code>, <code>--also-make</code> : 当项目列表指定后，同时构建列表中项目的依赖项目。</li>
-<li><code>-amd</code>, <code>--also-make-dependents</code>: 当项目列表指定后，同时构建依赖于列表项目的项目。</li>
-</ul>
-<p>结合以上选项使用 maven 命令可以大大地提高项目构建的速度及灵活度，这种情况下，只有工作的项目模块及相应的修改的依赖才会被构建，而其他大量的构建工作，由于文件仍是新的或不是目标模块的一部分，则无需重新构建，可以跳过。</p>
-<h3 id="4-离线或限制网络访问"><a class="markdownIt-Anchor" href="#4-离线或限制网络访问"></a> 4、离线或限制网络访问</h3>
-<p>网络下载也是影响构建速度的一个重要因素，当然，在国内环境中，我们一般都配置 maven 库的镜像来下载依赖，可有效的提高依赖下载的网络速度，这一部分内容不是本文的关注点，读者可自行检索了解。</p>
-<p>离线或限制网络访问均可以提升 Maven 项目构建的速度，但我们可能需要对它们的使用场景作一下限制：<br />
-对于离线构建，<code>mvn</code> 命令增加 <code>-o</code> 或 <code>--offline</code> 选项，需要明确项目所需的所有依赖及传递依赖均已缓存至本地仓库；<br />
-当网络质量不佳且需要联网构建时，则可在 <code>MAVEN_OPTS</code> 变量中增加 <code>-DdependendencyLocationsEnabled=false</code> 设置来尽可能地减少项目构建时进行的网络传输。</p>
-<h3 id="5-提升-maven-java-进程的启动速度"><a class="markdownIt-Anchor" href="#5-提升-maven-java-进程的启动速度"></a> 5、提升 Maven Java 进程的启动速度</h3>
-<p>Maven 作为一个 Java 应用程序，就意味着我们可以通过对 JVM 进行调优以提高 Maven 进程启动速度。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-XX:+TieredCompilation -XX:TieredStopAtLevel=1</span><br></pre></td></tr></table></figure>
-<p>通过上述配置，可使 JVM 只执行基本的 jIT 编译，而不尝试去获取更多精确配置信息优化代码的执行。</p>
-<blockquote>
-<p>为提高 Maven 的构建速度，Maven 官方参考 Gradle 和 Takari 的技术，开发了 <a href="https://github.com/apache/maven-mvnd">maven-mvnd</a>。mvnd 会启动一个长时运行的守护进程来负责项目构建，并采用 GraalVM 开发 mvnd 的客户端，与传的 mvn 相比，启动速度更快且需要的内存更少。</p>
-</blockquote>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>本文主要简单地讨论了影响 maven 项目构建速度的一些因素及一些提高 maven 构建速度的技巧。更多关于 maven 的理论知识及内容，可以前往 maven 官网查看，另外 <code>mvn</code> 命令行选项可以参考 <a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html%E3%80%82">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html。</a></p>
-<h2 id="references"><a class="markdownIt-Anchor" href="#references"></a> References</h2>
-<ol>
-<li><a href="https://www.jrebel.com/blog/how-to-speed-up-your-maven-build">https://www.jrebel.com/blog/how-to-speed-up-your-maven-build</a></li>
-<li><a href="https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/">https://forgettingtocode.com/2019/01/23/readme-slow-maven-builds/</a></li>
-<li><a href="https://mincong.io/2018/11/01/speed-up-the-maven-build/">https://mincong.io/2018/11/01/speed-up-the-maven-build/</a></li>
-<li><a href="http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html">http://maven.apache.org/ref/3.6.3/maven-embedder/cli.html</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>maven</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java 集合框架概览</title>
     <url>/posts/6a98b274/</url>
     <content><![CDATA[<p>集合（Collection），顾名思义，是一组对象。当需要处理任何的一组对象的时候，我们不可避免地要与集合打交道。集合也存在于几乎所有编程语言中，因此 Java 也不例外，为了开发人员能够更高效地处理集合数据，Java 提供了一个集合框架 （Collections framework），它由一系列接口以及实现类组成，提供了不同类型的集合：<strong>List, Set, Map, Queue, Deque</strong> 等。</p>
@@ -4269,75 +4269,6 @@ beat rate: 65.95%</p>
       </tags>
   </entry>
   <entry>
-    <title>Advanture 1 - Leetcode 561 - Array Partition I</title>
-    <url>/posts/270f73f9/</url>
-    <content><![CDATA[<blockquote>
-<p>给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), …, (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。<br /><br /><br />
-链接:</p>
-<ol>
-<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode-cn.com/problems/array-partition-i/</a>(中文)</li>
-<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode.com/problems/array-partition-i/</a>(en)</li>
-</ol>
-<p>示例 1:</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: [1,4,3,2]</span><br><span class="line"></span><br><span class="line">输出: 4</span><br><span class="line">解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>提示:</p>
-<ol>
-<li>n 是正整数,范围在 [1, 10000].</li>
-<li>数组中的元素范围在 [-10000, 10000].</li>
-</ol>
-</blockquote>
-<span id="more"></span>
-<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
-<p>个人解题思路，观察给定的例子，很容易发现，对于一个给定的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi>n</mi></mrow><annotation encoding="application/x-tex">2n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault">n</span></span></span></span>大小的数组，只要在组成数对时每次都从数组选择最小的连两个数来组成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>个数对。所获得的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi mathvariant="normal">到</mi><mi>n</mi><mi mathvariant="normal">的</mi><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>b</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">1到n的min(a_i,b_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord cjk_fallback">到</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>总和最大。</p>
-<p>证明: 可以使用数学归纳法进行证明。</p>
-<blockquote>
-<p>因此，首先考虑将数组进行排序，然后将所有奇数位置的元素加和起来就是结果.</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">        <span class="comment">// sort the array first if it is unsorted.</span></span><br><span class="line">        <span class="keyword">if</span> (!isSorted(nums))</span><br><span class="line">            Arrays.sort(nums);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i+=<span class="number">2</span>) &#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// simple tool for sorting a integer array.</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isSorted</span><span class="params">(<span class="keyword">int</span>[] arr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length-<span class="number">1</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[i]&gt;arr[i+<span class="number">1</span>])</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>，主要取决所使用的排序算法</li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
-</ul>
-<p>Submission status:</p>
-<blockquote>
-<p>以上解法，通过所有测试用例，运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>32</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">32 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">2</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>击败<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>28.65</mn></mrow><annotation encoding="application/x-tex">28.65</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">8</span><span class="mord">.</span><span class="mord">6</span><span class="mord">5</span></span></span></span>%的提交(英文版leetcode)</p>
-</blockquote>
-<blockquote>
-<p>可以清楚的了解到该问题还有更好的解法。<br />
-由于<strong>我的解题思路基于比较的排序算法，因此时间复杂度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>已是最优</strong>,需要考虑另外的解题思路。</p>
-</blockquote>
-<p>如果不排序的情况下，得到结果。？？？ --&gt; emmm… 没想到。。。</p>
-<blockquote>
-<p>额…, 解题思路不变，还是基于排序，但是应用<strong>空间换时间</strong>的思想，因此容易想到利用<strong>桶排序</strong>对给定数组进行排序(毕竟数组元素范围已经给定<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn><mtext> </mtext><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000 ~ 10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bucket = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">20001</span>];</span><br><span class="line">        <span class="keyword">int</span> maxElemt = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">int</span> minElemt = Integer.MAX_VALUE;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            bucket[nums[i]+<span class="number">10000</span>]++;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; maxElemt)</span><br><span class="line">                maxElemt = nums[i];</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &lt; minElemt)</span><br><span class="line">                minElemt = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">        minElemt += <span class="number">10000</span>;  <span class="comment">// offset is 10000</span></span><br><span class="line">        maxElemt += <span class="number">10000</span>;</span><br><span class="line">        <span class="keyword">boolean</span> isOdd = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = minElemt; i &lt;= maxElemt; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bucket[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; bucket[i]; j++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (isOdd)</span><br><span class="line">                        result += (i - <span class="number">10000</span>);</span><br><span class="line">                    isOdd = !isOdd;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<div class="note primary"><p>代码简单解释，由于给定数组元素的范围为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span> ~ <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 因此桶排序所需要的总的容量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>20000</mn></mrow><annotation encoding="application/x-tex">20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 对给定数组出现的元素进行偏移(偏移量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)<br />
-<code>bucket[nums[i]+10000]++</code>，使用两个整型变量<code>minElemt</code>和<code>maxElemt</code>确定元素出现的范围, 使用<em>flag</em>变量<code>isOdd</code>判断当前处理元素是处于奇数位置还是偶数位置。</p>
-</div>
-<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
-<ul>
-<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>, 就算是数组所有元素都相同的情况，也是只要遍历<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>次</li>
-<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 对于该题目来说，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi mathvariant="normal">为</mi><mn>20000</mn></mrow><annotation encoding="application/x-tex">n为20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">为</span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span></li>
-</ul>
-<p><strong>Submission status</strong>:</p>
-<blockquote>
-<p>代码提交状况: 运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>7</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">7 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">7</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>,超过<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>100</mn></mrow><annotation encoding="application/x-tex">100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span>%的<code>java</code>代码提交。</p>
-</blockquote>
-<p><img data-src="leetcode-561-2.png" alt="" /></p>
-<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
-<p>第一种解法是通用解法，可以适用于不同的给定数组元素范围，而第二种解法只适用于此题，当元素范围比较大时，所花费的空间代价高。</p>
-]]></content>
-      <categories>
-        <category>Leetcode</category>
-      </categories>
-      <tags>
-        <tag>leetcode-array-easy</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Advantrue 1 - Leetcode 189 - Rotate Array</title>
     <url>/posts/885fe7d0/</url>
     <content><![CDATA[<blockquote>
@@ -4421,6 +4352,75 @@ loop1: 4, 2, 3, 1 -&gt;<br />
 </blockquote>
 <h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
 <p>在处理数组问题时，需要非常小心，时刻注意边界，避免发生数组越界问题。</p>
+]]></content>
+      <categories>
+        <category>Leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode-array-easy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Advanture 1 - Leetcode 561 - Array Partition I</title>
+    <url>/posts/270f73f9/</url>
+    <content><![CDATA[<blockquote>
+<p>给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), …, (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。<br /><br /><br />
+链接:</p>
+<ol>
+<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode-cn.com/problems/array-partition-i/</a>(中文)</li>
+<li><a href="https://leetcode.com/problems/array-partition-i/">https://leetcode.com/problems/array-partition-i/</a>(en)</li>
+</ol>
+<p>示例 1:</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: [1,4,3,2]</span><br><span class="line"></span><br><span class="line">输出: 4</span><br><span class="line">解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>提示:</p>
+<ol>
+<li>n 是正整数,范围在 [1, 10000].</li>
+<li>数组中的元素范围在 [-10000, 10000].</li>
+</ol>
+</blockquote>
+<span id="more"></span>
+<h3 id="解题思路"><a class="markdownIt-Anchor" href="#解题思路"></a> 解题思路</h3>
+<p>个人解题思路，观察给定的例子，很容易发现，对于一个给定的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi>n</mi></mrow><annotation encoding="application/x-tex">2n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault">n</span></span></span></span>大小的数组，只要在组成数对时每次都从数组选择最小的连两个数来组成<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>个数对。所获得的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi mathvariant="normal">到</mi><mi>n</mi><mi mathvariant="normal">的</mi><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mi>i</mi></msub><mo separator="true">,</mo><msub><mi>b</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">1到n的min(a_i,b_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord cjk_fallback">到</span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">的</span><span class="mord mathdefault">m</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">b</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>总和最大。</p>
+<p>证明: 可以使用数学归纳法进行证明。</p>
+<blockquote>
+<p>因此，首先考虑将数组进行排序，然后将所有奇数位置的元素加和起来就是结果.</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">        <span class="comment">// sort the array first if it is unsorted.</span></span><br><span class="line">        <span class="keyword">if</span> (!isSorted(nums))</span><br><span class="line">            Arrays.sort(nums);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i+=<span class="number">2</span>) &#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// simple tool for sorting a integer array.</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isSorted</span><span class="params">(<span class="keyword">int</span>[] arr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length-<span class="number">1</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[i]&gt;arr[i+<span class="number">1</span>])</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>复杂度分析(Compelxity Analysis):</strong></p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>，主要取决所使用的排序算法</li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></li>
+</ul>
+<p>Submission status:</p>
+<blockquote>
+<p>以上解法，通过所有测试用例，运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>32</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">32 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">2</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>击败<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>28.65</mn></mrow><annotation encoding="application/x-tex">28.65</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">8</span><span class="mord">.</span><span class="mord">6</span><span class="mord">5</span></span></span></span>%的提交(英文版leetcode)</p>
+</blockquote>
+<blockquote>
+<p>可以清楚的了解到该问题还有更好的解法。<br />
+由于<strong>我的解题思路基于比较的排序算法，因此时间复杂度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mi>l</mi><mi>o</mi><mi>g</mi><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(nlogn)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>已是最优</strong>,需要考虑另外的解题思路。</p>
+</blockquote>
+<p>如果不排序的情况下，得到结果。？？？ --&gt; emmm… 没想到。。。</p>
+<blockquote>
+<p>额…, 解题思路不变，还是基于排序，但是应用<strong>空间换时间</strong>的思想，因此容易想到利用<strong>桶排序</strong>对给定数组进行排序(毕竟数组元素范围已经给定<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn><mtext> </mtext><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000 ~ 10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mspace nobreak"> </span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nums.length % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] bucket = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">20001</span>];</span><br><span class="line">        <span class="keyword">int</span> maxElemt = Integer.MIN_VALUE;</span><br><span class="line">        <span class="keyword">int</span> minElemt = Integer.MAX_VALUE;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.length; i++) &#123;</span><br><span class="line">            bucket[nums[i]+<span class="number">10000</span>]++;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; maxElemt)</span><br><span class="line">                maxElemt = nums[i];</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &lt; minElemt)</span><br><span class="line">                minElemt = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">        minElemt += <span class="number">10000</span>;  <span class="comment">// offset is 10000</span></span><br><span class="line">        maxElemt += <span class="number">10000</span>;</span><br><span class="line">        <span class="keyword">boolean</span> isOdd = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = minElemt; i &lt;= maxElemt; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bucket[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; bucket[i]; j++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (isOdd)</span><br><span class="line">                        result += (i - <span class="number">10000</span>);</span><br><span class="line">                    isOdd = !isOdd;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<div class="note primary"><p>代码简单解释，由于给定数组元素的范围为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>10000</mn></mrow><annotation encoding="application/x-tex">-10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span> ~ <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 因此桶排序所需要的总的容量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>20000</mn></mrow><annotation encoding="application/x-tex">20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>, 对给定数组出现的元素进行偏移(偏移量为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>10000</mn></mrow><annotation encoding="application/x-tex">10000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span>)<br />
+<code>bucket[nums[i]+10000]++</code>，使用两个整型变量<code>minElemt</code>和<code>maxElemt</code>确定元素出现的范围, 使用<em>flag</em>变量<code>isOdd</code>判断当前处理元素是处于奇数位置还是偶数位置。</p>
+</div>
+<p><strong>复杂度分析(Complexity Analysis)</strong>:</p>
+<ul>
+<li>时间复杂度(Time complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>, 就算是数组所有元素都相同的情况，也是只要遍历<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>次</li>
+<li>空间复杂度(Space complexity): <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 对于该题目来说，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mi mathvariant="normal">为</mi><mn>20000</mn></mrow><annotation encoding="application/x-tex">n为20000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord mathdefault">n</span><span class="mord cjk_fallback">为</span><span class="mord">2</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span></span></span></span></li>
+</ul>
+<p><strong>Submission status</strong>:</p>
+<blockquote>
+<p>代码提交状况: 运行时间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>7</mn><mi>m</mi><mi>s</mi></mrow><annotation encoding="application/x-tex">7 ms</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">7</span><span class="mord mathdefault">m</span><span class="mord mathdefault">s</span></span></span></span>,超过<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>100</mn></mrow><annotation encoding="application/x-tex">100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span></span></span></span>%的<code>java</code>代码提交。</p>
+</blockquote>
+<p><img data-src="leetcode-561-2.png" alt="" /></p>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>第一种解法是通用解法，可以适用于不同的给定数组元素范围，而第二种解法只适用于此题，当元素范围比较大时，所花费的空间代价高。</p>
 ]]></content>
       <categories>
         <category>Leetcode</category>
