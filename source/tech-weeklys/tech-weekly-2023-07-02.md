@@ -20,7 +20,7 @@ date: 2023-07-02 21:11
 6. [JDK 21 - JEP 430 - String Templates (Preview)]([JEP 430: String Templates (Preview) (openjdk.org)](https://openjdk.org/jeps/430))
 > Instroduce string templates to enable string interpolation, the implementation is much like the [Scala's string interpolation]([String Interpolation | Scala 3 — Book | Scala Documentation (scala-lang.org)](https://docs.scala-lang.org/scala3/book/string-interpolation.html)).
 
-7. [JDK 21 - JEP 445 - Unnamed Classes and Instance Main Methods]([JEP 445: Unnamed Classes and Instance Main Methods (Preview) (openjdk.org)](https://openjdk.org/jeps/445))
+7. [JDK 21 - JEP 445 - Unnamed Classes and Instance Main Methods](https://openjdk.org/jeps/445))
 8. [JDK 21 - JEP440 - Record Patterns](https://openjdk.org/jeps/440)
 9. [JDK21 - JEP441 - Pattern Matching for switch](https://openjdk.org/jeps/441)
 10. [JDK21 - JEP444 - Virtual Threads](https://openjdk.org/jeps/444)
@@ -40,7 +40,7 @@ date: 2023-07-02 21:11
 5. [LLMs are compilers (vivekhaldar.com)](https://vivekhaldar.com/articles/llms-are-compilers/)
 > English is the new pl and LLMs are compilers.
 
-6. [[java-self-testing/java-self-testing-book: 《Java 研发自测》开源书 (github.com)](https://github.com/java-self-testing/java-self-testing-book)]
+6. [java-self-testing/java-self-testing-book: 《Java 研发自测》开源书](https://github.com/java-self-testing/java-self-testing-book)
 > An open source book for java developers  to write tests.
 
 7. [Taskell - A command-line kanban task manager.]([https://github.com/smallhadroncollider/taskell))

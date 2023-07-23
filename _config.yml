@@ -103,11 +103,11 @@ live2d:
   pluginJsPath: lib/
   pluginModelPath: assets/
   model:
-    use: live2d-widget-model-koharu
+    use: live2d-widget-model-hijiki
   display:
     position: right
-    width: 100
-    height: 180
+    width: 160
+    height: 260
   mobile:
     show: false
  
