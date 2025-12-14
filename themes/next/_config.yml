@@ -528,7 +528,8 @@ math:
 
   katex:
     enable: true
-    cdn: //cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css
+    # cdn: //cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css
+    cdn: https://cdn.staticfile.org/KaTeX/0.16.8/katex.min.css
     # See: https://github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex
     copy_tex: false
 
